@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace HelloWorld.Pages
+namespace FitnessClub.Pages
 {
     public class PrivacyModel : PageModel
     {
