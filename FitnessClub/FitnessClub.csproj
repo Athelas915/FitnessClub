@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>FitnessClub</AssemblyName>
     <RootNamespace>FitnessClub</RootNamespace>
+    <UserSecretsId>547ac825-b636-485c-a00f-812ab512c38f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
