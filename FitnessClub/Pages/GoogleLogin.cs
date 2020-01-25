@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FitnessClub
 {
-    public class googleloginModel : PageModel
+    public class GoogleLoginModel : PageModel
     {
         public void OnGet()
         {
