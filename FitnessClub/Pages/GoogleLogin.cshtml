@@ -19,8 +19,8 @@
 
         document.getElementById('SignOutButton').style.visibility = 'visible';
 
-        document.getElementById('htmlName').innerHTML = name;
-        document.getElementById('htmlEmail').innerHTML = email;
+        document.getElementById('Name').innerHTML = name;
+        document.getElementById('Email').innerHTML = email;
         document.getElementById('pfpImg').src = imageUrl;
         document.getElementById('pfpImg').style.visibility = "visible";
     }
@@ -28,8 +28,8 @@
 <body>
     <a href="#" onclick="signOut();" id="SignOutButton" style="visibility: hidden">Sign out</a>
     <p></p>
-    <p id="htmlName"></p>
-    <p id="htmlEmail"></p>
+    <p id="Name"></p>
+    <p id="Email"></p>
     <img id ="pfpImg" src="" alt="Your profile picture" style="visibility: hidden">
 
     <script>
@@ -41,8 +41,8 @@
             });
             document.getElementById('SignOutButton').style.visibility = 'hidden';
 
-            document.getElementById('htmlName').innerHTML = "";
-            document.getElementById('htmlEmail').innerHTML = "";
+            document.getElementById('Name').innerHTML = "";
+            document.getElementById('Email').innerHTML = "";
             document.getElementById('pfpImg').src = "";
             document.getElementById('pfpImg').style.visibility = "hidden";
         }
