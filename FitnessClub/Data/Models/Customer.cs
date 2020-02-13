@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace FC.Data.Models
+namespace FitnessClub.Data.Models
 {
-    class Customer : Person
+    public class Customer : Person
     {
         public int CustomerID { get; set; }
         public virtual ICollection<SessionEnrollment> SessionEnrollments { get; set; }

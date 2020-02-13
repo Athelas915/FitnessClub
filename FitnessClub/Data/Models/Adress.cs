@@ -1,9 +1,9 @@
-﻿namespace FC.Data.Models
+﻿namespace FitnessClub.Data.Models
 {
-    class Adress : BaseEntity
+    public class Adress : BaseEntity
     {
-        public int PersonID { get; set; }
         public virtual Person Person { get; set; }
+        public int AdressID { get; set; }
         public string Street { get; set; }
         public string ZipCode { get; set; }
         public string City { get; set; }

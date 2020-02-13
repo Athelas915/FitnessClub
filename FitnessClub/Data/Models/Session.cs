@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FC.Data.Models
+namespace FitnessClub.Data.Models
 {
     public enum SessionType
     {
         aerobics, spinning, boxing, yoga, pilates
     }
-    class Session : BaseEntity
+    public class Session : BaseEntity
     {
         public int SessionID { get; set; }
         public int CoachID { get; set; }

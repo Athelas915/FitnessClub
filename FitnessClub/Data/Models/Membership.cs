@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace FC.Data.Models
+namespace FitnessClub.Data.Models
 {
-    class Membership : BaseEntity
+    public class Membership : BaseEntity
     {
         public int MembershipID { get; set; }
         public int MembershipNo { get; set; }

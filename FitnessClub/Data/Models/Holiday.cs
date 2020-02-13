@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace FC.Data.Models
+namespace FitnessClub.Data.Models
 {
-    class Holiday : BaseEntity
+    public class Holiday : BaseEntity
     {
         public int HolidayID { get; set; }
         public int EmployeeID { get; set; }

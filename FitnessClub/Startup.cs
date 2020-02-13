@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FitnessClub.Data.DAL;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub
 {
@@ -24,6 +26,8 @@ namespace FitnessClub
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+
+            services.AddDbContext<FCContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FCContext")));
 
             services.AddAuthentication()
         .AddGoogle(options =>

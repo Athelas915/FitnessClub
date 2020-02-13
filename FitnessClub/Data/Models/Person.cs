@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FC.Data.Models
+namespace FitnessClub.Data.Models
 {
     public class Person : BaseEntity
     {

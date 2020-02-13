@@ -1,9 +1,9 @@
-﻿using FC.Data.Models;
+﻿using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FC.Data.DAL
+namespace FitnessClub.Data.DAL
 {
-    class FCContext : DbContext
+    public class FCContext : DbContext
     {
         public DbSet<Person> People { get; set; }
         public DbSet<Adress> Adresses { get; set; }
@@ -15,5 +15,9 @@ namespace FC.Data.DAL
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<SessionEnrollment> SessionEnrollments { get; set; }
+
+        public FCContext(DbContextOptions<FCContext> options) : base(options)
+        {
+        }
     }
 }
