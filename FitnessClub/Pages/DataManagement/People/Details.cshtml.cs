@@ -12,11 +12,11 @@ namespace FitnessClub
 {
     public class DetailsModel : PageModel
     {
-        private readonly FitnessClub.Data.DAL.FCContext _context;
+        private readonly IPersonRepository personRepository;
 
-        public DetailsModel(FitnessClub.Data.DAL.FCContext context)
+        public DetailsModel(IPersonRepository personRepository)
         {
-            _context = context;
+            this.personRepository = personRepository;
         }
 
         public Person Person { get; set; }
@@ -28,7 +28,7 @@ namespace FitnessClub
                 return NotFound();
             }
 
-            Person = await _context.People.FirstOrDefaultAsync(m => m.PersonID == id);
+            Person = await personRepository.GetPersonByID(id.Value);
 
             if (Person == null)
             {

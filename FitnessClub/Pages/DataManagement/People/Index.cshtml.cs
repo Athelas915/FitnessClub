@@ -12,18 +12,18 @@ namespace FitnessClub
 {
     public class IndexModel : PageModel
     {
-        private readonly FitnessClub.Data.DAL.FCContext _context;
+        private readonly IPersonRepository personRepository;
 
-        public IndexModel(FitnessClub.Data.DAL.FCContext context)
+        public IndexModel(IPersonRepository personRepository)
         {
-            _context = context;
+            this.personRepository = personRepository;
         }
 
-        public IList<Person> Person { get;set; }
+        public IList<Person> Person { get; set; }
 
         public async Task OnGetAsync()
         {
-            Person = await _context.People.ToListAsync();
+            Person = await personRepository.GetPeople();
         }
     }
 }

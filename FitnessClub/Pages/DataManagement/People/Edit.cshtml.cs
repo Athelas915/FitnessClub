@@ -13,11 +13,11 @@ namespace FitnessClub
 {
     public class EditModel : PageModel
     {
-        private readonly FitnessClub.Data.DAL.FCContext _context;
+        private readonly IPersonRepository personRepository;
 
-        public EditModel(FitnessClub.Data.DAL.FCContext context)
+        public EditModel(IPersonRepository personRepository)
         {
-            _context = context;
+            this.personRepository = personRepository;
         }
 
         [BindProperty]
@@ -30,7 +30,7 @@ namespace FitnessClub
                 return NotFound();
             }
 
-            Person = await _context.People.FirstOrDefaultAsync(m => m.PersonID == id);
+            Person = await personRepository.GetPersonByID(id.Value);
 
             if (Person == null)
             {
@@ -48,11 +48,11 @@ namespace FitnessClub
                 return Page();
             }
 
-            _context.Attach(Person).State = EntityState.Modified;
+            personRepository.UpdatePerson(Person);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await personRepository.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -71,7 +71,7 @@ namespace FitnessClub
 
         private bool PersonExists(int id)
         {
-            return _context.People.Any(e => e.PersonID == id);
+            return personRepository.Any(id);
         }
     }
 }

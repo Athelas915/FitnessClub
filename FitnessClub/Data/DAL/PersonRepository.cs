@@ -4,6 +4,7 @@ using System.Linq;
 using System.Data;
 using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL
 {
@@ -15,13 +16,13 @@ namespace FitnessClub.Data.DAL
             this.context = context;
         }
         
-        public IEnumerable<Person> GetPeople()
+        public async Task<IList<Person>> GetPeople()
         {
-            return context.People.ToList();
+            return await context.People.ToListAsync();
         }
-        public Person GetPersonByID(int id)
+        public async Task<Person> GetPersonByID(int id)
         {
-            return context.People.Find(id);
+            return await context.People.FindAsync(id);
         }
         public void InsertPerson(Person person)
         {
@@ -36,9 +37,15 @@ namespace FitnessClub.Data.DAL
         {
             context.Entry(person).State = EntityState.Modified;
         }
-        public void Save()
+        public async Task Save()
         {
-            context.SaveChanges();
+            await context.SaveChangesAsync();
+            return;
+        }
+
+        public bool Any(int id)
+        {
+            return context.People.Any(e => e.PersonID == id);
         }
 
         private bool disposed = false;

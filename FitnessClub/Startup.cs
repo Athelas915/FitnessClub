@@ -28,6 +28,7 @@ namespace FitnessClub
             services.AddRazorPages();
 
             services.AddDbContext<FCContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FCContext")));
+            services.AddTransient<IPersonRepository, PersonRepository>();
 
             services.AddAuthentication()
         .AddGoogle(options =>

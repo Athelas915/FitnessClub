@@ -12,11 +12,11 @@ namespace FitnessClub
 {
     public class CreateModel : PageModel
     {
-        private readonly FitnessClub.Data.DAL.FCContext _context;
+        private readonly IPersonRepository personRepository;
 
-        public CreateModel(FitnessClub.Data.DAL.FCContext context)
+        public CreateModel(IPersonRepository personRepository)
         {
-            _context = context;
+            this.personRepository = personRepository;
         }
 
         public IActionResult OnGet()
@@ -36,8 +36,8 @@ namespace FitnessClub
                 return Page();
             }
 
-            _context.People.Add(Person);
-            await _context.SaveChangesAsync();
+            personRepository.InsertPerson(Person);
+            await personRepository.Save();
 
             return RedirectToPage("./Index");
         }

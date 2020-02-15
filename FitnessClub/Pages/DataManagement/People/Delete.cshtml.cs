@@ -12,11 +12,11 @@ namespace FitnessClub
 {
     public class DeleteModel : PageModel
     {
-        private readonly FitnessClub.Data.DAL.FCContext _context;
+        private readonly IPersonRepository personRepository;
 
-        public DeleteModel(FitnessClub.Data.DAL.FCContext context)
+        public DeleteModel(IPersonRepository personRepository)
         {
-            _context = context;
+            this.personRepository = personRepository;
         }
 
         [BindProperty]
@@ -29,7 +29,7 @@ namespace FitnessClub
                 return NotFound();
             }
 
-            Person = await _context.People.FirstOrDefaultAsync(m => m.PersonID == id);
+            Person = await personRepository.GetPersonByID(id.Value);
 
             if (Person == null)
             {
@@ -45,12 +45,12 @@ namespace FitnessClub
                 return NotFound();
             }
 
-            Person = await _context.People.FindAsync(id);
+            Person = await personRepository.GetPersonByID(id.Value);
 
             if (Person != null)
             {
-                _context.People.Remove(Person);
-                await _context.SaveChangesAsync();
+                personRepository.DeletePerson(id.Value);
+                await personRepository.Save();
             }
 
             return RedirectToPage("./Index");
