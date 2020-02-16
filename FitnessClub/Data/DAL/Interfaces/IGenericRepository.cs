@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data;
-using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.Models;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FitnessClub.Data.DAL
+namespace FitnessClub.Data.DAL.Interfaces
 {
     public interface IGenericRepository<TEntity> : IDisposable where TEntity : class
     {
@@ -19,7 +16,7 @@ namespace FitnessClub.Data.DAL
         void Insert(TEntity entity);
         void Delete(int id);
         void Delete(TEntity entity);
-        void UpdatePerson(TEntity entity);
+        void Update(TEntity entity);
         Task Save();
         bool Any(int id);
 

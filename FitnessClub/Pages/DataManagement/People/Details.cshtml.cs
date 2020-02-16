@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL;
+using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
 namespace FitnessClub
@@ -28,7 +28,7 @@ namespace FitnessClub
                 return NotFound();
             }
 
-            Person = await personRepository.GetPersonByID(id.Value);
+            Person = await personRepository.GetByID(id.Value);
 
             if (Person == null)
             {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL;
+using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
 namespace FitnessClub
@@ -36,7 +36,9 @@ namespace FitnessClub
                 return Page();
             }
 
-            personRepository.InsertPerson(Person);
+            personRepository.Insert(Person);
+            Person.CreatedOn = DateTime.Now;
+            Person.CreatedBy = 0; // add currently logged user here
             await personRepository.Save();
 
             return RedirectToPage("./Index");

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessClub.Migrations
 {
     [DbContext(typeof(FCContext))]
-    [Migration("20200213230719_FCMigration3")]
-    partial class FCMigration3
+    [Migration("20200216165327_FCMigration4")]
+    partial class FCMigration4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -172,7 +172,7 @@ namespace FitnessClub.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Gender")
+                    b.Property<int?>("Gender")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")

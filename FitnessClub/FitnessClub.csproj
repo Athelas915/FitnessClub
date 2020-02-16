@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\DAL\IPersonRepository.cs.txt" />
+    <None Remove="Data\DAL\PersonRepository.cs.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\google2054d70463facac7.html" />
   </ItemGroup>
 

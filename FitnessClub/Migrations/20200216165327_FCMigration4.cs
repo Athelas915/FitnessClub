@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FitnessClub.Migrations
 {
-    public partial class FCMigration3 : Migration
+    public partial class FCMigration4 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,7 +18,7 @@ namespace FitnessClub.Migrations
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
-                    Gender = table.Column<int>(nullable: false),
+                    Gender = table.Column<int>(nullable: true),
                     Birthdate = table.Column<DateTime>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     CustomerID = table.Column<int>(nullable: true),

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL;
+using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
 namespace FitnessClub
@@ -23,7 +23,7 @@ namespace FitnessClub
 
         public async Task OnGetAsync()
         {
-            Person = await personRepository.GetPeople();
+            Person = await personRepository.Get();
         }
     }
 }

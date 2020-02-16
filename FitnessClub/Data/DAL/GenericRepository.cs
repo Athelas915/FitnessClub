@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.Models;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using FitnessClub.Data.DAL.Interfaces;
 
 namespace FitnessClub.Data.DAL
 {
@@ -68,7 +68,7 @@ namespace FitnessClub.Data.DAL
             }
             dbSet.Remove(entity);
         }
-        public virtual void UpdatePerson(TEntity entity)
+        public virtual void Update(TEntity entity)
         {
             dbSet.Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
