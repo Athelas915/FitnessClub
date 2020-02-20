@@ -1,0 +1,69 @@
+﻿@page
+@model FitnessClub.Pages.DataManagement.Sessions.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].Coach)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].SessionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].Start)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].Finish)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].Room)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].CreatedOn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].CreatedBy)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Session) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SessionType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Start)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Finish)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Room)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.SessionID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.SessionID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.SessionID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

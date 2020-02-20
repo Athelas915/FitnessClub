@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub
@@ -29,7 +30,9 @@ namespace FitnessClub
             services.AddRazorPages();
 
             services.AddDbContext<FCContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FCContext")));
-            services.AddTransient<IPersonRepository, PersonRepository>();
+            services.AddTransient<IPersonRepository<Person>, PersonRepository<Person>>();
+            services.AddTransient<ISessionRepository, SessionRepository>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddAuthentication()
         .AddGoogle(options =>

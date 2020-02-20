@@ -3,7 +3,7 @@ using FitnessClub.Data.DAL.Interfaces;
 
 namespace FitnessClub.Data.DAL
 {
-    public class PersonRepository : GenericRepository<Person>, IPersonRepository
+    public class PersonRepository<PersonEntity> : GenericRepository<PersonEntity>, IPersonRepository<PersonEntity> where PersonEntity : class
     {
         public PersonRepository(FCContext context) : base(context)
         {

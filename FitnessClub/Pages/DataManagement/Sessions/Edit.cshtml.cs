@@ -9,19 +9,19 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Pages.DataManagement.People
+namespace FitnessClub.Pages.DataManagement.Sessions
 {
     public class EditModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly ISessionRepository sessionRepository;
 
-        public EditModel(IPersonRepository<Person> personRepository)
+        public EditModel(ISessionRepository sessionRepository)
         {
-            this.personRepository = personRepository;
+            this.sessionRepository = sessionRepository;
         }
 
         [BindProperty]
-        public Person Person { get; set; }
+        public Session Session { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -30,12 +30,13 @@ namespace FitnessClub.Pages.DataManagement.People
                 return NotFound();
             }
 
-            Person = await personRepository.GetByID(id.Value);
+            Session = await sessionRepository.GetByID(id.Value);
 
-            if (Person == null)
+            if (Session == null)
             {
                 return NotFound();
             }
+           ViewData["CoachID"] = new SelectList(sessionRepository.GetCoaches(), "PersonID", "Discriminator");
             return Page();
         }
 
@@ -48,15 +49,15 @@ namespace FitnessClub.Pages.DataManagement.People
                 return Page();
             }
 
-            personRepository.Update(Person);
+            sessionRepository.Update(Session);
 
             try
             {
-                await personRepository.Save();
+                await sessionRepository.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PersonExists(Person.PersonID))
+                if (!SessionExists(Session.SessionID))
                 {
                     return NotFound();
                 }
@@ -69,9 +70,10 @@ namespace FitnessClub.Pages.DataManagement.People
             return RedirectToPage("./Index");
         }
 
-        private bool PersonExists(int id)
+        private bool SessionExists(int id)
         {
-            return personRepository.Any(id);
+            return sessionRepository.Any(id);
+
         }
     }
 }

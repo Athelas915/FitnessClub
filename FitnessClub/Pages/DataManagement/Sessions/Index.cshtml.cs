@@ -8,22 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Pages.DataManagement.People
+namespace FitnessClub.Pages.DataManagement.Sessions
 {
     public class IndexModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly ISessionRepository sessionRepository;
 
-        public IndexModel(IPersonRepository<Person> personRepository)
+        public IndexModel(ISessionRepository sessionRepository)
         {
-            this.personRepository = personRepository;
+            this.sessionRepository = sessionRepository;
         }
 
-        public IList<Person> Person { get; set; }
+        public IList<Session> Session { get;set; }
 
         public async Task OnGetAsync()
         {
-            Person = await personRepository.Get();
+            Session = await sessionRepository.Get();
         }
     }
 }

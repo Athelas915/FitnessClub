@@ -8,18 +8,18 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Pages.DataManagement.People
+namespace FitnessClub.Pages.DataManagement.Sessions
 {
     public class DetailsModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly ISessionRepository sessionRepository;
 
-        public DetailsModel(IPersonRepository<Person> personRepository)
+        public DetailsModel(ISessionRepository sessionRepository)
         {
-            this.personRepository = personRepository;
+            this.sessionRepository = sessionRepository;
         }
 
-        public Person Person { get; set; }
+        public Session Session { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,9 +28,9 @@ namespace FitnessClub.Pages.DataManagement.People
                 return NotFound();
             }
 
-            Person = await personRepository.GetByID(id.Value);
+            Session = await sessionRepository.GetByID(id.Value);
 
-            if (Person == null)
+            if (Session == null)
             {
                 return NotFound();
             }

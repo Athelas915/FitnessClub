@@ -8,23 +8,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Pages.DataManagement.People
+namespace FitnessClub.Pages.DataManagement.Sessions
 {
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
-        public CreateModel(IUnitOfWork unitOfWork)
+        private readonly ISessionRepository sessionRepository;
+        public CreateModel(ISessionRepository sessionRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionRepository = sessionRepository;
         }
 
         public IActionResult OnGet()
         {
+        ViewData["CoachID"] = new SelectList(sessionRepository.GetCoaches(), "PersonID", "Discriminator");
             return Page();
         }
 
         [BindProperty]
-        public Person Person { get; set; }
+        public Session Session { get; set; }
 
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
@@ -35,10 +36,10 @@ namespace FitnessClub.Pages.DataManagement.People
                 return Page();
             }
 
-            unitOfWork.PersonRepository.Insert(Person);
-            Person.CreatedOn = DateTime.Now;
-            Person.CreatedBy = 0; // add currently logged user here
-            await unitOfWork.PersonRepository.Save();
+            sessionRepository.Insert(Session);
+            Session.CreatedOn = DateTime.Now;
+            Session.CreatedBy = 0; // add currently logged user here
+            await sessionRepository.Save();
 
             return RedirectToPage("./Index");
         }
