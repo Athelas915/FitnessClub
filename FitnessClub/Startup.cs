@@ -29,7 +29,7 @@ namespace FitnessClub
         {
             services.AddRazorPages();
 
-            services.AddDbContext<FCContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FCContext")));
+            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddAuthentication()
