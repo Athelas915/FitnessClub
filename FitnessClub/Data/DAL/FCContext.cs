@@ -20,6 +20,6 @@ namespace FitnessClub.Data.DAL
         {
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql("Host=ec2-54-246-90-10.eu-west-1.compute.amazonaws.com;Database=df8btp2v90h9t1;Username=otnzwcbaeerohs;Password=ab83af16a06c11102cc57b387af7e936c7e0cc5f4c21a41501955cb59e10f09e;SSL Mode=Require;Trust Server Certificate=true");
+            => optionsBuilder.UseNpgsql(GetConnectionString.ConvertDbURL());
     }
 }

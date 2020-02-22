@@ -29,6 +29,7 @@ namespace FitnessClub
         {
             services.AddRazorPages();
 
+            GetConnectionString.EditJson();
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
