@@ -5,10 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub.Data.DAL
 {
-    public class PersonRepository : GenericRepository<Person>, IPersonRepository, IDisposable
-
+    public class CoachRepository : GenericRepository<Coach>, ICoachRepository, IDisposable
     {
-        public PersonRepository(FCContext context) : base(context)
+        public CoachRepository(FCContext context) : base(context)
         {
             this.context = context;
         }

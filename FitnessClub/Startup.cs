@@ -30,8 +30,6 @@ namespace FitnessClub
             services.AddRazorPages();
 
             services.AddDbContext<FCContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FCContext")));
-            services.AddTransient<IPersonRepository<Person>, PersonRepository<Person>>();
-            services.AddTransient<ISessionRepository, SessionRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddAuthentication()

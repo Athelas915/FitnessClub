@@ -12,18 +12,17 @@ namespace FitnessClub.Pages.DataManagement.Sessions
 {
     public class IndexModel : PageModel
     {
-        private readonly ISessionRepository sessionRepository;
-
-        public IndexModel(ISessionRepository sessionRepository)
+        private readonly IUnitOfWork unitOfWork;
+        public IndexModel(IUnitOfWork unitOfWork)
         {
-            this.sessionRepository = sessionRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public IList<Session> Session { get;set; }
 
         public async Task OnGetAsync()
         {
-            Session = await sessionRepository.Get();
+            Session = await unitOfWork.SessionRepository.Get();
         }
     }
 }

@@ -8,8 +8,9 @@ namespace FitnessClub.Data.DAL.Interfaces
 {
     public interface IUnitOfWork
     {
-        IPersonRepository<Person> PersonRepository { get; }
+        IPersonRepository PersonRepository { get; }
         ISessionRepository SessionRepository { get; }
-        public void Save();
+        ICoachRepository CoachRepository { get; }
+        Task Commit();
     }
 }

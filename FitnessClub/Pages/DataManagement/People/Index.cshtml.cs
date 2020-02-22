@@ -12,18 +12,18 @@ namespace FitnessClub.Pages.DataManagement.People
 {
     public class IndexModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public IndexModel(IPersonRepository<Person> personRepository)
+        public IndexModel(IUnitOfWork unitOfWork)
         {
-            this.personRepository = personRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public IList<Person> Person { get; set; }
 
         public async Task OnGetAsync()
         {
-            Person = await personRepository.Get();
+            Person = await unitOfWork.PersonRepository.Get();
         }
     }
 }

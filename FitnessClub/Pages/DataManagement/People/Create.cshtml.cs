@@ -38,7 +38,7 @@ namespace FitnessClub.Pages.DataManagement.People
             unitOfWork.PersonRepository.Insert(Person);
             Person.CreatedOn = DateTime.Now;
             Person.CreatedBy = 0; // add currently logged user here
-            await unitOfWork.PersonRepository.Save();
+            await unitOfWork.Commit();
 
             return RedirectToPage("./Index");
         }

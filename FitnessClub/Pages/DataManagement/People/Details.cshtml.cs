@@ -12,11 +12,11 @@ namespace FitnessClub.Pages.DataManagement.People
 {
     public class DetailsModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public DetailsModel(IPersonRepository<Person> personRepository)
+        public DetailsModel(IUnitOfWork unitOfWork)
         {
-            this.personRepository = personRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public Person Person { get; set; }
@@ -28,7 +28,7 @@ namespace FitnessClub.Pages.DataManagement.People
                 return NotFound();
             }
 
-            Person = await personRepository.GetByID(id.Value);
+            Person = await unitOfWork.PersonRepository.GetByID(id.Value);
 
             if (Person == null)
             {

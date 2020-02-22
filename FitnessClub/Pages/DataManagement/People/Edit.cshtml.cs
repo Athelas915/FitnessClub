@@ -13,11 +13,11 @@ namespace FitnessClub.Pages.DataManagement.People
 {
     public class EditModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public EditModel(IPersonRepository<Person> personRepository)
+        public EditModel(IUnitOfWork unitOfWork)
         {
-            this.personRepository = personRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         [BindProperty]
@@ -30,7 +30,7 @@ namespace FitnessClub.Pages.DataManagement.People
                 return NotFound();
             }
 
-            Person = await personRepository.GetByID(id.Value);
+            Person = await unitOfWork.PersonRepository.GetByID(id.Value);
 
             if (Person == null)
             {
@@ -48,11 +48,11 @@ namespace FitnessClub.Pages.DataManagement.People
                 return Page();
             }
 
-            personRepository.Update(Person);
+            unitOfWork.PersonRepository.Update(Person);
 
             try
             {
-                await personRepository.Save();
+                await unitOfWork.Commit();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -71,7 +71,7 @@ namespace FitnessClub.Pages.DataManagement.People
 
         private bool PersonExists(int id)
         {
-            return personRepository.Any(id);
+            return unitOfWork.PersonRepository.Any(id);
         }
     }
 }

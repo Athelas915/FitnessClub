@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
-    public interface IGenericRepository<TEntity> : IDisposable where TEntity : class
+    public interface IGenericRepository<TEntity> where TEntity : class
     {
         Task<IList<TEntity>> Get(
             Expression<Func<TEntity, bool>> filter = null,
@@ -17,7 +17,6 @@ namespace FitnessClub.Data.DAL.Interfaces
         void Delete(int id);
         void Delete(TEntity entity);
         void Update(TEntity entity);
-        Task Save();
         bool Any(int id);
 
     }

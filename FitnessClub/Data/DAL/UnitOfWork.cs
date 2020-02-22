@@ -4,45 +4,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub.Data.DAL
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly FCContext context;
-        private IPersonRepository<Person> personRepository;
-        private ISessionRepository sessionRepository;
+        public IPersonRepository PersonRepository { get; }
+        public ISessionRepository SessionRepository { get; }
+        public ICoachRepository CoachRepository { get; }
 
         public UnitOfWork(FCContext context)
         {
             this.context = context;
+            PersonRepository = new PersonRepository(this.context);
+            SessionRepository = new SessionRepository(this.context);
+            CoachRepository = new CoachRepository(this.context);
         }
-
-        public IPersonRepository<Person> PersonRepository
+        public async Task Commit()
         {
-            get
-            {
-                if (this.personRepository == null)
-                {
-                    this.personRepository = new PersonRepository<Person>(context);
-                }
-                return personRepository;
-            }
-        }
-        public ISessionRepository SessionRepository
-        {
-            get
-            {
-                if (this.sessionRepository == null)
-                {
-                    this.sessionRepository = new SessionRepository(context);
-                }
-                return sessionRepository;
-            }
-        }
-        public void Save()
-        {
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
 

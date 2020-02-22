@@ -73,11 +73,6 @@ namespace FitnessClub.Data.DAL
             dbSet.Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
         }
-        public async Task Save()
-        {
-            await context.SaveChangesAsync();
-            return;
-        }
 
         public bool Any(int id)
         {

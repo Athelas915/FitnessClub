@@ -12,11 +12,10 @@ namespace FitnessClub.Pages.DataManagement.Sessions
 {
     public class DeleteModel : PageModel
     {
-        private readonly ISessionRepository sessionRepository;
-
-        public DeleteModel(ISessionRepository sessionRepository)
+        private readonly IUnitOfWork unitOfWork;
+        public DeleteModel(IUnitOfWork unitOfWork)
         {
-            this.sessionRepository = sessionRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         [BindProperty]
@@ -29,7 +28,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await sessionRepository.GetByID(id.Value);
+            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
 
             if (Session == null)
             {
@@ -45,12 +44,12 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await sessionRepository.GetByID(id.Value);
+            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
 
             if (Session != null)
             {
-                sessionRepository.Delete(Session);
-                await sessionRepository.Save();
+                unitOfWork.SessionRepository.Delete(Session);
+                await unitOfWork.Commit();
             }
 
             return RedirectToPage("./Index");

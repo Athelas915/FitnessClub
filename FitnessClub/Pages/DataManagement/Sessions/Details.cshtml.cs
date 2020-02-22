@@ -12,11 +12,10 @@ namespace FitnessClub.Pages.DataManagement.Sessions
 {
     public class DetailsModel : PageModel
     {
-        private readonly ISessionRepository sessionRepository;
-
-        public DetailsModel(ISessionRepository sessionRepository)
+        private readonly IUnitOfWork unitOfWork;
+        public DetailsModel(IUnitOfWork unitOfWork)
         {
-            this.sessionRepository = sessionRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public Session Session { get; set; }
@@ -28,7 +27,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await sessionRepository.GetByID(id.Value);
+            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
 
             if (Session == null)
             {
