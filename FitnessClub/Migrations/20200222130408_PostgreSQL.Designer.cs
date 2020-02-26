@@ -38,7 +38,8 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("GETDATE(   )");
 
                     b.Property<int?>("PersonID")
                         .HasColumnType("integer");
@@ -73,7 +74,8 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("GETDATE(   )");
 
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
@@ -96,7 +98,8 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("GETDATE(   )");
 
                     b.Property<int>("EmployeeID")
                         .HasColumnType("integer");
@@ -125,7 +128,8 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("GETDATE(   )");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("integer");
@@ -160,7 +164,8 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("GETDATE(   )");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -199,7 +204,8 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("GETDATE(   )");
 
                     b.Property<DateTime>("Finish")
                         .HasColumnType("timestamp without time zone");
@@ -231,7 +237,8 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("GETDATE(   )");
 
                     b.Property<int?>("CustomerID")
                         .HasColumnType("integer");
