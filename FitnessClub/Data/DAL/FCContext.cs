@@ -1,5 +1,10 @@
-﻿using FitnessClub.Data.Models;
+﻿using System;
+using System.Linq;
+using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL
 {
@@ -15,11 +20,28 @@ namespace FitnessClub.Data.DAL
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<SessionEnrollment> SessionEnrollments { get; set; }
-
         public FCContext(DbContextOptions<FCContext> options) : base(options)
         {
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseNpgsql(GetConnectionString.ConvertDbURL());
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            foreach (var entity in modelBuilder.Model
+                .GetEntityTypes()
+                .Where(w => w.ClrType.IsSubclassOf(typeof(BaseEntity)))
+                .Select(c => modelBuilder.Entity(c.ClrType)))
+            {
+                entity
+                    .Property("CreatedOn")
+                    .HasDefaultValueSql("now()")
+                    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+                entity
+                    .Property("CreatedBy")
+                    .HasDefaultValue(0)
+                    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+            }
+        }
     }
 }

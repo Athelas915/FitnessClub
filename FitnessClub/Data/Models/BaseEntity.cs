@@ -1,12 +1,13 @@
 ﻿using System;
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace FitnessClub.Data.Models
 {
     public class BaseEntity
     {
-        [ReadOnly(true)]
-        public DateTime CreatedOn { get; set; }
         public int CreatedBy { get; set; }
+        [Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedOn { get; set; }
     }
 }
