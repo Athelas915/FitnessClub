@@ -11,16 +11,18 @@ namespace FitnessClub.Data.DAL
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly FCContext context;
-        public IPersonRepository PersonRepository { get; }
+        public IPersonRepository<Person> PersonRepository { get; }
+        public IPersonRepository<Employee> EmployeeRepository { get; }
+        public IPersonRepository<Coach> CoachRepository { get; }
         public ISessionRepository SessionRepository { get; }
-        public ICoachRepository CoachRepository { get; }
 
         public UnitOfWork(FCContext context)
         {
             this.context = context;
-            PersonRepository = new PersonRepository(this.context);
+            PersonRepository  = new PersonRepository<Person>(this.context);
+            EmployeeRepository = new PersonRepository<Employee>(this.context);
+            CoachRepository = new PersonRepository<Coach>(this.context);
             SessionRepository = new SessionRepository(this.context);
-            CoachRepository = new CoachRepository(this.context);
         }
         public async Task Commit()
         {

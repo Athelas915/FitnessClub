@@ -9,18 +9,19 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Pages.DataManagement.Sessions
+namespace FitnessClub.Pages.DataManagement.Coaches
 {
     public class EditModel : PageModel
     {
         private readonly IUnitOfWork unitOfWork;
+
         public EditModel(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
 
         [BindProperty]
-        public Session Session { get; set; }
+        public Coach Coach { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,13 +30,12 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
+            Coach = await unitOfWork.CoachRepository.GetByID(id.Value);
 
-            if (Session == null)
+            if (Coach == null)
             {
                 return NotFound();
             }
-           ViewData["PersonID"] = new SelectList(await unitOfWork.CoachRepository.Get(), "PersonID", "Discriminator");
             return Page();
         }
 
@@ -48,7 +48,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return Page();
             }
 
-            unitOfWork.SessionRepository.Update(Session);
+            unitOfWork.CoachRepository.Update(Coach);
 
             try
             {
@@ -56,7 +56,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SessionExists(Session.SessionID))
+                if (!CoachExists(Coach.PersonID))
                 {
                     return NotFound();
                 }
@@ -69,10 +69,9 @@ namespace FitnessClub.Pages.DataManagement.Sessions
             return RedirectToPage("./Index");
         }
 
-        private bool SessionExists(int id)
+        private bool CoachExists(int id)
         {
-            return unitOfWork.SessionRepository.Any(id);
-
+            return unitOfWork.CoachRepository.Any(id);
         }
     }
 }

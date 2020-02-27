@@ -29,18 +29,14 @@ namespace FitnessClub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-
             services.AddRazorPages();
 
             GetConnectionString.EditJson();
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
+            
             services.AddAuthentication()
-            .AddGoogle(options =>
+            .AddGoogle(options =>   
             {
                 IConfigurationSection googleAuthNSection =
                     Configuration.GetSection("Authentication:Google");

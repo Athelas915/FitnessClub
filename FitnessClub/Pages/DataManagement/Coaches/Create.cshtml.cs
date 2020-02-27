@@ -8,24 +8,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Pages.DataManagement.Sessions
+namespace FitnessClub.Pages.DataManagement.Coaches
 {
     public class CreateModel : PageModel
     {
         private readonly IUnitOfWork unitOfWork;
+
         public CreateModel(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-        ViewData["PersonID"] = new SelectList(await unitOfWork.CoachRepository.Get(), "PersonID", "LastName");
             return Page();
         }
 
         [BindProperty]
-        public Session Session { get; set; }
+        public Coach Coach { get; set; }
 
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
@@ -36,7 +36,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return Page();
             }
 
-            unitOfWork.SessionRepository.Insert(Session);
+            unitOfWork.CoachRepository.Insert(Coach);
             await unitOfWork.Commit();
 
             return RedirectToPage("./Index");

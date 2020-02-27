@@ -3,15 +3,17 @@ using System;
 using FitnessClub.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FitnessClub.Migrations
 {
     [DbContext(typeof(FCContext))]
-    partial class FCContextModelSnapshot : ModelSnapshot
+    [Migration("20200227133942_PostgreSQL14")]
+    partial class PostgreSQL14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,21 +113,18 @@ namespace FitnessClub.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<int?>("EmployeePersonID")
+                    b.Property<int>("EmployeeID")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Finish")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("PersonID")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("Start")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("HolidayID");
 
-                    b.HasIndex("EmployeePersonID");
+                    b.HasIndex("EmployeeID");
 
                     b.ToTable("Holidays");
                 });
@@ -147,7 +146,7 @@ namespace FitnessClub.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<int?>("CustomerPersonID")
+                    b.Property<int>("CustomerID")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Finish")
@@ -156,15 +155,12 @@ namespace FitnessClub.Migrations
                     b.Property<int>("MembershipNo")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PersonID")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("Start")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("MembershipID");
 
-                    b.HasIndex("CustomerPersonID");
+                    b.HasIndex("CustomerID");
 
                     b.ToTable("Memberships");
                 });
@@ -219,7 +215,7 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("CoachPersonID")
+                    b.Property<int>("CoachID")
                         .HasColumnType("integer");
 
                     b.Property<int>("CreatedBy")
@@ -235,9 +231,6 @@ namespace FitnessClub.Migrations
                     b.Property<DateTime>("Finish")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("PersonID")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Room")
                         .HasColumnType("integer");
 
@@ -249,7 +242,7 @@ namespace FitnessClub.Migrations
 
                     b.HasKey("SessionID");
 
-                    b.HasIndex("CoachPersonID");
+                    b.HasIndex("CoachID");
 
                     b.ToTable("Sessions");
                 });
@@ -271,10 +264,7 @@ namespace FitnessClub.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<int?>("CustomerPersonID")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("PersonID")
+                    b.Property<int?>("CustomerID")
                         .HasColumnType("integer");
 
                     b.Property<int?>("SessionID")
@@ -282,7 +272,7 @@ namespace FitnessClub.Migrations
 
                     b.HasKey("SessionEnrollmentID");
 
-                    b.HasIndex("CustomerPersonID");
+                    b.HasIndex("CustomerID");
 
                     b.HasIndex("SessionID");
 
@@ -344,28 +334,34 @@ namespace FitnessClub.Migrations
                 {
                     b.HasOne("FitnessClub.Data.Models.Employee", "Employee")
                         .WithMany("Holidays")
-                        .HasForeignKey("EmployeePersonID");
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Membership", b =>
                 {
                     b.HasOne("FitnessClub.Data.Models.Customer", "Customer")
                         .WithMany("Memberships")
-                        .HasForeignKey("CustomerPersonID");
+                        .HasForeignKey("CustomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Session", b =>
                 {
                     b.HasOne("FitnessClub.Data.Models.Coach", "Coach")
                         .WithMany()
-                        .HasForeignKey("CoachPersonID");
+                        .HasForeignKey("CoachID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.SessionEnrollment", b =>
                 {
                     b.HasOne("FitnessClub.Data.Models.Customer", "Customer")
                         .WithMany("SessionEnrollments")
-                        .HasForeignKey("CustomerPersonID");
+                        .HasForeignKey("CustomerID");
 
                     b.HasOne("FitnessClub.Data.Models.Session", "Session")
                         .WithMany("SessionEnrollments")

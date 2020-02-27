@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub.Data.DAL
 {
-    public class PersonRepository : GenericRepository<Person>, IPersonRepository, IDisposable
+    public class PersonRepository<PersonEntity> : GenericRepository<PersonEntity>, IPersonRepository<PersonEntity>, IDisposable where PersonEntity : class
 
     {
         public PersonRepository(FCContext context) : base(context)
