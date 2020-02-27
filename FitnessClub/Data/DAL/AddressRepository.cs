@@ -4,9 +4,9 @@ using FitnessClub.Data.DAL.Interfaces;
 
 namespace FitnessClub.Data.DAL
 {
-    public class SessionRepository : GenericRepository<Session>, ISessionRepository, IDisposable
+    public class AddressRepository : GenericRepository<Address>, IAddressRepository, IDisposable
     {
-        public SessionRepository(FCContext context) : base(context)
+        public AddressRepository(FCContext context) : base(context)
         {
             this.context = context;
         }

@@ -11,7 +11,7 @@ namespace FitnessClub.Data.DAL
     public class FCContext : DbContext
     {
         public DbSet<Person> People { get; set; }
-        public DbSet<Adress> Adresses { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Membership> Memberships { get; set; }

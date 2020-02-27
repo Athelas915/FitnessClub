@@ -9,18 +9,19 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Pages.DataManagement.Sessions
+namespace FitnessClub.Pages.DataManagement.Customers
 {
     public class EditModel : PageModel
     {
         private readonly IUnitOfWork unitOfWork;
+
         public EditModel(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
 
         [BindProperty]
-        public Session Session { get; set; }
+        public Customer Customer { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,13 +30,12 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
+            Customer = await unitOfWork.CustomerRepository.GetByID(id.Value);
 
-            if (Session == null)
+            if (Customer == null)
             {
                 return NotFound();
             }
-           ViewData["PersonID"] = new SelectList(await unitOfWork.CoachRepository.Get(), "PersonID", "LastName");
             return Page();
         }
 
@@ -48,7 +48,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return Page();
             }
 
-            unitOfWork.SessionRepository.Update(Session);
+            unitOfWork.CustomerRepository.Update(Customer);
 
             try
             {
@@ -56,7 +56,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SessionExists(Session.SessionID))
+                if (!CustomerExists(Customer.PersonID))
                 {
                     return NotFound();
                 }
@@ -69,10 +69,9 @@ namespace FitnessClub.Pages.DataManagement.Sessions
             return RedirectToPage("./Index");
         }
 
-        private bool SessionExists(int id)
+        private bool CustomerExists(int id)
         {
-            return unitOfWork.SessionRepository.Any(id);
-
+            return unitOfWork.CustomerRepository.Any(id);
         }
     }
 }

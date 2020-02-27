@@ -1,0 +1,78 @@
+﻿@page
+@model FitnessClub.Pages.DataManagement.Addresses.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].Person)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].Street)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].ZipCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].Region)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].Country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address[0].CreatedOn)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Address) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Street)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ZipCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Region)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedOn)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.AddressID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.AddressID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.AddressID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

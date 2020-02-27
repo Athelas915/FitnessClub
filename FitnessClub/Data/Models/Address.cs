@@ -2,11 +2,11 @@
 
 namespace FitnessClub.Data.Models
 {
-    public class Adress : BaseEntity
+    public class Address : BaseEntity
     {
-        public virtual Person Person { get; set; }
-        [Key]
+        public int AddressID { get; set; }
         public int PersonID { get; set; }
+        public virtual Person Person { get; set; }
         public string Street { get; set; }
         public string ZipCode { get; set; }
         public string City { get; set; }

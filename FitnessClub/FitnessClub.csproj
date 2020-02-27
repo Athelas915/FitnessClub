@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200227221659_PostgreSQL1.cs" />
+    <Compile Remove="Migrations\20200227221659_PostgreSQL1.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Data\DAL\IPersonRepository.cs.txt" />
     <None Remove="Data\DAL\PersonRepository.cs.txt" />
   </ItemGroup>

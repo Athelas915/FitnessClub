@@ -19,9 +19,9 @@ namespace FitnessClub.Migrations
                 .HasAnnotation("ProductVersion", "3.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("FitnessClub.Data.Models.Adress", b =>
+            modelBuilder.Entity("FitnessClub.Data.Models.Address", b =>
                 {
-                    b.Property<int>("PersonID")
+                    b.Property<int>("AddressID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
@@ -42,7 +42,7 @@ namespace FitnessClub.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<int?>("PersonID1")
+                    b.Property<int>("PersonID")
                         .HasColumnType("integer");
 
                     b.Property<string>("Region")
@@ -54,11 +54,11 @@ namespace FitnessClub.Migrations
                     b.Property<string>("ZipCode")
                         .HasColumnType("text");
 
-                    b.HasKey("PersonID");
+                    b.HasKey("AddressID");
 
-                    b.HasIndex("PersonID1");
+                    b.HasIndex("PersonID");
 
-                    b.ToTable("Adresses");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.CoachRating", b =>
@@ -326,11 +326,13 @@ namespace FitnessClub.Migrations
                     b.HasDiscriminator().HasValue("Coach");
                 });
 
-            modelBuilder.Entity("FitnessClub.Data.Models.Adress", b =>
+            modelBuilder.Entity("FitnessClub.Data.Models.Address", b =>
                 {
                     b.HasOne("FitnessClub.Data.Models.Person", "Person")
                         .WithMany()
-                        .HasForeignKey("PersonID1");
+                        .HasForeignKey("PersonID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.CoachRating", b =>

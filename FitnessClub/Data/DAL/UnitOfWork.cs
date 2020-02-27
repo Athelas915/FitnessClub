@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub.Data.DAL
 {
@@ -12,6 +9,8 @@ namespace FitnessClub.Data.DAL
     {
         private readonly FCContext context;
         public IPersonRepository<Person> PersonRepository { get; }
+        public IAddressRepository AddressRepository { get; }
+        public IPersonRepository<Customer> CustomerRepository { get; }
         public IPersonRepository<Employee> EmployeeRepository { get; }
         public IPersonRepository<Coach> CoachRepository { get; }
         public ISessionRepository SessionRepository { get; }
@@ -20,6 +19,8 @@ namespace FitnessClub.Data.DAL
         {
             this.context = context;
             PersonRepository  = new PersonRepository<Person>(this.context);
+            AddressRepository = new AddressRepository(this.context);
+            CustomerRepository = new PersonRepository<Customer>(this.context);
             EmployeeRepository = new PersonRepository<Employee>(this.context);
             CoachRepository = new PersonRepository<Coach>(this.context);
             SessionRepository = new SessionRepository(this.context);

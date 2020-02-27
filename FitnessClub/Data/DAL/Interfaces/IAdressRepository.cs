@@ -2,7 +2,7 @@
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
-    public interface ISessionRepository : IGenericRepository<Session>
+    public interface IAddressRepository : IGenericRepository<Address>
     {
     }
 }
