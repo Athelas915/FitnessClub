@@ -24,17 +24,19 @@ namespace FitnessClub
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        internal static IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IConfiguration>(Configuration);
+
             services.AddRazorPages();
 
             GetConnectionString.EditJson();
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            
+
             services.AddAuthentication()
             .AddGoogle(options =>   
             {

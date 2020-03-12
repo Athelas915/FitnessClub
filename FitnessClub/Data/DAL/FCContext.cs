@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using FitnessClub.Data.Models;
+using FitnessClub;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +26,8 @@ namespace FitnessClub.Data.DAL
         {
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql(GetConnectionString.ConvertDbURL());
+
+            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString("FCContext"));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
