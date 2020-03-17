@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL.Repositories;
 using FitnessClub.Data.Models;
 
 namespace FitnessClub.Data.DAL

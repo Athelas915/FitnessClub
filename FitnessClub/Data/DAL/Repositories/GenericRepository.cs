@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FitnessClub.Data.DAL.Interfaces;
 
-namespace FitnessClub.Data.DAL
+namespace FitnessClub.Data.DAL.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {

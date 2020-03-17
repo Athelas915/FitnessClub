@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub
@@ -36,6 +36,8 @@ namespace FitnessClub
 
             GetConnectionString.EditJson();
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
+            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<FCContext>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             
