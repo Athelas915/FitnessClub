@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +38,8 @@ namespace FitnessClub
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+            
+
             services.AddAuthentication()
             .AddGoogle(options =>   
             {
@@ -46,6 +49,7 @@ namespace FitnessClub
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("SignedIn", policy =>
@@ -72,6 +76,7 @@ namespace FitnessClub
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -81,3 +86,4 @@ namespace FitnessClub
         }
     }
 }
+    

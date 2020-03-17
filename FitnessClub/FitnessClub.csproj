@@ -5,6 +5,7 @@
     <AssemblyName>FitnessClub</AssemblyName>
     <RootNamespace>FitnessClub</RootNamespace>
     <UserSecretsId>547ac825-b636-485c-a00f-812ab512c38f</UserSecretsId>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0-preview5-19227-01" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
@@ -35,6 +37,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
   </ItemGroup>
 
 </Project>
