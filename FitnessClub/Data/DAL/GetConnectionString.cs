@@ -8,10 +8,10 @@ using Newtonsoft.Json;
 
 namespace FitnessClub.Data.DAL
 {
-    //Class that has methods to convert DATABASE_URL variable from Heroku app to ConnectionStrings in appsettings.json.
+    //Because Heroku provides database credentials in "Database_URL" form, this class was made to convert that into ConnectionString that can be used by .NET app. 
     public static class GetConnectionString
     {
-        public static string getDatabaseUrl(int dev) //returns heroku database url stored in database-url.json. int dev: 0 for production, 1 for development.
+        public static string getDatabaseUrl(int dev) //reads heroku database url stored in database-url.json and returns it as string. int dev: 0 for production, 1 for development.
         {
             string databaseUrl;
 
@@ -27,7 +27,7 @@ namespace FitnessClub.Data.DAL
             }
             return databaseUrl;
         }
-        public static string ConvertDbURL(string databaseUrl) //returns correct connection string when given databseUrl from Heroku
+        public static string ConvertDbURL(string databaseUrl) //converts Heroku Database_URL into ConnectionString
         {
             string[] urlList;
 
@@ -36,7 +36,7 @@ namespace FitnessClub.Data.DAL
             return "Host=" + urlList[5] + ";Database=" + urlList[7] + ";Username=" + urlList[3] + ";Password=" + urlList[4] + ";SSL Mode=Require;Trust Server Certificate=true";
         }
 
-        public static void EditJson()
+        public static void EditJson() //Edits appsettings.json and appsettings.Development.json, inserting new connection strings.
         {
 
             string json = File.ReadAllText("appsettings.Development.json");
