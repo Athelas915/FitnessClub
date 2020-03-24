@@ -1,0 +1,61 @@
+﻿@page
+@model FitnessClub.Pages.DataManagement.Holidays.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Holiday[0].PersonID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holiday[0].Start)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holiday[0].Finish)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holiday[0].CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holiday[0].CreatedOn)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Holiday) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Start)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Finish)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedOn)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.HolidayID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.HolidayID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.HolidayID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

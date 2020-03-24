@@ -12,9 +12,13 @@ namespace FitnessClub.Data.DAL
         public IPersonRepository<Person> PersonRepository { get; }
         public IAddressRepository AddressRepository { get; }
         public IPersonRepository<Customer> CustomerRepository { get; }
+        public IMembershipRepository MembershipRepository { get; }
         public IPersonRepository<Employee> EmployeeRepository { get; }
+        public IHolidayRepository HolidayRepository { get; }
         public IPersonRepository<Coach> CoachRepository { get; }
+        public ICoachRatingRepository CoachRatingRepository { get; }
         public ISessionRepository SessionRepository { get; }
+        public ISessionEnrollmentRepository SessionEnrollmentRepository { get; }
 
         public UnitOfWork(FCContext context)
         {
@@ -22,10 +26,16 @@ namespace FitnessClub.Data.DAL
             PersonRepository  = new PersonRepository<Person>(this.context);
             AddressRepository = new AddressRepository(this.context);
             CustomerRepository = new PersonRepository<Customer>(this.context);
+            MembershipRepository = new MembershipRepository(this.context);
             EmployeeRepository = new PersonRepository<Employee>(this.context);
+            HolidayRepository = new HolidayRepository(this.context);
             CoachRepository = new PersonRepository<Coach>(this.context);
+            CoachRatingRepository = new CoachRatingRepository(this.context);
             SessionRepository = new SessionRepository(this.context);
+            SessionEnrollmentRepository = new SessionEnrollmentRepository(this.context);
+
         }
+    
         public async Task Commit()
         {
             await context.SaveChangesAsync();

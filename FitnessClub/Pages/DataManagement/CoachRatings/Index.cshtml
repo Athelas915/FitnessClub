@@ -1,0 +1,55 @@
+﻿@page
+@model FitnessClub.Pages.DataManagement.CoachRatings.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CoachRating[0].PersonID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CoachRating[0].Rating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CoachRating[0].CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CoachRating[0].CreatedOn)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.CoachRating) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedOn)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.CoachRatingID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.CoachRatingID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.CoachRatingID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

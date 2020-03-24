@@ -26,7 +26,7 @@ namespace FitnessClub
         }
 
         internal static IConfiguration Configuration { get; private set; }
-        private string CurrentConnectionString = "ProductionString";
+        private string CurrentConnectionString = "Production";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -37,9 +37,10 @@ namespace FitnessClub
 
             GetConnectionString.EditJson();
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString(CurrentConnectionString)));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
             services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<FCContext>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             
 
@@ -53,11 +54,11 @@ namespace FitnessClub
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("SignedIn", policy =>
-                    policy.RequireAuthenticatedUser());
-            });
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("SignedIn", policy =>
+            //        policy.RequireAuthenticatedUser());
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,12 +66,12 @@ namespace FitnessClub
         {
             if (env.IsDevelopment())
             {
-                CurrentConnectionString = "DevelopmentString";
+                CurrentConnectionString = "Development";
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                CurrentConnectionString = "ProductionString";
+                CurrentConnectionString = "Production";
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
