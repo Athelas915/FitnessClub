@@ -4,6 +4,7 @@ using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using FitnessClub;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
@@ -12,9 +13,10 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL
 {
-    public class FCContext : DbContext
+    public class FCContext : IdentityDbContext<AspNetUser, AspNetRole, int>
     {
         //App identity and role storage data
+
         public DbSet<AspNetRole> AspNetRoles { get; set; }
         public DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
         public DbSet<AspNetUser> AspNetUsers { get; set; }
@@ -43,6 +45,8 @@ namespace FitnessClub.Data.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             foreach (var entity in modelBuilder.Model
                 .GetEntityTypes()
                 .Where(w => w.ClrType.IsSubclassOf(typeof(BaseEntity)))
@@ -57,7 +61,7 @@ namespace FitnessClub.Data.DAL
                     .HasDefaultValue(0)
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             }
-
+            /*
             modelBuilder.Entity<AspNetRoleClaim>()
                 .HasOne(a => a.AspNetRole)
                 .WithMany(b => b.AspNetRoleClaims)
@@ -72,22 +76,17 @@ namespace FitnessClub.Data.DAL
                 .HasOne(a => a.AspNetUser)
                 .WithMany(b => b.AspNetUserLogins)
                 .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<AspNetUserLogin>()
-                .HasKey(x => new { x.LoginProvider, x.ProviderKey });
 
             modelBuilder.Entity<AspNetUserRole>()
                 .HasOne(a => a.AspNetUser)
                 .WithMany(b => b.AspNetUserRoles)
                 .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<AspNetUserRole>()
-                .HasKey(x => new { x.UserId, x.RoleId });
 
             modelBuilder.Entity<AspNetUserToken>()
                 .HasOne(a => a.AspNetUser)
                 .WithMany(b => b.AspNetUserTokens)
                 .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<AspNetUserToken>()
-                .HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
+        */
         }
     }
 }

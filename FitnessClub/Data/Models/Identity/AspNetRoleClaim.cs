@@ -7,10 +7,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FitnessClub.Data.Models.Identity
 {
-    public class AspNetRoleClaim : IdentityRoleClaim<string>
+    public class AspNetRoleClaim : IdentityRoleClaim<int>
     {
         [ForeignKey("RoleId")]
         public virtual AspNetRole AspNetRole { get; set; }
-        public override string RoleId { get; set; }
+        public override int RoleId { get; set; }
     }
 }

@@ -16,6 +16,7 @@ using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace FitnessClub
 {
@@ -47,9 +48,13 @@ namespace FitnessClub
 
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultTokenProviders()
+                .AddDefaultUI()
                 .AddEntityFrameworkStores<FCContext>()
-                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, string, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
-                .AddRoleStore<RoleStore<AspNetRole, FCContext, string, AspNetUserRole, AspNetRoleClaim>>();
+                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
+                .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
+
+
 
             //services.AddDefaultIdentity<AspNetUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<FCContext>();

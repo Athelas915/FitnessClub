@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FitnessClub.Data.Models.Identity
 {
-    public class AspNetUserToken : IdentityUserToken<string>
+    public class AspNetUserToken : IdentityUserToken<int>
     {
         [ForeignKey("UserId")]
         public virtual AspNetUser AspNetUser { get; set; }

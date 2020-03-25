@@ -132,59 +132,49 @@ namespace FitnessClub.Migrations
 
             modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetRole", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetRoleClaim", b =>
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims");
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
@@ -196,10 +186,12 @@ namespace FitnessClub.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -217,89 +209,19 @@ namespace FitnessClub.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserClaim", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserClaims");
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserLogin", b =>
-                {
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.HasKey("LoginProvider", "ProviderKey");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserLogins");
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserRole", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles");
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserToken", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.HasKey("UserId", "LoginProvider", "Name");
-
-                    b.ToTable("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Membership", b =>
@@ -461,6 +383,137 @@ namespace FitnessClub.Migrations
                     b.ToTable("SessionEnrollments");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRoleClaim<int>");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserClaim<int>");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin<int>");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<int>");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<int>");
+                });
+
             modelBuilder.Entity("FitnessClub.Data.Models.Customer", b =>
                 {
                     b.HasBaseType("FitnessClub.Data.Models.Person");
@@ -484,6 +537,71 @@ namespace FitnessClub.Migrations
                     b.HasIndex("PersonID1");
 
                     b.HasDiscriminator().HasValue("Employee");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetRoleClaim", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>");
+
+                    b.Property<int?>("AspNetRoleId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("AspNetRoleId");
+
+                    b.HasDiscriminator().HasValue("AspNetRoleClaim");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserClaim", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>");
+
+                    b.Property<int?>("AspNetUserId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("AspNetUserId");
+
+                    b.HasDiscriminator().HasValue("AspNetUserClaim");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserLogin", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>");
+
+                    b.Property<int?>("AspNetUserId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("AspNetUserId");
+
+                    b.HasDiscriminator().HasValue("AspNetUserLogin");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<int>");
+
+                    b.Property<int?>("AspNetRoleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("AspNetUserId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("AspNetRoleId");
+
+                    b.HasIndex("AspNetUserId");
+
+                    b.HasDiscriminator().HasValue("AspNetUserRole");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserToken", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<int>");
+
+                    b.Property<int?>("AspNetUserId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("AspNetUserId");
+
+                    b.HasDiscriminator().HasValue("AspNetUserToken");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Coach", b =>
@@ -521,54 +639,6 @@ namespace FitnessClub.Migrations
                         .HasForeignKey("EmployeePersonID");
                 });
 
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetRoleClaim", b =>
-                {
-                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetRole", "AspNetRole")
-                        .WithMany("AspNetRoleClaims")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserClaim", b =>
-                {
-                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
-                        .WithMany("AspNetUserClaims")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserLogin", b =>
-                {
-                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
-                        .WithMany("AspNetUserLogins")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserRole", b =>
-                {
-                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetRole", "AspNetRole")
-                        .WithMany("AspNetUserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
-                        .WithMany("AspNetUserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserToken", b =>
-                {
-                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
-                        .WithMany("AspNetUserTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("FitnessClub.Data.Models.Membership", b =>
                 {
                     b.HasOne("FitnessClub.Data.Models.Customer", "Customer")
@@ -594,6 +664,57 @@ namespace FitnessClub.Migrations
                         .HasForeignKey("SessionID");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FitnessClub.Data.Models.Customer", b =>
                 {
                     b.HasOne("FitnessClub.Data.Models.Person", "Person")
@@ -606,6 +727,45 @@ namespace FitnessClub.Migrations
                     b.HasOne("FitnessClub.Data.Models.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonID1");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetRoleClaim", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetRole", "AspNetRole")
+                        .WithMany("AspNetRoleClaims")
+                        .HasForeignKey("AspNetRoleId");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserClaim", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
+                        .WithMany("AspNetUserClaims")
+                        .HasForeignKey("AspNetUserId");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserLogin", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
+                        .WithMany("AspNetUserLogins")
+                        .HasForeignKey("AspNetUserId");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserRole", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetRole", "AspNetRole")
+                        .WithMany("AspNetUserRoles")
+                        .HasForeignKey("AspNetRoleId");
+
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
+                        .WithMany("AspNetUserRoles")
+                        .HasForeignKey("AspNetUserId");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetUserToken", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
+                        .WithMany("AspNetUserTokens")
+                        .HasForeignKey("AspNetUserId");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Coach", b =>
