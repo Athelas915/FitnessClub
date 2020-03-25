@@ -11,7 +11,7 @@ namespace FitnessClub.Data.DAL
     //Because Heroku provides database credentials in "Database_URL" form, this class was made to convert that into ConnectionString that can be used by .NET app. 
     public static class GetConnectionString
     {
-        public static string getDatabaseUrl(int dev) //reads heroku database url stored in database-url.json and returns it as string. int dev: 0 for production, 1 for development.
+        public static string GetDatabaseUrl(int dev) //reads heroku database url stored in database-url.json and returns it as string. int dev: 0 for production, 1 for development.
         {
             string databaseUrl;
 
@@ -41,13 +41,13 @@ namespace FitnessClub.Data.DAL
 
             string json = File.ReadAllText("appsettings.Development.json");
             dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj["ConnectionStrings"]["FCContext"] = ConvertDbURL(getDatabaseUrl(1));
+            jsonObj["ConnectionStrings"]["FCContext"] = ConvertDbURL(GetDatabaseUrl(1));
             string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
             File.WriteAllText("appsettings.Development.json", output);
 
             json = File.ReadAllText("appsettings.json");
             jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj["ConnectionStrings"]["FCContext"] = ConvertDbURL(getDatabaseUrl(0));
+            jsonObj["ConnectionStrings"]["FCContext"] = ConvertDbURL(GetDatabaseUrl(0));
             output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
             File.WriteAllText("appsettings.json", output);
         }

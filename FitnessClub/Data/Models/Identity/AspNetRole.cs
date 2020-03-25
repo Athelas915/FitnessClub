@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FitnessClub.Data.Models.Identity
 {
-    public class User : IdentityUser
+    public class AspNetRole : IdentityRole
     {
+        public ICollection<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+        public ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
     }
 }

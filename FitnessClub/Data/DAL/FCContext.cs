@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
+using Microsoft.AspNetCore.Identity;
 using FitnessClub;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -12,6 +14,16 @@ namespace FitnessClub.Data.DAL
 {
     public class FCContext : DbContext
     {
+        //App identity and role storage data
+        public DbSet<AspNetRole> AspNetRoles { get; set; }
+        public DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+        public DbSet<AspNetUser> AspNetUsers { get; set; }
+        public DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
+        public DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
+
+        //Business usage data
         public DbSet<Person> People { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Employee> Employees { get; set; }
@@ -27,7 +39,7 @@ namespace FitnessClub.Data.DAL
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 
-            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString("FCContext"));
+            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString(Startup.CurrentConnectionString));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +57,37 @@ namespace FitnessClub.Data.DAL
                     .HasDefaultValue(0)
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             }
+
+            modelBuilder.Entity<AspNetRoleClaim>()
+                .HasOne(a => a.AspNetRole)
+                .WithMany(b => b.AspNetRoleClaims)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AspNetUserClaim>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserClaims)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AspNetUserLogin>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserLogins)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AspNetUserLogin>()
+                .HasKey(x => new { x.LoginProvider, x.ProviderKey });
+
+            modelBuilder.Entity<AspNetUserRole>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserRoles)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AspNetUserRole>()
+                .HasKey(x => new { x.UserId, x.RoleId });
+
+            modelBuilder.Entity<AspNetUserToken>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserTokens)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AspNetUserToken>()
+                .HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
         }
     }
 }

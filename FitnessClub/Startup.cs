@@ -15,6 +15,7 @@ using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FitnessClub
 {
@@ -26,12 +27,17 @@ namespace FitnessClub
         }
 
         internal static IConfiguration Configuration { get; private set; }
-        private string CurrentConnectionString = "Production";
+        public static string CurrentConnectionString { get; private set; } 
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            if (CurrentConnectionString == null)
+            {
+                CurrentConnectionString = "Development";
+            }
             services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton<string>(CurrentConnectionString);
 
             services.AddRazorPages();
 
@@ -39,10 +45,16 @@ namespace FitnessClub
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString(CurrentConnectionString)));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<FCContext>();
 
-            
+            services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<FCContext>()
+                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, string, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
+                .AddRoleStore<RoleStore<AspNetRole, FCContext, string, AspNetUserRole, AspNetRoleClaim>>();
+
+            //services.AddDefaultIdentity<AspNetUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<FCContext>();
+
+
 
             services.AddAuthentication()
             .AddGoogle(options =>   
