@@ -120,9 +120,9 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid)     
             {
-                var user = new AspNetUser { UserName = Input.Email, Email = Input.Email };
+                var user = new AspNetUser { UserName = Input.Email, Email = Input.Email, EmailConfirmed = true };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
