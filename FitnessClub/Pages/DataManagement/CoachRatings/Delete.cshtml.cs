@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.CoachRatings
 {
+    [Authorize(Policy = "SignedIn")]
     public class DeleteModel : PageModel
     {
         private readonly IUnitOfWork unitOfWork;

@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
-
+using Microsoft.AspNetCore.Authorization;
 namespace FitnessClub.Pages.DataManagement.SessionEnrollments
 {
+    [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
         private readonly IUnitOfWork unitOfWork;

@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Coaches
 {
+    [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
         private readonly IUnitOfWork unitOfWork;

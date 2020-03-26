@@ -71,11 +71,11 @@ namespace FitnessClub
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("SignedIn", policy =>
-            //        policy.RequireAuthenticatedUser());
-            //});
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("SignedIn", policy =>
+                    policy.RequireAuthenticatedUser());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

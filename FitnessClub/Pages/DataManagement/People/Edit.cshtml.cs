@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.People
 {
+    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
         private readonly IUnitOfWork unitOfWork;
