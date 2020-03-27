@@ -14,16 +14,16 @@ namespace FitnessClub.Pages.DataManagement.Memberships
     [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMembershipRepository membershipRepository;
 
-        public CreateModel(IUnitOfWork unitOfWork)
+        public CreateModel(IMembershipRepository membershipRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.membershipRepository = membershipRepository;
         }
 
         public async Task<IActionResult> OnGet()
         {
-            ViewData["PersonID"] = new SelectList(await unitOfWork.CustomerRepository.Get(), "PersonID", "LastName");
+            ViewData["PersonID"] = new SelectList(await membershipRepository.Get<Customer>(), "PersonID", "LastName");
             return Page();
         }
 
@@ -39,8 +39,8 @@ namespace FitnessClub.Pages.DataManagement.Memberships
                 return Page();
             }
 
-            unitOfWork.MembershipRepository.Insert(Membership);
-            await unitOfWork.Commit();
+            membershipRepository.Insert(Membership);
+            await membershipRepository.Submit();
 
             return RedirectToPage("./Index");
         }

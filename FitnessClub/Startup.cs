@@ -11,8 +11,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL.Repositories;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -44,8 +46,7 @@ namespace FitnessClub
 
             GetConnectionString.EditJson();
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString(CurrentConnectionString)));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
+            RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultTokenProviders()
@@ -71,6 +72,7 @@ namespace FitnessClub
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
 
+            
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("SignedIn", policy =>
@@ -106,6 +108,20 @@ namespace FitnessClub
             {
                 endpoints.MapRazorPages();
             });
+        }
+        private static void RegisterRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IPersonRepository<Coach>, PersonRepository<Coach>>();
+            services.AddScoped<ICoachRatingRepository, CoachRatingRepository>();
+            services.AddScoped<IPersonRepository<Customer>, PersonRepository<Customer>>();
+            services.AddScoped<IPersonRepository<Employee>, PersonRepository<Employee>>();
+            services.AddScoped<IHolidayRepository, HolidayRepository>();
+            services.AddScoped<IMembershipRepository, MembershipRepository>();
+            services.AddScoped<IPersonRepository<Person>, PersonRepository<Person>>();
+            services.AddScoped<ISessionEnrollmentRepository, SessionEnrollmentRepository>();
+            services.AddScoped<ISessionRepository, SessionRepository>();
         }
     }
 }

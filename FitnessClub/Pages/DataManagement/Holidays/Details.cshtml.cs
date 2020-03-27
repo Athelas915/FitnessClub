@@ -14,11 +14,11 @@ namespace FitnessClub.Pages.DataManagement.Holidays
     [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IHolidayRepository holidayRepository;
 
-        public DetailsModel(IUnitOfWork unitOfWork)
+        public DetailsModel(IHolidayRepository holidayRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.holidayRepository = holidayRepository;
         }
 
         public Holiday Holiday { get; set; }
@@ -30,7 +30,7 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return NotFound();
             }
 
-            Holiday = await unitOfWork.HolidayRepository.GetByID(id.Value);
+            Holiday = await holidayRepository.GetByID(id.Value);
 
             if (Holiday == null)
             {

@@ -61,6 +61,8 @@ namespace FitnessClub.Data.DAL
                     .HasDefaultValue(0)
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             }
+            modelBuilder.Entity<SessionEnrollment>()
+                .HasKey(o => new { o.PersonID, o.SessionID });
             /*
             modelBuilder.Entity<AspNetRoleClaim>()
                 .HasOne(a => a.AspNetRole)

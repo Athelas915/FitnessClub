@@ -14,11 +14,11 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
     [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ICoachRatingRepository coachRatingRepository;
 
-        public DetailsModel(IUnitOfWork unitOfWork)
+        public DetailsModel(ICoachRatingRepository coachRatingRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.coachRatingRepository = coachRatingRepository;
         }
 
         public CoachRating CoachRating { get; set; }
@@ -30,7 +30,7 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return NotFound();
             }
 
-            CoachRating = await unitOfWork.CoachRatingRepository.GetByID(id.Value);
+            CoachRating = await coachRatingRepository.GetByID(id.Value);
 
             if (CoachRating == null)
             {

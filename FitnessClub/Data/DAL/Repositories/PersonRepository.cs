@@ -6,9 +6,8 @@ namespace FitnessClub.Data.DAL.Repositories
     public class PersonRepository<PersonEntity> : GenericRepository<PersonEntity>, IPersonRepository<PersonEntity>, IDisposable where PersonEntity : class
 
     {
-        public PersonRepository(FCContext context) : base(context)
+        public PersonRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            this.context = context;
         }
     }
 }

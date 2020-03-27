@@ -45,9 +45,9 @@
                 @Html.DisplayFor(modelItem => item.CreatedOn)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.SessionEnrollmentID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.SessionEnrollmentID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.SessionEnrollmentID">Delete</a>
+                <a asp-page="./Edit" asp-route-PersonID="@item.PersonID" asp-route-SessionID="@item.SessionID">Edit</a> |
+                <a asp-page="./Details" asp-route-PersonID="@item.PersonID" asp-route-SessionID="@item.SessionID">Details</a> |
+                <a asp-page="./Delete" asp-route-PersonID="@item.PersonID" asp-route-SessionID="@item.SessionID">Delete</a>
             </td>
         </tr>
 }

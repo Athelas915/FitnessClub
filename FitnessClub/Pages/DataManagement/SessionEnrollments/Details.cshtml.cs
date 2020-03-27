@@ -13,23 +13,23 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
     [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
 
-        public DetailsModel(IUnitOfWork unitOfWork)
+        public DetailsModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
         }
 
         public SessionEnrollment SessionEnrollment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? PersonID, int? SessionID)
         {
-            if (id == null)
+            if ((PersonID == null) || (SessionID == null))
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await unitOfWork.SessionEnrollmentRepository.GetByID(id.Value);
+            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
 
             if (SessionEnrollment == null)
             {

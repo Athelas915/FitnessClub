@@ -14,16 +14,16 @@ namespace FitnessClub.Pages.DataManagement.Holidays
     [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IHolidayRepository holidayRepository;
 
-        public CreateModel(IUnitOfWork unitOfWork)
+        public CreateModel(IHolidayRepository holidayRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.holidayRepository = holidayRepository;
         }
 
         public async Task<IActionResult> OnGet()
         {
-            ViewData["PersonID"] = new SelectList(await unitOfWork.EmployeeRepository.Get(), "PersonID", "LastName");
+            ViewData["PersonID"] = new SelectList(await holidayRepository.Get<Employee>(), "PersonID", "LastName");
             return Page();
         }
 
@@ -39,8 +39,8 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return Page();
             }
 
-            unitOfWork.HolidayRepository.Insert(Holiday);
-            await unitOfWork.Commit();
+            holidayRepository.Insert(Holiday);
+            await holidayRepository.Submit();
 
             return RedirectToPage("./Index");
         }

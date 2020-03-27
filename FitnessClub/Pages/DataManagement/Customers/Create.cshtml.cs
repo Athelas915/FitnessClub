@@ -14,11 +14,11 @@ namespace FitnessClub.Pages.DataManagement.Customers
     [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPersonRepository<Customer> customerRepository;
 
-        public CreateModel(IUnitOfWork unitOfWork)
+        public CreateModel(IPersonRepository<Customer> customerRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.customerRepository = customerRepository;
         }
 
         public IActionResult OnGet()
@@ -38,8 +38,8 @@ namespace FitnessClub.Pages.DataManagement.Customers
                 return Page();
             }
 
-            unitOfWork.CustomerRepository.Insert(Customer);
-            await unitOfWork.Commit();
+            customerRepository.Insert(Customer);
+            await customerRepository.Submit();
 
             return RedirectToPage("./Index");
         }

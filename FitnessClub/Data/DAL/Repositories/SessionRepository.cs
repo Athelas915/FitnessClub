@@ -6,9 +6,8 @@ namespace FitnessClub.Data.DAL.Repositories
 {
     public class SessionRepository : GenericRepository<Session>, ISessionRepository, IDisposable
     {
-        public SessionRepository(FCContext context) : base(context)
+        public SessionRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            this.context = context;
         }
     }
 }

@@ -14,16 +14,16 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
     [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ICoachRatingRepository coachRatingRepository;
 
-        public CreateModel(IUnitOfWork unitOfWork)
+        public CreateModel(ICoachRatingRepository coachRatingRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.coachRatingRepository = coachRatingRepository;
         }
 
         public async Task<IActionResult> OnGet()
         {
-            ViewData["PersonID"] = new SelectList(await unitOfWork.CoachRepository.Get(), "PersonID", "LastName");
+            ViewData["PersonID"] = new SelectList(await coachRatingRepository.Get<Coach>(), "PersonID", "LastName");
             return Page();
         }
 
@@ -39,8 +39,8 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return Page();
             }
 
-            unitOfWork.CoachRatingRepository.Insert(CoachRating);
-            await unitOfWork.Commit();
+            coachRatingRepository.Insert(CoachRating);
+            await coachRatingRepository.Submit();
 
             return RedirectToPage("./Index");
         }

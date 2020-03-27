@@ -6,9 +6,8 @@ namespace FitnessClub.Data.DAL.Repositories
 {
     public class HolidayRepository : GenericRepository<Holiday>, IHolidayRepository, IDisposable
     {
-        public HolidayRepository(FCContext context) : base(context)
+        public HolidayRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            this.context = context;
         }
     }
 }

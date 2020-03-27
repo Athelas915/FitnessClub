@@ -15,11 +15,11 @@ namespace FitnessClub.Pages.DataManagement.Addresses
     [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IAddressRepository addressRepository;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(IAddressRepository addressRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.addressRepository = addressRepository;
         }
 
         [BindProperty]
@@ -32,13 +32,13 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return NotFound();
             }
 
-            Address = await unitOfWork.AddressRepository.GetByID(id.Value);
+            Address = await addressRepository.GetByID(id.Value);
 
             if (Address == null)
             {
                 return NotFound();
             }
-           ViewData["PersonID"] = new SelectList(await unitOfWork.PersonRepository.Get(), "PersonID", "LastName");
+           ViewData["PersonID"] = new SelectList(await addressRepository.Get<Person>(), "PersonID", "LastName");
             return Page();
         }
 
@@ -51,11 +51,11 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return Page();
             }
 
-            unitOfWork.AddressRepository.Update(Address);
+            addressRepository.Update(Address);
 
             try
             {
-                await unitOfWork.Commit();
+                await addressRepository.Submit();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +74,7 @@ namespace FitnessClub.Pages.DataManagement.Addresses
 
         private bool AddressExists(int id)
         {
-            return unitOfWork.AddressRepository.Any(id);
+            return addressRepository.Any(id);
         }
     }
 }

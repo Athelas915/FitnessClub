@@ -15,11 +15,11 @@ namespace FitnessClub.Pages.DataManagement.Employees
     [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPersonRepository<Employee> employeeRepository;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(IPersonRepository<Employee> employeeRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.employeeRepository = employeeRepository;
         }
 
         [BindProperty]
@@ -32,7 +32,7 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return NotFound();
             }
 
-            Employee = await unitOfWork.EmployeeRepository.GetByID(id.Value);
+            Employee = await employeeRepository.GetByID(id.Value);
 
             if (Employee == null)
             {
@@ -50,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return Page();
             }
 
-            unitOfWork.EmployeeRepository.Update(Employee);
+            employeeRepository.Update(Employee);
 
             try
             {
-                await unitOfWork.Commit();
+                await employeeRepository.Submit();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Employees
 
         private bool EmployeeExists(int id)
         {
-            return unitOfWork.EmployeeRepository.Any(id);
+            return employeeRepository.Any(id);
         }
     }
 }

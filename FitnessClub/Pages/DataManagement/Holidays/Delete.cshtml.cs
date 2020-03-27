@@ -14,11 +14,11 @@ namespace FitnessClub.Pages.DataManagement.Holidays
     [Authorize(Policy = "SignedIn")]
     public class DeleteModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IHolidayRepository holidayRepository;
 
-        public DeleteModel(IUnitOfWork unitOfWork)
+        public DeleteModel(IHolidayRepository holidayRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.holidayRepository = holidayRepository;
         }
 
         [BindProperty]
@@ -31,7 +31,7 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return NotFound();
             }
 
-            Holiday = await unitOfWork.HolidayRepository.GetByID(id.Value);
+            Holiday = await holidayRepository.GetByID(id.Value);
 
             if (Holiday == null)
             {
@@ -47,12 +47,12 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return NotFound();
             }
 
-            Holiday = await unitOfWork.HolidayRepository.GetByID(id.Value);
+            Holiday = await holidayRepository.GetByID(id.Value);
 
             if (Holiday != null)
             {
-                unitOfWork.HolidayRepository.Delete(Holiday);
-                await unitOfWork.Commit();
+                holidayRepository.Delete(Holiday);
+                await holidayRepository.Submit();
 
             }
 

@@ -14,18 +14,17 @@ namespace FitnessClub.Pages.DataManagement.People
     [Authorize(Policy = "SignedIn")]
     public class IndexModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPersonRepository<Person> personRepository;
 
-        public IndexModel(IUnitOfWork unitOfWork)
+        public IndexModel(IPersonRepository<Person> personRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.personRepository = personRepository;
         }
-
         public IList<Person> Person { get; set; }
 
         public async Task OnGetAsync()
         {
-            Person = await unitOfWork.PersonRepository.Get();
+            Person = await personRepository.Get();
         }
     }
 }

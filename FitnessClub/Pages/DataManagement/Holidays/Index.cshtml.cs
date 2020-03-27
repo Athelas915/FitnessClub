@@ -14,18 +14,18 @@ namespace FitnessClub.Pages.DataManagement.Holidays
     [Authorize(Policy = "SignedIn")]
     public class IndexModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IHolidayRepository holidayRepository;
 
-        public IndexModel(IUnitOfWork unitOfWork)
+        public IndexModel(IHolidayRepository holidayRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.holidayRepository = holidayRepository;
         }
 
         public IList<Holiday> Holiday { get; set; }
 
         public async Task OnGetAsync()
         {
-            Holiday = await unitOfWork.HolidayRepository.Get();
+            Holiday = await holidayRepository.Get();
         }
     }
 }

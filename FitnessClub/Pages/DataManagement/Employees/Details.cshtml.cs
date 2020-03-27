@@ -14,11 +14,11 @@ namespace FitnessClub.Pages.DataManagement.Employees
     [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPersonRepository<Employee> employeeRepository;
 
-        public DetailsModel(IUnitOfWork unitOfWork)
+        public DetailsModel(IPersonRepository<Employee> employeeRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.employeeRepository = employeeRepository;
         }
 
         public Employee Employee { get; set; }
@@ -30,7 +30,7 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return NotFound();
             }
 
-            Employee = await unitOfWork.EmployeeRepository.GetByID(id.Value);
+            Employee = await employeeRepository.GetByID(id.Value);
 
             if (Employee == null)
             {

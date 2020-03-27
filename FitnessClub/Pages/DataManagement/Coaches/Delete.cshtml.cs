@@ -14,11 +14,11 @@ namespace FitnessClub.Pages.DataManagement.Coaches
     [Authorize(Policy = "SignedIn")]
     public class DeleteModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPersonRepository<Coach> coachRepository;
 
-        public DeleteModel(IUnitOfWork unitOfWork)
+        public DeleteModel(IPersonRepository<Coach> coachRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.coachRepository = coachRepository;
         }
 
         [BindProperty]
@@ -31,7 +31,7 @@ namespace FitnessClub.Pages.DataManagement.Coaches
                 return NotFound();
             }
 
-            Coach = await unitOfWork.CoachRepository.GetByID(id.Value);
+            Coach = await coachRepository.GetByID(id.Value);
 
             if (Coach == null)
             {
@@ -47,12 +47,12 @@ namespace FitnessClub.Pages.DataManagement.Coaches
                 return NotFound();
             }
 
-            Coach = await unitOfWork.CoachRepository.GetByID(id.Value);
+            Coach = await coachRepository.GetByID(id.Value);
 
             if (Coach != null)
             {
-                unitOfWork.CoachRepository.Delete(Coach);
-                await unitOfWork.Commit();
+                coachRepository.Delete(Coach);
+                await coachRepository.Submit();
             }
 
             return RedirectToPage("./Index");

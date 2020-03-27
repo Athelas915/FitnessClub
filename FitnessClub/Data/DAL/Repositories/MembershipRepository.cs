@@ -6,9 +6,8 @@ namespace FitnessClub.Data.DAL.Repositories
 {
     public class MembershipRepository : GenericRepository<Membership>, IMembershipRepository, IDisposable
     {
-        public MembershipRepository(FCContext context) : base(context)
+        public MembershipRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            this.context = context;
         }
     }
 }

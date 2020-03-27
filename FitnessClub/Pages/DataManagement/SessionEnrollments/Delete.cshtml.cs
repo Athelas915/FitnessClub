@@ -14,24 +14,24 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
     [Authorize(Policy = "SignedIn")]
     public class DeleteModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
 
-        public DeleteModel(IUnitOfWork unitOfWork)
+        public DeleteModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
         }
 
         [BindProperty]
         public SessionEnrollment SessionEnrollment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? PersonID, int? SessionID)
         {
-            if (id == null)
+            if ((PersonID == null) || (SessionID == null))
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await unitOfWork.SessionEnrollmentRepository.GetByID(id.Value);
+            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
 
             if (SessionEnrollment == null)
             {
@@ -40,19 +40,19 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int? PersonID, int? SessionID)
         {
-            if (id == null)
+            if ((PersonID == null) || (SessionID == null))
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await unitOfWork.SessionEnrollmentRepository.GetByID(id.Value);
+            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
 
             if (SessionEnrollment != null)
             {
-                unitOfWork.SessionEnrollmentRepository.Delete(SessionEnrollment);
-                await unitOfWork.Commit();
+                sessionEnrollmentRepository.Delete(SessionEnrollment);
+                await sessionEnrollmentRepository.Submit();
 
             }
 

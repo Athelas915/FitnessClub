@@ -14,17 +14,17 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
     [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
 
-        public CreateModel(IUnitOfWork unitOfWork)
+        public CreateModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
         }
 
         public async Task<IActionResult> OnGet()
         {
-            ViewData["PersonID"] = new SelectList(await unitOfWork.CustomerRepository.Get(), "PersonID", "LastName");
-            ViewData["SessionID"] = new SelectList(await unitOfWork.SessionRepository.Get(), "SessionID", "SessionID");
+            ViewData["PersonID"] = new SelectList(await sessionEnrollmentRepository.Get<Customer>(), "PersonID", "LastName");
+            ViewData["SessionID"] = new SelectList(await sessionEnrollmentRepository.Get<Session>(), "SessionID", "SessionID");
             return Page();
         }
 
@@ -40,8 +40,15 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
                 return Page();
             }
 
-            unitOfWork.SessionEnrollmentRepository.Insert(SessionEnrollment);
-            await unitOfWork.Commit();
+            if (sessionEnrollmentRepository.Any(SessionEnrollment.PersonID.Value, SessionEnrollment.SessionID.Value) == true)
+            {
+                return RedirectToPage("./Error");
+            }
+            else
+            {
+                sessionEnrollmentRepository.Insert(SessionEnrollment);
+                await sessionEnrollmentRepository.Submit();
+            }
 
             return RedirectToPage("./Index");
         }

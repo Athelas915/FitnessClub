@@ -15,11 +15,11 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
     [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ICoachRatingRepository coachRatingRepository;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(ICoachRatingRepository coachRatingRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.coachRatingRepository = coachRatingRepository;
         }
 
         [BindProperty]
@@ -32,13 +32,13 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return NotFound();
             }
 
-            CoachRating = await unitOfWork.CoachRatingRepository.GetByID(id.Value);
+            CoachRating = await coachRatingRepository.GetByID(id.Value);
 
             if (CoachRating == null)
             {
                 return NotFound();
             }
-            ViewData["PersonID"] = new SelectList(await unitOfWork.CoachRepository.Get(), "PersonID", "LastName");
+            ViewData["PersonID"] = new SelectList(await coachRatingRepository.Get<Coach>(), "PersonID", "LastName");
             return Page();
         }
 
@@ -51,11 +51,11 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return Page();
             }
 
-            unitOfWork.CoachRatingRepository.Update(CoachRating);
+            coachRatingRepository.Update(CoachRating);
 
             try
             {
-                await unitOfWork.Commit();
+                await coachRatingRepository.Submit();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +74,7 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
 
         private bool CoachRatingExists(int id)
         {
-            return unitOfWork.CoachRatingRepository.Any(id);
+            return coachRatingRepository.Any(id);
         }
     }
 }

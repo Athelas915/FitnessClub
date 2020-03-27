@@ -14,18 +14,18 @@ namespace FitnessClub.Pages.DataManagement.Addresses
     [Authorize(Policy = "SignedIn")]
     public class IndexModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IAddressRepository addressRepository;
 
-        public IndexModel(IUnitOfWork unitOfWork)
+        public IndexModel(IAddressRepository addressRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.addressRepository = addressRepository;
         }
 
         public IList<Address> Address { get;set; }
 
         public async Task OnGetAsync()
         {
-            Address = await unitOfWork.AddressRepository.Get();
+            Address = await addressRepository.Get();
         }
     }
 }

@@ -14,18 +14,18 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
     [Authorize(Policy = "SignedIn")]
     public class IndexModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ICoachRatingRepository coachRatingRepository;
 
-        public IndexModel(IUnitOfWork unitOfWork)
+        public IndexModel(ICoachRatingRepository coachRatingRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.coachRatingRepository = coachRatingRepository;
         }
 
         public IList<CoachRating> CoachRating { get;set; }
 
         public async Task OnGetAsync()
         {
-            CoachRating = await unitOfWork.CoachRatingRepository.Get();
+            CoachRating = await coachRatingRepository.Get();
         }
     }
 }

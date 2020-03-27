@@ -14,10 +14,10 @@ namespace FitnessClub.Pages.DataManagement.Sessions
     [Authorize(Policy = "SignedIn")]
     public class DeleteModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
-        public DeleteModel(IUnitOfWork unitOfWork)
+        private readonly ISessionRepository sessionRepository;
+        public DeleteModel(ISessionRepository sessionRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionRepository = sessionRepository;
         }
 
         [BindProperty]
@@ -30,7 +30,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
+            Session = await sessionRepository.GetByID(id.Value);
 
             if (Session == null)
             {
@@ -46,12 +46,12 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
+            Session = await sessionRepository.GetByID(id.Value);
 
             if (Session != null)
             {
-                unitOfWork.SessionRepository.Delete(Session);
-                await unitOfWork.Commit();
+                sessionRepository.Delete(Session);
+                await sessionRepository.Submit();
             }
 
             return RedirectToPage("./Index");

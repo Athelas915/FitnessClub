@@ -14,15 +14,15 @@ namespace FitnessClub.Pages.DataManagement.Sessions
     [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
-        public CreateModel(IUnitOfWork unitOfWork)
+        private readonly ISessionRepository sessionRepository;
+        public CreateModel(ISessionRepository sessionRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionRepository = sessionRepository;
         }
 
         public async Task<IActionResult> OnGet()
         {
-        ViewData["PersonID"] = new SelectList(await unitOfWork.CoachRepository.Get(), "PersonID", "LastName");
+        ViewData["PersonID"] = new SelectList(await sessionRepository.Get<Coach>(), "PersonID", "LastName");
             return Page();
         }
 
@@ -38,8 +38,8 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return Page();
             }
 
-            unitOfWork.SessionRepository.Insert(Session);
-            await unitOfWork.Commit();
+            sessionRepository.Insert(Session);
+            await sessionRepository.Submit();
 
             return RedirectToPage("./Index");
         }

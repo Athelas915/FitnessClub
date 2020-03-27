@@ -14,11 +14,11 @@ namespace FitnessClub.Pages.DataManagement.Addresses
     [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IAddressRepository addressRepository;
 
-        public DetailsModel(IUnitOfWork unitOfWork)
+        public DetailsModel(IAddressRepository addressRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.addressRepository = addressRepository;
         }
 
         public Address Address { get; set; }
@@ -30,7 +30,7 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return NotFound();
             }
 
-            Address = await unitOfWork.AddressRepository.GetByID(id.Value);
+            Address = await addressRepository.GetByID(id.Value);
 
             if (Address == null)
             {

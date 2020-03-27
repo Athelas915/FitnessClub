@@ -15,11 +15,11 @@ namespace FitnessClub.Pages.DataManagement.Coaches
     [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPersonRepository<Coach> coachRepository;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(IPersonRepository<Coach> coachRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.coachRepository = coachRepository;
         }
 
         [BindProperty]
@@ -32,7 +32,7 @@ namespace FitnessClub.Pages.DataManagement.Coaches
                 return NotFound();
             }
 
-            Coach = await unitOfWork.CoachRepository.GetByID(id.Value);
+            Coach = await coachRepository.GetByID(id.Value);
 
             if (Coach == null)
             {
@@ -50,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Coaches
                 return Page();
             }
 
-            unitOfWork.CoachRepository.Update(Coach);
+            coachRepository.Update(Coach);
 
             try
             {
-                await unitOfWork.Commit();
+                await coachRepository.Submit();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Coaches
 
         private bool CoachExists(int id)
         {
-            return unitOfWork.CoachRepository.Any(id);
+            return coachRepository.Any(id);
         }
     }
 }

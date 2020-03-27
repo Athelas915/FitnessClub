@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Repositories;
@@ -8,37 +10,17 @@ namespace FitnessClub.Data.DAL
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly FCContext context;
-        public IPersonRepository<Person> PersonRepository { get; }
-        public IAddressRepository AddressRepository { get; }
-        public IPersonRepository<Customer> CustomerRepository { get; }
-        public IMembershipRepository MembershipRepository { get; }
-        public IPersonRepository<Employee> EmployeeRepository { get; }
-        public IHolidayRepository HolidayRepository { get; }
-        public IPersonRepository<Coach> CoachRepository { get; }
-        public ICoachRatingRepository CoachRatingRepository { get; }
-        public ISessionRepository SessionRepository { get; }
-        public ISessionEnrollmentRepository SessionEnrollmentRepository { get; }
+        public FCContext Context { get; }
 
         public UnitOfWork(FCContext context)
         {
-            this.context = context;
-            PersonRepository  = new PersonRepository<Person>(this.context);
-            AddressRepository = new AddressRepository(this.context);
-            CustomerRepository = new PersonRepository<Customer>(this.context);
-            MembershipRepository = new MembershipRepository(this.context);
-            EmployeeRepository = new PersonRepository<Employee>(this.context);
-            HolidayRepository = new HolidayRepository(this.context);
-            CoachRepository = new PersonRepository<Coach>(this.context);
-            CoachRatingRepository = new CoachRatingRepository(this.context);
-            SessionRepository = new SessionRepository(this.context);
-            SessionEnrollmentRepository = new SessionEnrollmentRepository(this.context);
+            Context = context;
 
         }
     
-        public async Task Commit()
+        public async Task Save()
         {
-            await context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
         }
 
 
@@ -50,7 +32,7 @@ namespace FitnessClub.Data.DAL
             {
                 if (disposing)
                 {
-                    context.Dispose();
+                    Context.Dispose();
                 }
             }
             this.disposed = true;

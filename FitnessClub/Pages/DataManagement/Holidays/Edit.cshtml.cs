@@ -15,11 +15,11 @@ namespace FitnessClub.Pages.DataManagement.Holidays
     [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IHolidayRepository holidayRepository;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(IHolidayRepository holidayRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.holidayRepository = holidayRepository;
         }
 
         [BindProperty]
@@ -32,13 +32,13 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return NotFound();
             }
 
-            Holiday = await unitOfWork.HolidayRepository.GetByID(id.Value);
+            Holiday = await holidayRepository.GetByID(id.Value);
 
             if (Holiday == null)
             {
                 return NotFound();
             }
-            ViewData["PersonID"] = new SelectList(await unitOfWork.CoachRepository.Get(), "PersonID", "LastName");
+            ViewData["PersonID"] = new SelectList(await holidayRepository.Get<Employee>(), "PersonID", "LastName");
             return Page();
         }
 
@@ -51,11 +51,11 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return Page();
             }
 
-            unitOfWork.HolidayRepository.Update(Holiday);
+            holidayRepository.Update(Holiday);
 
             try
             {
-                await unitOfWork.Commit();
+                await holidayRepository.Submit();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +74,7 @@ namespace FitnessClub.Pages.DataManagement.Holidays
 
         private bool HolidayExists(int id)
         {
-            return unitOfWork.HolidayRepository.Any(id);
+            return holidayRepository.Any(id);
         }
     }
 }

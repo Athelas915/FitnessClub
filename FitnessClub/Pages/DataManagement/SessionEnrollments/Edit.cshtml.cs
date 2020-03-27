@@ -15,31 +15,31 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
     [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
         }
 
         [BindProperty]
         public SessionEnrollment SessionEnrollment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? PersonID, int? SessionID)
         {
-            if (id == null)
+            if ((PersonID == null) || (SessionID == null))
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await unitOfWork.SessionEnrollmentRepository.GetByID(id.Value);
+            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
 
             if (SessionEnrollment == null)
             {
                 return NotFound();
             }
-            ViewData["PersonID"] = new SelectList(await unitOfWork.CustomerRepository.Get(), "PersonID", "LastName");
-            ViewData["SessionID"] = new SelectList(await unitOfWork.SessionRepository.Get(), "SessionID", "SessionID");
+            ViewData["PersonID"] = new SelectList(await sessionEnrollmentRepository.Get<Customer>(), "PersonID", "LastName");
+            ViewData["SessionID"] = new SelectList(await sessionEnrollmentRepository.Get<Session>(), "SessionID", "SessionID");
             return Page();
         }
 
@@ -52,15 +52,15 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
                 return Page();
             }
 
-            unitOfWork.SessionEnrollmentRepository.Update(SessionEnrollment);
+            sessionEnrollmentRepository.Update(SessionEnrollment);
 
             try
             {
-                await unitOfWork.Commit();
+                await sessionEnrollmentRepository.Submit();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SessionEnrollmentExists(SessionEnrollment.SessionEnrollmentID))
+                if (!SessionEnrollmentExists(SessionEnrollment.PersonID.Value, SessionEnrollment.SessionID.Value))
                 {
                     return NotFound();
                 }
@@ -73,9 +73,9 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
             return RedirectToPage("./Index");
         }
 
-        private bool SessionEnrollmentExists(int id)
+        private bool SessionEnrollmentExists(int PersonID, int SessionID)
         {
-            return unitOfWork.SessionEnrollmentRepository.Any(id);
+            return sessionEnrollmentRepository.Any(PersonID, SessionID);
         }
     }
 }
