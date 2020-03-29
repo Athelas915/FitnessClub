@@ -76,19 +76,20 @@ namespace FitnessClub.Data.DAL.Repositories
                 return await query.ToListAsync();
             }
         }
-        public virtual async Task<TEntity> GetByID(int id)
+        public virtual async Task<TEntity> GetByID(params object[] Ids)
         {
-            return await dbSet.FindAsync(id);
+            return await dbSet.FindAsync(Ids);
         }
         public virtual void Insert(TEntity entity)
         {
             dbSet.Add(entity);
         }
-        public virtual void Delete(int id)
+        public void Delete(params object[] Ids)
         {
-            TEntity entity = dbSet.Find(id);
+            TEntity entity = dbSet.Find(Ids);
             dbSet.Remove(entity);
         }
+
         public virtual void Delete(TEntity entity)
         {
             if (unitOfWork.Context.Entry(entity).State == EntityState.Detached)
@@ -103,9 +104,9 @@ namespace FitnessClub.Data.DAL.Repositories
             unitOfWork.Context.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual bool Any(int id)
+        public bool Any(params object[] Ids)
         {
-            TEntity entity = dbSet.Find(id);
+            TEntity entity = dbSet.Find(Ids);
             if (entity == null) { return false; }
             else { return true; }
         }

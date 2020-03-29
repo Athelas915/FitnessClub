@@ -16,12 +16,12 @@ namespace FitnessClub.Data.DAL.Interfaces
             Expression<Func<OtherEntity, bool>> filter = null,
             Func<IQueryable<OtherEntity>, IOrderedQueryable<OtherEntity>> orderBy = null,
             string includeProperties = "") where OtherEntity : class;
-        Task<TEntity> GetByID(int id);
+        Task<TEntity> GetByID(params object[] Ids);
         void Insert(TEntity entity);
-        void Delete(int id);
+        void Delete(params object[] Ids);
         void Delete(TEntity entity);
         void Update(TEntity entity);
-        bool Any(int id);
+        bool Any(params object[] Ids);
 
     }
 }
