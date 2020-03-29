@@ -40,7 +40,7 @@ namespace FitnessClub
 
             services.AddRazorPages();
 
-            Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection", Configuration.GetConnectionString("DefaultConnection"));
+            //Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection", Configuration.GetConnectionString("DefaultConnection"));
             //GetConnectionString.EditJson(); //This only needs to be run once after Heroku Database credentials change
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection")));
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
