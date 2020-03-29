@@ -39,7 +39,7 @@ namespace FitnessClub
 
             services.AddRazorPages();
 
-            GetConnectionString.EditJson();
+            //GetConnectionString.EditJson(); //This only needs to be run once after Heroku Database credentials change
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
