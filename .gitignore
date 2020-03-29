@@ -28,10 +28,10 @@ bld/
 [Ll]og/
 
 # App settings with secret data
-appsettings.json
-appsettings.Development.json
-web.config
-launchSettings.json
+# appsettings.json
+# appsettings.Development.json
+# web.config
+# launchSettings.json
 database-url.json
 
 # Visual Studio 2015/2017 cache/options directory

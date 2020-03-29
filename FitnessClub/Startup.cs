@@ -29,13 +29,7 @@ namespace FitnessClub
         internal static IConfiguration Configuration { get; private set; }
         public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder();
-
-            builder.AddConfiguration(configuration);
-            builder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-            builder.AddJsonFile("appsettings.Development.json", optional: true);
-            Configuration["DefaultConnection"] = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection");
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -46,7 +40,6 @@ namespace FitnessClub
 
             services.AddRazorPages();
 
-            //Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection", Configuration.GetConnectionString("DefaultConnection"));
             //GetConnectionString.EditJson(); //This only needs to be run once after Heroku Database credentials change
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
