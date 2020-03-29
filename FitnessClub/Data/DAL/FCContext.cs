@@ -41,7 +41,7 @@ namespace FitnessClub.Data.DAL
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 
-            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString(Startup.CurrentConnectionString));
+            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString("FCContext"));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

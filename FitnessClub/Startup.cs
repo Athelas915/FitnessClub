@@ -30,22 +30,17 @@ namespace FitnessClub
         }
 
         internal static IConfiguration Configuration { get; private set; }
-        public static string CurrentConnectionString { get; private set; } 
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (CurrentConnectionString == null)
-            {
-                CurrentConnectionString = "Development";
-            }
             services.AddSingleton<IConfiguration>(Configuration);
-            services.AddSingleton<string>(CurrentConnectionString);
+            //services.AddSingleton<string>("FCContext");
 
             services.AddRazorPages();
 
             GetConnectionString.EditJson();
-            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString(CurrentConnectionString)));
+            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -85,12 +80,10 @@ namespace FitnessClub
         {
             if (env.IsDevelopment())
             {
-                CurrentConnectionString = "Development";
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                CurrentConnectionString = "Production";
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
