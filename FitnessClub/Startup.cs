@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
@@ -28,12 +29,7 @@ namespace FitnessClub
         internal static IConfiguration Configuration { get; private set; }
         public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder();
-            builder.AddJsonFile("appsettings.json");
-            builder.AddConfiguration(configuration);
-            builder.AddEnvironmentVariables();
-
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,8 +40,9 @@ namespace FitnessClub
 
             services.AddRazorPages();
 
+            Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection", Configuration.GetConnectionString("DefaultConnection"));
             //GetConnectionString.EditJson(); //This only needs to be run once after Heroku Database credentials change
-            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<FCContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection")));
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -54,7 +51,7 @@ namespace FitnessClub
                 .AddEntityFrameworkStores<FCContext>()
                 .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
                 .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
-
+            
 
 
             //services.AddDefaultIdentity<AspNetUser>(options => options.SignIn.RequireConfirmedAccount = true)

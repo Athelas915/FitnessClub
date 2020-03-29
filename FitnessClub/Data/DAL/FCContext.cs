@@ -41,7 +41,7 @@ namespace FitnessClub.Data.DAL
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 
-            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString("DefaultConnection"));
+            => optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection"));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
