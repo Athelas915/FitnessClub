@@ -7,15 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Sessions
 {
+    [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
-        public DetailsModel(IUnitOfWork unitOfWork)
+        private readonly ISessionRepository sessionRepository;
+        public DetailsModel(ISessionRepository sessionRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionRepository = sessionRepository;
         }
 
         public Session Session { get; set; }
@@ -27,7 +29,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await unitOfWork.SessionRepository.GetByID(id.Value);
+            Session = await sessionRepository.GetByID(id.Value);
 
             if (Session == null)
             {

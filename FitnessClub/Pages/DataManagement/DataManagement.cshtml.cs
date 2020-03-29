@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FitnessClub.Pages.DataManagement
 {
-    //[Authorize(Policy = "SignedIn")]
+    [Authorize(Policy = "SignedIn")]
     public class DataManagementModel : PageModel
     {
         public void OnGet()

@@ -1,0 +1,56 @@
+﻿@page
+@model FitnessClub.Pages.DataManagement.Memberships.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Membership</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Membership.MembershipNo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Membership.MembershipNo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Membership.PersonID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Membership.PersonID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Membership.Start)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Membership.Start)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Membership.Finish)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Membership.Finish)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Membership.CreatedBy)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Membership.CreatedBy)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Membership.CreatedOn)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Membership.CreatedOn)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Membership.MembershipID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

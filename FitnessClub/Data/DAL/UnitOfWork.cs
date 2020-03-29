@@ -1,30 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL.Repositories;
 using FitnessClub.Data.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace FitnessClub.Data.DAL
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly FCContext context;
-        public IPersonRepository PersonRepository { get; }
-        public ISessionRepository SessionRepository { get; }
-        public ICoachRepository CoachRepository { get; }
+        public FCContext Context { get; }
 
         public UnitOfWork(FCContext context)
         {
-            this.context = context;
-            PersonRepository = new PersonRepository(this.context);
-            SessionRepository = new SessionRepository(this.context);
-            CoachRepository = new CoachRepository(this.context);
+            Context = context;
+
         }
-        public async Task Commit()
+    
+        public async Task Save()
         {
-            await context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
         }
 
 
@@ -36,7 +32,7 @@ namespace FitnessClub.Data.DAL
             {
                 if (disposing)
                 {
-                    context.Dispose();
+                    Context.Dispose();
                 }
             }
             this.disposed = true;

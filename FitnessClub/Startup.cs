@@ -7,13 +7,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.Models;
+using FitnessClub.Data.DAL.Repositories;
+using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace FitnessClub
 {
@@ -24,23 +29,36 @@ namespace FitnessClub
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        internal static IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
+            services.AddSingleton<IConfiguration>(Configuration);
+            //services.AddSingleton<string>("FCContext");
 
             services.AddRazorPages();
 
-            GetConnectionString.EditJson();
+            //GetConnectionString.EditJson(); //This only needs to be run once after Heroku Database credentials change
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
+
+            services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultTokenProviders()
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<FCContext>()
+                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
+                .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
+
+
+
+            //services.AddDefaultIdentity<AspNetUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<FCContext>();
+
+
 
             services.AddAuthentication()
-            .AddGoogle(options =>
+            .AddGoogle(options =>   
             {
                 IConfigurationSection googleAuthNSection =
                     Configuration.GetSection("Authentication:Google");
@@ -48,6 +66,8 @@ namespace FitnessClub
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
+
+            
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("SignedIn", policy =>
@@ -74,6 +94,7 @@ namespace FitnessClub
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -81,5 +102,20 @@ namespace FitnessClub
                 endpoints.MapRazorPages();
             });
         }
+        private static void RegisterRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IPersonRepository<Coach>, PersonRepository<Coach>>();
+            services.AddScoped<ICoachRatingRepository, CoachRatingRepository>();
+            services.AddScoped<IPersonRepository<Customer>, PersonRepository<Customer>>();
+            services.AddScoped<IPersonRepository<Employee>, PersonRepository<Employee>>();
+            services.AddScoped<IHolidayRepository, HolidayRepository>();
+            services.AddScoped<IMembershipRepository, MembershipRepository>();
+            services.AddScoped<IPersonRepository<Person>, PersonRepository<Person>>();
+            services.AddScoped<ISessionEnrollmentRepository, SessionEnrollmentRepository>();
+            services.AddScoped<ISessionRepository, SessionRepository>();
+        }
     }
 }
+    

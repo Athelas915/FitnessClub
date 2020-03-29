@@ -7,15 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.People
 {
+    [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
-        public CreateModel(IUnitOfWork unitOfWork)
+        private readonly IPersonRepository<Person> personRepository;
+        public CreateModel(IPersonRepository<Person> personRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.personRepository = personRepository;
         }
 
         public IActionResult OnGet()
@@ -35,8 +37,8 @@ namespace FitnessClub.Pages.DataManagement.People
                 return Page();
             }
 
-            unitOfWork.PersonRepository.Insert(Person);
-            await unitOfWork.Commit();
+            personRepository.Insert(Person);
+            await personRepository.Submit();
 
             return RedirectToPage("./Index");
         }

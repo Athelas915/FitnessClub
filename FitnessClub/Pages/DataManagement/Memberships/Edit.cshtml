@@ -1,0 +1,60 @@
+﻿@page
+@model FitnessClub.Pages.DataManagement.Memberships.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Membership</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Membership.MembershipID" />
+            <div class="form-group">
+                <label asp-for="Membership.MembershipNo" class="control-label"></label>
+                <input asp-for="Membership.MembershipNo" class="form-control" />
+                <span asp-validation-for="Membership.MembershipNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Membership.PersonID" class="control-label"></label>
+                <select asp-for="Membership.PersonID" class="form-control" asp-items="ViewBag.PersonID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Membership.Start" class="control-label"></label>
+                <input asp-for="Membership.Start" class="form-control" />
+                <span asp-validation-for="Membership.Start" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Membership.Finish" class="control-label"></label>
+                <input asp-for="Membership.Finish" class="form-control" />
+                <span asp-validation-for="Membership.Finish" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Membership.CreatedBy" class="control-label"></label>
+                <input asp-for="Membership.CreatedBy" class="form-control" />
+                <span asp-validation-for="Membership.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Membership.CreatedOn" class="control-label"></label>
+                <input asp-for="Membership.CreatedOn" class="form-control" />
+                <span asp-validation-for="Membership.CreatedOn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

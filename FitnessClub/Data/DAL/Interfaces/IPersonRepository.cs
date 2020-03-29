@@ -2,7 +2,7 @@
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
-    public interface IPersonRepository : IGenericRepository<Person>
+    public interface IPersonRepository<PersonEntity> : IGenericRepository<PersonEntity> where PersonEntity : class
     {
     }
 }

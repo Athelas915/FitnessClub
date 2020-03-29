@@ -7,22 +7,24 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Sessions
 {
+    [Authorize(Policy = "SignedIn")]
     public class IndexModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
-        public IndexModel(IUnitOfWork unitOfWork)
+        private readonly ISessionRepository sessionRepository;
+        public IndexModel(ISessionRepository sessionRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.sessionRepository = sessionRepository;
         }
 
         public IList<Session> Session { get;set; }
 
         public async Task OnGetAsync()
         {
-            Session = await unitOfWork.SessionRepository.Get();
+            Session = await sessionRepository.Get();
         }
     }
 }

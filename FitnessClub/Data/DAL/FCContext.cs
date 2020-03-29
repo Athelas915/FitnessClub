@@ -1,17 +1,33 @@
 ﻿using System;
 using System.Linq;
 using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
+using Microsoft.AspNetCore.Identity;
+using FitnessClub;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL
 {
-    public class FCContext : DbContext
+    public class FCContext : IdentityDbContext<AspNetUser, AspNetRole, int>
     {
+        //App identity and role storage data
+
+        public DbSet<AspNetRole> AspNetRoles { get; set; }
+        public DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+        public DbSet<AspNetUser> AspNetUsers { get; set; }
+        public DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
+        public DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
+
+        //Business usage data
         public DbSet<Person> People { get; set; }
-        public DbSet<Adress> Adresses { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Membership> Memberships { get; set; }
@@ -24,10 +40,13 @@ namespace FitnessClub.Data.DAL
         {
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql(GetConnectionString.ConvertDbURL());
+
+            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString("FCContext"));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             foreach (var entity in modelBuilder.Model
                 .GetEntityTypes()
                 .Where(w => w.ClrType.IsSubclassOf(typeof(BaseEntity)))
@@ -42,6 +61,34 @@ namespace FitnessClub.Data.DAL
                     .HasDefaultValue(0)
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             }
+            modelBuilder.Entity<SessionEnrollment>()
+                .HasKey(o => new { o.PersonID, o.SessionID });
+            /*
+            modelBuilder.Entity<AspNetRoleClaim>()
+                .HasOne(a => a.AspNetRole)
+                .WithMany(b => b.AspNetRoleClaims)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AspNetUserClaim>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserClaims)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AspNetUserLogin>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserLogins)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AspNetUserRole>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserRoles)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AspNetUserToken>()
+                .HasOne(a => a.AspNetUser)
+                .WithMany(b => b.AspNetUserTokens)
+                .OnDelete(DeleteBehavior.Cascade);
+        */
         }
     }
 }

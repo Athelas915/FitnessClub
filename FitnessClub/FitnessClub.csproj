@@ -5,7 +5,25 @@
     <AssemblyName>FitnessClub</AssemblyName>
     <RootNamespace>FitnessClub</RootNamespace>
     <UserSecretsId>547ac825-b636-485c-a00f-812ab512c38f</UserSecretsId>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200227221659_PostgreSQL1.cs" />
+    <Compile Remove="Migrations\20200227221659_PostgreSQL1.Designer.cs" />
+    <Compile Remove="Migrations\20200325122254_Identity1.cs" />
+    <Compile Remove="Migrations\20200325122254_Identity1.Designer.cs" />
+    <Compile Remove="Migrations\20200325152952_Identity2.cs" />
+    <Compile Remove="Migrations\20200325152952_Identity2.Designer.cs" />
+    <Compile Remove="Migrations\20200325165848_Identity3.cs" />
+    <Compile Remove="Migrations\20200325165848_Identity3.Designer.cs" />
+    <Compile Remove="Migrations\20200325170133_Identity4.cs" />
+    <Compile Remove="Migrations\20200325170133_Identity4.Designer.cs" />
+    <Compile Remove="Migrations\20200325172233_Identity5.cs" />
+    <Compile Remove="Migrations\20200325172233_Identity5.Designer.cs" />
+    <Compile Remove="Migrations\20200325172534_Identity6.cs" />
+    <Compile Remove="Migrations\20200325172534_Identity6.Designer.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Data\DAL\IPersonRepository.cs.txt" />
@@ -13,11 +31,58 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Pages\DataManagement\Addresses\Create.cshtml" />
+    <None Include="Pages\DataManagement\Addresses\Delete.cshtml" />
+    <None Include="Pages\DataManagement\Addresses\Details.cshtml" />
+    <None Include="Pages\DataManagement\Addresses\Edit.cshtml" />
+    <None Include="Pages\DataManagement\Addresses\Index.cshtml" />
+    <None Include="Pages\DataManagement\Coaches\Create.cshtml" />
+    <None Include="Pages\DataManagement\Coaches\Delete.cshtml" />
+    <None Include="Pages\DataManagement\Coaches\Details.cshtml" />
+    <None Include="Pages\DataManagement\Coaches\Edit.cshtml" />
+    <None Include="Pages\DataManagement\Coaches\Index.cshtml" />
+    <None Include="Pages\DataManagement\CoachRatings\Create.cshtml" />
+    <None Include="Pages\DataManagement\CoachRatings\Delete.cshtml" />
+    <None Include="Pages\DataManagement\CoachRatings\Details.cshtml" />
+    <None Include="Pages\DataManagement\CoachRatings\Edit.cshtml" />
+    <None Include="Pages\DataManagement\CoachRatings\Index.cshtml" />
+    <None Include="Pages\DataManagement\Customers\Create.cshtml" />
+    <None Include="Pages\DataManagement\Customers\Delete.cshtml" />
+    <None Include="Pages\DataManagement\Customers\Details.cshtml" />
+    <None Include="Pages\DataManagement\Customers\Edit.cshtml" />
+    <None Include="Pages\DataManagement\Customers\Index.cshtml" />
+    <None Include="Pages\DataManagement\Employees\Create.cshtml" />
+    <None Include="Pages\DataManagement\Employees\Delete.cshtml" />
+    <None Include="Pages\DataManagement\Employees\Details.cshtml" />
+    <None Include="Pages\DataManagement\Employees\Edit.cshtml" />
+    <None Include="Pages\DataManagement\Employees\Index.cshtml" />
+    <None Include="Pages\DataManagement\Holidays\Create.cshtml" />
+    <None Include="Pages\DataManagement\Holidays\Delete.cshtml" />
+    <None Include="Pages\DataManagement\Holidays\Details.cshtml" />
+    <None Include="Pages\DataManagement\Holidays\Edit.cshtml" />
+    <None Include="Pages\DataManagement\Holidays\Index.cshtml" />
+    <None Include="Pages\DataManagement\Memberships\Create.cshtml" />
+    <None Include="Pages\DataManagement\Memberships\Delete.cshtml" />
+    <None Include="Pages\DataManagement\Memberships\Details.cshtml" />
+    <None Include="Pages\DataManagement\Memberships\Edit.cshtml" />
+    <None Include="Pages\DataManagement\Memberships\Index.cshtml" />
+    <None Include="Pages\DataManagement\SessionEnrollments\Create.cshtml" />
+    <None Include="Pages\DataManagement\SessionEnrollments\Delete.cshtml" />
+    <None Include="Pages\DataManagement\SessionEnrollments\Details.cshtml" />
+    <None Include="Pages\DataManagement\SessionEnrollments\Edit.cshtml" />
+    <None Include="Pages\DataManagement\SessionEnrollments\Index.cshtml" />
+    <None Include="Pages\DataManagement\Sessions\Create.cshtml" />
+    <None Include="Pages\DataManagement\Sessions\Delete.cshtml" />
+    <None Include="Pages\DataManagement\Sessions\Details.cshtml" />
+    <None Include="Pages\DataManagement\Sessions\Edit.cshtml" />
+    <None Include="Pages\DataManagement\Sessions\Index.cshtml" />
     <None Include="wwwroot\google2054d70463facac7.html" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0-preview5-19227-01" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.2" />
@@ -29,6 +94,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

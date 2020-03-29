@@ -8,16 +8,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.People
 {
+    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPersonRepository<Person> personRepository;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(IPersonRepository<Person> personRepository)
         {
-            this.unitOfWork = unitOfWork;
+            this.personRepository = personRepository;
         }
 
         [BindProperty]
@@ -30,7 +32,7 @@ namespace FitnessClub.Pages.DataManagement.People
                 return NotFound();
             }
 
-            Person = await unitOfWork.PersonRepository.GetByID(id.Value);
+            Person = await personRepository.GetByID(id.Value);
 
             if (Person == null)
             {
@@ -48,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.People
                 return Page();
             }
 
-            unitOfWork.PersonRepository.Update(Person);
+            personRepository.Update(Person);
 
             try
             {
-                await unitOfWork.Commit();
+                await personRepository.Submit();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -71,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.People
 
         private bool PersonExists(int id)
         {
-            return unitOfWork.PersonRepository.Any(id);
+            return personRepository.Any(id);
         }
     }
 }
