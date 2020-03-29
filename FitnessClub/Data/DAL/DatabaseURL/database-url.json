@@ -1,7 +1,0 @@
-{
-  "DATABASE_URL": {
-    "Development": "postgres://cpymlxkzpbptwv:1096d2fa303f41b51585911072f525c6bf8ce204c6d425bacb1de962407277d3@ec2-54-217-204-34.eu-west-1.compute.amazonaws.com:5432/d4m81rt1kckgc2",
-    "Production": "postgres://xmhvjjuaadyzgv:02912c8798e5c4b32debab6ca36c87118321f794bf591a9b92669b1c1595b3be@ec2-54-246-89-234.eu-west-1.compute.amazonaws.com:5432/d3bc6n0mdqulr6"
-  }
-
-}
