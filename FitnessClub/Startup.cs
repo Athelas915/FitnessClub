@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FitnessClub.Data.Models;
@@ -24,12 +25,16 @@ namespace FitnessClub
 {
     public class Startup
     {
+        internal static IConfiguration Configuration { get; private set; }
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-        }
+            var builder = new ConfigurationBuilder();
+            builder.AddJsonFile("appsettings.json");
+            builder.AddConfiguration(configuration);
+            builder.AddEnvironmentVariables();
 
-        internal static IConfiguration Configuration { get; private set; }
+            Configuration = builder.Build();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,7 +45,7 @@ namespace FitnessClub
             services.AddRazorPages();
 
             //GetConnectionString.EditJson(); //This only needs to be run once after Heroku Database credentials change
-            services.AddDbContext<FCContext>(options => options.UseNpgsql("FCContext"));
+            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
