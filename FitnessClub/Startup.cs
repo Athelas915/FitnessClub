@@ -40,14 +40,8 @@ namespace FitnessClub
 
             services.AddRazorPages();
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-            {
-                CurrentConnString = Configuration.GetConnectionString("FCContext");
-            }
-            else
-            {
-                CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
-            }
+            
+            CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
 
             services.AddSingleton<string>(CurrentConnString);
             services.AddDbContext<FCContext>(options => options.UseNpgsql(CurrentConnString));
