@@ -35,6 +35,9 @@ namespace FitnessClub
             builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             builder.AddEnvironmentVariables();
 
+            var currentConnString = Environment.GetEnvironmentVariable("")APPSETTING_ConnectionString:FCContext;
+            CurrentConnString = currentConnString;
+
             builder.AddConfiguration(configuration);
             Configuration = builder.Build();
         }
@@ -44,7 +47,6 @@ namespace FitnessClub
         {
             services.AddRazorPages();
 
-            CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
             //CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
             //CurrentConnString = Configuration.GetConnectionString("FCContext");
             //CurrentConnString = Configuration.GetConnectionString("POSTGRESQLCONNSTR_FCContext");
