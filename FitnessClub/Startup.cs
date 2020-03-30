@@ -27,6 +27,7 @@ namespace FitnessClub
     public class Startup
     {
         internal static IConfiguration Configuration { get; private set; }
+        public static string CurrentConnString { get; private set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -39,7 +40,18 @@ namespace FitnessClub
 
             services.AddRazorPages();
 
-            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                CurrentConnString = Configuration.GetConnectionString("FCContext");
+            }
+            else
+            {
+                CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+            }
+
+            services.AddSingleton<string>(CurrentConnString);
+            services.AddDbContext<FCContext>(options => options.UseNpgsql(CurrentConnString));
+
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
