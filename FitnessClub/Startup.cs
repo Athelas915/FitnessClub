@@ -32,7 +32,8 @@ namespace FitnessClub
         {
             Configuration = configuration;
 
-            if (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext") == null)
+            //sets ConnectionString as environment variable if we're in development.
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             { Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext", Configuration.GetConnectionString("FCContext")); }
             CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
         }
@@ -55,13 +56,6 @@ namespace FitnessClub
                 .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
                 .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
             
-
-
-            //services.AddDefaultIdentity<AspNetUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddEntityFrameworkStores<FCContext>();
-
-
-
             services.AddAuthentication()
             .AddGoogle(options =>   
             {
