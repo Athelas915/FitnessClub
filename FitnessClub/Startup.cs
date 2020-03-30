@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
@@ -24,23 +26,34 @@ namespace FitnessClub
 {
     public class Startup
     {
+        internal static IConfiguration Configuration { get; private set; }
+        public static string CurrentConnString { get; private set; }
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-        }
+            var builder = new ConfigurationBuilder();
 
-        internal static IConfiguration Configuration { get; private set; }
+            builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            builder.AddEnvironmentVariables();
+
+            var currentConnString = Environment.GetEnvironmentVariable("APPSETTING_ConnectionString:FCContext");
+            CurrentConnString = currentConnString;
+
+            builder.AddConfiguration(configuration);
+            Configuration = builder.Build();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IConfiguration>(Configuration);
-            //services.AddSingleton<string>("FCContext");
-
             services.AddRazorPages();
 
-            //GetConnectionString.EditJson(); //This only needs to be run once after Heroku Database credentials change
-            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCContext")));
+            //CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+            //CurrentConnString = Configuration.GetConnectionString("FCContext");
+            //CurrentConnString = Configuration.GetConnectionString("POSTGRESQLCONNSTR_FCContext");
+            services.AddSingleton<string>(CurrentConnString);
+
+            services.AddDbContext<FCContext>(options => options.UseNpgsql(CurrentConnString));
+
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -49,7 +62,7 @@ namespace FitnessClub
                 .AddEntityFrameworkStores<FCContext>()
                 .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
                 .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
-
+            
 
 
             //services.AddDefaultIdentity<AspNetUser>(options => options.SignIn.RequireConfirmedAccount = true)

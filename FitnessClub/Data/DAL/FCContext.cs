@@ -41,7 +41,7 @@ namespace FitnessClub.Data.DAL
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 
-            => optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString("FCContext"));
+            => optionsBuilder.UseNpgsql(Startup.CurrentConnString);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,32 +63,6 @@ namespace FitnessClub.Data.DAL
             }
             modelBuilder.Entity<SessionEnrollment>()
                 .HasKey(o => new { o.PersonID, o.SessionID });
-            /*
-            modelBuilder.Entity<AspNetRoleClaim>()
-                .HasOne(a => a.AspNetRole)
-                .WithMany(b => b.AspNetRoleClaims)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AspNetUserClaim>()
-                .HasOne(a => a.AspNetUser)
-                .WithMany(b => b.AspNetUserClaims)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AspNetUserLogin>()
-                .HasOne(a => a.AspNetUser)
-                .WithMany(b => b.AspNetUserLogins)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AspNetUserRole>()
-                .HasOne(a => a.AspNetUser)
-                .WithMany(b => b.AspNetUserRoles)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AspNetUserToken>()
-                .HasOne(a => a.AspNetUser)
-                .WithMany(b => b.AspNetUserTokens)
-                .OnDelete(DeleteBehavior.Cascade);
-        */
         }
     }
 }
