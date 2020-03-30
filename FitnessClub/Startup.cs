@@ -47,6 +47,7 @@ namespace FitnessClub
         {
             services.AddRazorPages();
 
+            //test
             //CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
             //CurrentConnString = Configuration.GetConnectionString("FCContext");
             //CurrentConnString = Configuration.GetConnectionString("POSTGRESQLCONNSTR_FCContext");
