@@ -27,19 +27,28 @@ namespace FitnessClub
     public class Startup
     {
         internal static IConfiguration Configuration { get; private set; }
-        public static string CurrentConnString { get; set; }
+        public static string CurrentConnString { get; private set; }
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder();
+
+            builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            builder.AddEnvironmentVariables();
+
+            builder.AddConfiguration(configuration);
+            Configuration = builder.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IConfiguration>(Configuration);
-            services.AddSingleton<string>(CurrentConnString);
-
             services.AddRazorPages();
+
+            CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+            //CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+            //CurrentConnString = Configuration.GetConnectionString("FCContext");
+            //CurrentConnString = Configuration.GetConnectionString("POSTGRESQLCONNSTR_FCContext");
+            services.AddSingleton<string>(CurrentConnString);
 
             services.AddDbContext<FCContext>(options => options.UseNpgsql(CurrentConnString));
 

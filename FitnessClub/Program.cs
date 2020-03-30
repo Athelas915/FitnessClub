@@ -22,7 +22,6 @@ namespace FitnessClub
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    Startup.CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
                     webBuilder.UseStartup<Startup>();
                 });
     }
