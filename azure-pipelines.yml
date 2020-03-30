@@ -13,6 +13,10 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  system.collectionId: '56c4b86f-c828-42be-b1f7-744d06249329'
+  system.debug: 'false'
+  system.definitionId: '3'
+  system.teamProject: 'FitnessClubDevOps'
 
 steps:
 - task: DotNetCoreCLI@2
