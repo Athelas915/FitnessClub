@@ -32,14 +32,14 @@ namespace FitnessClub
         {
             Configuration = configuration;
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-            {
-                CurrentConnString = Configuration.GetConnectionString("FCContext");
-            }
-            else
-            {
-                CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
-            }
+            //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            //{
+            CurrentConnString = Configuration.GetConnectionString("FCContext");
+            //}
+            //else
+            //{
+            //    CurrentConnString = Environment.GetEnvironmentVariable("FCContext");
+            //}
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
