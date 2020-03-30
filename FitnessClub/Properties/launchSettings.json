@@ -12,7 +12,6 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "APPSETTING_ConnectionString:FCContext": "Host=ec2-54-217-204-34.eu-west-1.compute.amazonaws.com;Database=d4m81rt1kckgc2;Username=cpymlxkzpbptwv;Password=1096d2fa303f41b51585911072f525c6bf8ce204c6d425bacb1de962407277d3;SSL Mode=Require;Trust Server Certificate=true",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

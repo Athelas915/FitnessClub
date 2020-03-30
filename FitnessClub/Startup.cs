@@ -30,16 +30,11 @@ namespace FitnessClub
         public static string CurrentConnString { get; private set; }
         public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder();
+            Configuration = configuration;
 
-            builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            builder.AddEnvironmentVariables();
-
-            var currentConnString = Environment.GetEnvironmentVariable("APPSETTING_ConnectionString:FCContext");
-            CurrentConnString = currentConnString;
-
-            builder.AddConfiguration(configuration);
-            Configuration = builder.Build();
+            if (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext") == null)
+            { Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext", Configuration.GetConnectionString("FCContext")); }
+            CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -47,10 +42,6 @@ namespace FitnessClub
         {
             services.AddRazorPages();
 
-            //test
-            //CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
-            //CurrentConnString = Configuration.GetConnectionString("FCContext");
-            //CurrentConnString = Configuration.GetConnectionString("POSTGRESQLCONNSTR_FCContext");
             services.AddSingleton<string>(CurrentConnString);
 
             services.AddDbContext<FCContext>(options => options.UseNpgsql(CurrentConnString));
