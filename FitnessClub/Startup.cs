@@ -35,7 +35,7 @@ namespace FitnessClub
             builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             builder.AddEnvironmentVariables();
 
-            var currentConnString = Environment.GetEnvironmentVariable("")APPSETTING_ConnectionString:FCContext;
+            var currentConnString = Environment.GetEnvironmentVariable("APPSETTING_ConnectionString:FCContext");
             CurrentConnString = currentConnString;
 
             builder.AddConfiguration(configuration);
