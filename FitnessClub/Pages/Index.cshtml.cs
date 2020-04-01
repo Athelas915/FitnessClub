@@ -19,7 +19,7 @@ namespace FitnessClub.Pages
 
         public void OnGet()
         {
-
+            _logger.LogError("Test Error");
         }
     }
 }

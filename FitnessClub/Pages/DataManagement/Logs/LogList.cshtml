@@ -1,0 +1,65 @@
+﻿@page
+@model FitnessClub.Pages.DataManagement.Logs.LogListModel
+
+@{
+    ViewData["Title"] = "App Logs";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>App Logs</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Logs[0].Exception)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Logs[0].Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Logs[0].Log_event)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Logs[0].Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Logs[0].Message_template)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Logs[0].Timestamp)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Logs)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Exception)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Log_event)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Message)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Message_template)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Timestamp)
+            </td>
+        </tr>
+        }
+    </tbody>
+
+</table>
+
+<form method="post">
+    <input type="submit" value="Delete" class="btn btn-danger" />
+</form>

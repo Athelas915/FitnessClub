@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models.Identity;
 
-namespace FitnessClub
+namespace FitnessClub.Pages.DataManagement.UserData
 {
     public class EditModel : PageModel
     {

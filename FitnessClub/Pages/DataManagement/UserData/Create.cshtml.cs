@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models.Identity;
 
-namespace FitnessClub
+namespace FitnessClub.Pages.DataManagement.UserData
 {
     public class CreateModel : PageModel
     {

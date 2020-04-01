@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL;
@@ -27,25 +29,31 @@ namespace FitnessClub
     public class Startup
     {
         internal static IConfiguration Configuration { get; private set; }
-        public static string CurrentConnString { get; private set; }
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder();
+            builder.AddConfiguration(configuration);
+            builder.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
 
-            //sets ConnectionString as environment variable if we're in development.
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-            { Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext", Configuration.GetConnectionString("FCContext")); }
-            CurrentConnString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+            //next part sets the configuration setting ConnectionString depending on which environment is currently on.
+            if (env.EnvironmentName == "Development")
+            {
+                Configuration["ConnectionStrings:FCConnectionString"] = Configuration.GetConnectionString("FCContextDevelopment");
+            }
+            else
+            {
+                Configuration["ConnectionStrings:FCConnectionString"] = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+            }
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {   
             services.AddRazorPages();
 
-            services.AddSingleton<string>(CurrentConnString);
-
-            services.AddDbContext<FCContext>(options => options.UseNpgsql(CurrentConnString));
+            services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCConnectionString")));
 
             RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
@@ -114,6 +122,7 @@ namespace FitnessClub
             services.AddScoped<IPersonRepository<Person>, PersonRepository<Person>>();
             services.AddScoped<ISessionEnrollmentRepository, SessionEnrollmentRepository>();
             services.AddScoped<ISessionRepository, SessionRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
-    public interface IRepository
+    public interface IRepository : IDisposable
     {
         Task Submit();
     }
