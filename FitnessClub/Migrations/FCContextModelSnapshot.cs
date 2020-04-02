@@ -226,13 +226,18 @@ namespace FitnessClub.Migrations
 
             modelBuilder.Entity("FitnessClub.Data.Models.Log", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
                     b.Property<string>("Exception")
                         .HasColumnName("exception")
                         .HasColumnType("text");
 
                     b.Property<int>("Level")
                         .HasColumnName("level")
-                        .HasColumnType("integer");
+                        .HasColumnType("int4");
 
                     b.Property<string>("Log_event")
                         .HasColumnName("log_event")
@@ -248,7 +253,9 @@ namespace FitnessClub.Migrations
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnName("timestamp")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp");
+
+                    b.HasKey("Id");
 
                     b.ToTable("logs");
                 });

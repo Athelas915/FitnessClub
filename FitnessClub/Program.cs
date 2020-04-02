@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Enrichers;
+using Serilog.Settings.Configuration;
 using FitnessClub.Data.DAL;
 using FitnessClub.Pages.DataManagement.People;
 
@@ -23,10 +23,13 @@ namespace FitnessClub
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging =>
+                {
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration, "serilog"));
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseSerilog();
                 });
     }
 }

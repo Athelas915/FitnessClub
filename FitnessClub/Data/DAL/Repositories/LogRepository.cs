@@ -25,7 +25,7 @@ namespace FitnessClub.Data.DAL.Interfaces
             string includeProperties = "")
         {
             IQueryable<Log> query = dbSet;
-
+            
             if (filter != null)
             {
                 query = query.Where(filter);

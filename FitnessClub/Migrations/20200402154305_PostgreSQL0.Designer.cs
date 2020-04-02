@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitnessClub.Migrations
 {
     [DbContext(typeof(FCContext))]
-    [Migration("20200327212507_PostgreSQL1")]
-    partial class PostgreSQL1
+    [Migration("20200402154305_PostgreSQL0")]
+    partial class PostgreSQL0
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -224,6 +224,42 @@ namespace FitnessClub.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Exception")
+                        .HasColumnName("exception")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Level")
+                        .HasColumnName("level")
+                        .HasColumnType("int4");
+
+                    b.Property<string>("Log_event")
+                        .HasColumnName("log_event")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Message")
+                        .HasColumnName("message")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Message_template")
+                        .HasColumnName("message_template")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnName("timestamp")
+                        .HasColumnType("timestamp");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("logs");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Membership", b =>
