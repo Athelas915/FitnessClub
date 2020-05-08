@@ -7,38 +7,49 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
+        private readonly IPersonRepository<Customer> _customerRepository;
+        private readonly IAddressRepository _addressRepository;
         private readonly SignInManager<AspNetUser> _signInManager;
         private readonly UserManager<AspNetUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
+            IPersonRepository<Customer> customerRepository,
+            IAddressRepository addressRepository,
             SignInManager<AspNetUser> signInManager,
             UserManager<AspNetUser> userManager,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
+            _customerRepository = customerRepository;
+            _addressRepository = addressRepository;
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _emailSender = emailSender;
         }
-
         [BindProperty]
         public InputModel Input { get; set; }
+        [BindProperty]
+        public Customer Customer { get; set; }
+        [BindProperty]
+        public Address Address { get; set; }
 
         public string LoginProvider { get; set; }
 
@@ -120,15 +131,35 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
+            Customer.Email = Input.Email;
+            Address.Person = Customer;
+
+            Customer.CreatedBy = Customer.PersonID;
+            Address.CreatedBy = Customer.PersonID;
+
             if (ModelState.IsValid)     
             {
-                var user = new AspNetUser { UserName = Input.Email, Email = Input.Email, EmailConfirmed = true };
+                if ((_addressRepository.Any(Address.AddressID) == true) || (_customerRepository.Any(Customer.PersonID) == true))
+                {
+                    return RedirectToPage("..../Pages/Error");
+                }
+                else
+                {
+                    _customerRepository.Insert(Customer);
+                    _addressRepository.Insert(Address);
+                    await _customerRepository.Submit();
+                    await _addressRepository.Submit();
+                }
+
+                var user = new AspNetUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        await _userManager.AddToRoleAsync(user, "Customer");
+
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
@@ -144,7 +175,15 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                         await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                        return LocalRedirect(returnUrl);
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        {
+                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
                     }
                 }
                 foreach (var error in result.Errors)

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Addresses
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class DetailsModel : PageModel
     {
         private readonly IAddressRepository addressRepository;

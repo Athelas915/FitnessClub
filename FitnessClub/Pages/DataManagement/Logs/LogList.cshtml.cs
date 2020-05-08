@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Logs
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class LogListModel: PageModel
     {
         private readonly ILogRepository logRepository;

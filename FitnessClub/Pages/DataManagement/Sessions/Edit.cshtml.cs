@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Sessions
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class EditModel : PageModel
     {
         private readonly ISessionRepository sessionRepository;

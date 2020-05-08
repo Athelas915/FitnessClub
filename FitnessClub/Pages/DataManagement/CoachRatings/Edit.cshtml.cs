@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.CoachRatings
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class EditModel : PageModel
     {
         private readonly ICoachRatingRepository coachRatingRepository;

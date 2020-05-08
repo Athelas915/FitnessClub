@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Holidays
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class IndexModel : PageModel
     {
         private readonly IHolidayRepository holidayRepository;

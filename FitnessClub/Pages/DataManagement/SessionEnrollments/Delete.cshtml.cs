@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.SessionEnrollments
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class DeleteModel : PageModel
     {
         private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;

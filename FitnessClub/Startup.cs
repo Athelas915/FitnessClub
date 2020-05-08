@@ -25,6 +25,7 @@ using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace FitnessClub
 {
@@ -42,12 +43,13 @@ namespace FitnessClub
             if (env.EnvironmentName == "Development")
             {
                 //In development, the connection string is taken from secrets.json file that isn't checked in at github.
-                Configuration["ConnectionStrings:FCConnectionString"] = Configuration.GetConnectionString("FCContextDevelopment"); 
+                Configuration["ConnectionStrings:FCConnectionString"] = Configuration.GetConnectionString("FCContextDevelopment");
             }
             else
             {
                 //In production, the connection string is taken from environment variable set during app deployment.
                 Configuration["ConnectionStrings:FCConnectionString"] = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+                Configuration["DefaultAdminPassword"] = Environment.GetEnvironmentVariable("DefaultPassword");
             }
         }
 
@@ -58,7 +60,7 @@ namespace FitnessClub
 
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCConnectionString")));
 
-            RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
+            RepositoryRegistration.Register(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class in the Data/DAL folder.
 
             services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultTokenProviders()
@@ -86,13 +88,13 @@ namespace FitnessClub
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<AspNetUser> userManager, RoleManager<AspNetRole> roleManager)
         {
             //Serilog settings for different environments. They're kept here instead of "appsettings.json" because of issues with that method:
             //1. New version of serilog package can't handle parsing {date} when used inside json;
             //2. Connection string for Serilog.Sinks.PostgreSQL in appsettings needs to be stored as full string, and the package doesn't support using 
             //string's name given during configuration.If the app run on MS SQL, it would have been possible.
-            //Workarounds has been tested and keeping them here appeared to be the cleanest option.
+            //Other workarounds has been tested and keeping them here appeared to be the cleanest option.
             if (env.IsDevelopment())
             {
                 Serilog.Log.Logger = new LoggerConfiguration()
@@ -134,25 +136,12 @@ namespace FitnessClub
             app.UseAuthentication();
             app.UseAuthorization();
 
+            IdentityDataInitializer.SeedData(userManager, roleManager);
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
             });
-        }
-        private static void RegisterRepositories(IServiceCollection services)
-        {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IAddressRepository, AddressRepository>();
-            services.AddScoped<IPersonRepository<Coach>, PersonRepository<Coach>>();
-            services.AddScoped<ICoachRatingRepository, CoachRatingRepository>();
-            services.AddScoped<IPersonRepository<Customer>, PersonRepository<Customer>>();
-            services.AddScoped<IPersonRepository<Employee>, PersonRepository<Employee>>();
-            services.AddScoped<IHolidayRepository, HolidayRepository>();
-            services.AddScoped<IMembershipRepository, MembershipRepository>();
-            services.AddScoped<IPersonRepository<Person>, PersonRepository<Person>>();
-            services.AddScoped<ISessionEnrollmentRepository, SessionEnrollmentRepository>();
-            services.AddScoped<ISessionRepository, SessionRepository>();
-            services.AddScoped<ILogRepository, LogRepository>();
         }
     }
 }

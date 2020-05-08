@@ -4,7 +4,7 @@ namespace FitnessClub.Data.Models
 {
     public enum Gender
     {
-        male, female
+        Male, Female
     }
     public class Person : BaseEntity
     {

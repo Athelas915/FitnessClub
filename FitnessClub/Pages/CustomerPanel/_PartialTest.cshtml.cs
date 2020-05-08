@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FitnessClub.Pages.DataManagement
+namespace FitnessClub.Pages.CustomerPanel
 {
-    [Authorize(Roles = "Administrator")]
-    public class DataManagementModel : PageModel
+    public class _PartialTestModel : PageModel
     {
         public void OnGet()
         {

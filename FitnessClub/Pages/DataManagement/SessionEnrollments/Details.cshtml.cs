@@ -10,7 +10,7 @@ using FitnessClub.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 namespace FitnessClub.Pages.DataManagement.SessionEnrollments
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class DetailsModel : PageModel
     {
         private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;

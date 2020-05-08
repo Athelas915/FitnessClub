@@ -65,14 +65,6 @@ namespace FitnessClub.Data.DAL
             }
             modelBuilder.Entity<SessionEnrollment>()
                 .HasKey(o => new { o.PersonID, o.SessionID });
-            /*
-            foreach (var p in modelBuilder.Entity<Log>().Metadata.GetProperties())
-            {
-                modelBuilder.Entity<Log>()
-                    .Property(p.GetColumnName())
-                    .HasColumnName(p.GetColumnName()
-                    .ToLower());
-            }*/
             modelBuilder.Entity<Log>().ToTable("logs");
         }
     }

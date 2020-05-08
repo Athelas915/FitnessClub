@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Addresses
 {
-    [Authorize(Policy = "SignedIn")]
+    [Authorize(Roles = "Administrator")]
     public class CreateModel : PageModel
     {
         private readonly IAddressRepository addressRepository;
@@ -23,7 +23,7 @@ namespace FitnessClub.Pages.DataManagement.Addresses
 
         public async Task<IActionResult> OnGet()
         {
-        ViewData["PersonID"] = new SelectList(await addressRepository.Get<Person>(), "PersonID", "LastName");
+            ViewData["Genders"] = new SelectList(await addressRepository.Get<Person>(), "PersonID", "LastName");
             return Page();
         }
 
