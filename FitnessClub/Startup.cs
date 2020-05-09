@@ -80,11 +80,7 @@ namespace FitnessClub
             });
 
             
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("SignedIn", policy =>
-                    policy.RequireAuthenticatedUser());
-            });
+            services.AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -6,12 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FitnessClub.Pages.CustomerPanel
+namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
 {
-    [Authorize(Roles = "Customer")]
-    public class _CustomerPanelModel : PageModel
+    //[Authorize(Roles = "Customer")]
+    public class CustomerPanelModel : PageModel
     {
-        public _PartialTestModel partialTestModel = new _PartialTestModel();
         public void OnGet()
         {
 

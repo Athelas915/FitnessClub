@@ -69,3 +69,42 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+ul.menu {
+    /*Navigation menus for internal panels (eg. customer's panel)*/
+    list-style-type: none;
+    list-style;
+    border: 3px solid black;
+    color: black;
+    padding: 0;
+}
+
+li.menu-item {
+    /*single items in menu*/
+    border: 1px solid black;
+    margin: 1px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+li.menu-item:hover {
+    /*single items in menu*/
+    background-color: #65ff86;
+}
+
+a.menu-link {
+    /*links used in menu*/
+    font-size: 30px;
+    margin: 12px;
+    color: black;
+    display: block;
+}
+
+a.menu-link:hover {
+    /*links used in menu*/
+    text-decoration: none;
+}
+
+div.coll-fill {
+    overflow: auto;
+}
