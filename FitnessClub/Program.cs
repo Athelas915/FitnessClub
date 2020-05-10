@@ -12,7 +12,6 @@ using Serilog.Settings.Configuration;
 using FitnessClub.Data.DAL;
 using FitnessClub.Pages.DataManagement.People;
 
-
 namespace FitnessClub
 {
     public class Program
