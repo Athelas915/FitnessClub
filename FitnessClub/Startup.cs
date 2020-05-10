@@ -77,7 +77,6 @@ namespace FitnessClub
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
-
             
             services.AddAuthorization();
         }
