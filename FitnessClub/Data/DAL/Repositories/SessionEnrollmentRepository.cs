@@ -1,7 +1,6 @@
 ﻿using System;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL.Interfaces;
-using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Repositories
 {
@@ -11,6 +10,5 @@ namespace FitnessClub.Data.DAL.Repositories
         public SessionEnrollmentRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
-
     }
 }

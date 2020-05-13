@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.Models;
 
 namespace FitnessClub.Data.DAL.Repositories
 {
@@ -18,6 +19,23 @@ namespace FitnessClub.Data.DAL.Repositories
         {
             this.unitOfWork = unitOfWork;
             dbSet = unitOfWork.Context.Set<TEntity>();
+        }
+        
+
+        public virtual async Task<PersonEntity> GetUserByIdentityId<PersonEntity>(int aspNetUserId) where PersonEntity : Person
+        {
+            IQueryable<PersonEntity> query = unitOfWork.Context.Set<PersonEntity>();
+
+            query = query.Where(p => p.AspNetUserId == aspNetUserId);
+
+            if (query.ToList().Count == 0)
+            {
+                throw new NullReferenceException("User with given ID doesn't exist");
+            }
+            else
+            {
+                return await query.FirstAsync();
+            }
         }
 
         //when not given a type, this returns a list of type TEntity

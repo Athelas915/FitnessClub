@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace FitnessClub.Pages.DataManagement.Customers
 {
@@ -38,6 +40,18 @@ namespace FitnessClub.Pages.DataManagement.Customers
             {
                 return NotFound();
             }
+            var users = await customerRepository.Get<AspNetUser>();
+            var people = await customerRepository.Get<Person>();
+            people.Remove(Customer);
+            var usersToRemove = people.Select(c => c.AspNetUserId).ToList();
+
+            foreach (int userToRemove in usersToRemove)
+            {
+                users.Remove(users.Single(u => u.Id == userToRemove));
+            }
+
+            ViewData["Users"] = new SelectList(users, "Id", "Email");
+
             return Page();
         }
 

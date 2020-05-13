@@ -31,6 +31,55 @@ namespace FitnessClub.Data.DAL
                     userManager.AddToRoleAsync(user, "Administrator").Wait();
                 }
             }
+            /* these users are for testing
+             * 
+            if (userManager.FindByNameAsync
+         ("Coach1").Result == null)
+            {
+                AspNetUser user = new AspNetUser();
+                user.UserName = "coach1@fitness.club";
+                user.Email = "coach1@fitness.club";
+                user.EmailConfirmed = true;
+
+                IdentityResult result = userManager.CreateAsync(user, "Coach12#$").Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "Coach").Wait();
+                }
+            }
+            if (userManager.FindByNameAsync
+         ("Coach3").Result == null)
+            {
+                AspNetUser user = new AspNetUser();
+                user.UserName = "coach3@fitness.club";
+                user.Email = "coach3@fitness.club";
+                user.EmailConfirmed = true;
+
+                IdentityResult result = userManager.CreateAsync(user, "Coach12#$").Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "Coach").Wait();
+                }
+            }
+            if (userManager.FindByNameAsync
+         ("Coach2").Result == null)
+            {
+                AspNetUser user = new AspNetUser();
+                user.UserName = "coach2@fitness.club";
+                user.Email = "coach2@fitness.club";
+                user.EmailConfirmed = true;
+
+                IdentityResult result = userManager.CreateAsync(user, "Coach12#$").Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "Coach").Wait();
+                }
+            }
+            *
+            */
         }
         public static void SeedRoles(RoleManager<AspNetRole> roleManager)
         {

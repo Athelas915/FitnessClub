@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace FitnessClub.Pages.DataManagement.Coaches
 {
@@ -21,8 +23,19 @@ namespace FitnessClub.Pages.DataManagement.Coaches
             this.coachRepository = coachRepository;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGet()
         {
+            var users = await coachRepository.Get<AspNetUser>();
+            var people = await coachRepository.Get<Person>();
+            var usersToRemove = people.Select(c => c.AspNetUserId).ToList();
+
+            foreach (int userToRemove in usersToRemove)
+            {
+                users.Remove(users.Single(u => u.Id == userToRemove));
+            }
+
+            ViewData["Users"] = new SelectList(users, "Id", "Email");
+
             return Page();
         }
 

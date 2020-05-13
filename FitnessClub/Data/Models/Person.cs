@@ -1,4 +1,5 @@
 ﻿using System;
+using FitnessClub.Data.Models.Identity;
 
 namespace FitnessClub.Data.Models
 {
@@ -14,6 +15,8 @@ namespace FitnessClub.Data.Models
         public string Email { get; set; }
         public Gender? Gender { get; set; }
         public DateTime Birthdate { get; set; }
+        public virtual AspNetUser AspNetUser { get; set; }
+        public int AspNetUserId { get; set; }
 
     }
 }

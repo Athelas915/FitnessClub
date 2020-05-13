@@ -66,6 +66,11 @@ namespace FitnessClub.Data.DAL
             modelBuilder.Entity<SessionEnrollment>()
                 .HasKey(o => new { o.PersonID, o.SessionID });
             modelBuilder.Entity<Log>().ToTable("logs");
+
+            modelBuilder.Entity<AspNetUser>()
+                .HasOne(a => a.Person)
+                .WithOne(b => b.AspNetUser)
+                .HasForeignKey<Person>(b => b.AspNetUserId);
         }
     }
 }

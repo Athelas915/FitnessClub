@@ -1,7 +1,7 @@
 ﻿@page
 @model FitnessClub.Areas.Identity.Pages.CustomerPanel.RateCoachesModel
 @{
-    ViewData["Title"] = "_CustomerPanel";
+    ViewData["Title"] = "Rate Coaches";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
@@ -9,13 +9,56 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
-<h1>Customer Panel</h1>
+<h1>@ViewData["Title"]</h1>
 
 <div class="row">
     <div class="col-md-3">
         <partial name="./Shared/_Menu" />
     </div>
     <div class="col-md-9">
-        <h1>This page will allow user to rate coaches from sessions they participated in.</h1>
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Session Type</th>
+                        <th>Coach</th>
+                        <th>Weekday</th>
+                        <th>Date</th>
+                        <th>Start time</th>
+                        <th>Finish time</th>
+                        <th>Room number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SessionsList.Select(s => new FitnessClub.Data.Models.ViewModels.SessionViewModel(s)))
+                    {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SessionType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CoachFullname)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Weekday)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Date)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FinishTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Room)
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
     </div>
 </div>

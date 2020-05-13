@@ -3,15 +3,17 @@ using System;
 using FitnessClub.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FitnessClub.Migrations
 {
     [DbContext(typeof(FCContext))]
-    partial class FCContextModelSnapshot : ModelSnapshot
+    [Migration("20200512150002_PostgreSQL1")]
+    partial class PostgreSQL1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -306,9 +308,6 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("AspNetUserId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("Birthdate")
                         .HasColumnType("timestamp without time zone");
 
@@ -335,13 +334,15 @@ namespace FitnessClub.Migrations
                     b.Property<int?>("Gender")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("Id")
+                        .HasColumnType("integer");
+
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
                     b.HasKey("PersonID");
 
-                    b.HasIndex("AspNetUserId")
-                        .IsUnique();
+                    b.HasIndex("Id");
 
                     b.ToTable("People");
 
@@ -555,12 +556,23 @@ namespace FitnessClub.Migrations
                 {
                     b.HasBaseType("FitnessClub.Data.Models.Person");
 
+                    b.Property<int?>("PersonID1")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("PersonID1");
+
                     b.HasDiscriminator().HasValue("Customer");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Employee", b =>
                 {
                     b.HasBaseType("FitnessClub.Data.Models.Person");
+
+                    b.Property<int?>("PersonID1")
+                        .HasColumnName("Employee_PersonID1")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("PersonID1");
 
                     b.HasDiscriminator().HasValue("Employee");
                 });
@@ -634,6 +646,11 @@ namespace FitnessClub.Migrations
                 {
                     b.HasBaseType("FitnessClub.Data.Models.Employee");
 
+                    b.Property<int?>("EmployeePersonID")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("EmployeePersonID");
+
                     b.HasDiscriminator().HasValue("Coach");
                 });
 
@@ -667,9 +684,9 @@ namespace FitnessClub.Migrations
 
             modelBuilder.Entity("FitnessClub.Data.Models.Person", b =>
                 {
-                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
-                        .WithOne("Person")
-                        .HasForeignKey("FitnessClub.Data.Models.Person", "AspNetUserId");
+                    b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "IdentityUser")
+                        .WithMany()
+                        .HasForeignKey("Id");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Session", b =>
@@ -743,6 +760,20 @@ namespace FitnessClub.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FitnessClub.Data.Models.Customer", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonID1");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Employee", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonID1");
+                });
+
             modelBuilder.Entity("FitnessClub.Data.Models.Identity.AspNetRoleClaim", b =>
                 {
                     b.HasOne("FitnessClub.Data.Models.Identity.AspNetRole", "AspNetRole")
@@ -780,6 +811,13 @@ namespace FitnessClub.Migrations
                     b.HasOne("FitnessClub.Data.Models.Identity.AspNetUser", "AspNetUser")
                         .WithMany("AspNetUserTokens")
                         .HasForeignKey("AspNetUserId");
+                });
+
+            modelBuilder.Entity("FitnessClub.Data.Models.Coach", b =>
+                {
+                    b.HasOne("FitnessClub.Data.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeePersonID");
                 });
 #pragma warning restore 612, 618
         }
