@@ -16,9 +16,10 @@ namespace FitnessClub.Data.DAL.Repositories
         }
         public override void Insert(Address address)
         {
-            if (Any(address.AddressID) == true)
+            if (unitOfWork.LoggedUserId == -1)
             {
-                throw new System.InvalidOperationException("This user already has address connected to their account.");
+                address.CreatedBy = address.Person.AspNetUser.Id;
+                dbSet.Add(address);
             }
             else
             {

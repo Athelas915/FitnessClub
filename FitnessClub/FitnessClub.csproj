@@ -17,6 +17,10 @@
     <Compile Remove="Migrations\20200512154042_PostgreSQL2.Designer.cs" />
     <Compile Remove="Migrations\20200512154315_PostgreSQL2.cs" />
     <Compile Remove="Migrations\20200512154315_PostgreSQL2.Designer.cs" />
+    <Compile Remove="Migrations\20200513121720_PostgreSQL7.cs" />
+    <Compile Remove="Migrations\20200513121720_PostgreSQL7.Designer.cs" />
+    <Compile Remove="Migrations\20200514212644_PostgreSQL14.cs" />
+    <Compile Remove="Migrations\20200514212644_PostgreSQL14.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

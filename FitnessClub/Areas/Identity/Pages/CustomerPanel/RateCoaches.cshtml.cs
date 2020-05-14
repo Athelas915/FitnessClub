@@ -1,40 +1,38 @@
-using System;
+using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
+using FitnessClub.Data.DAL;
+using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.ViewModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.Identity;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
 {
     public class RateCoachesModel : PageModel
     {
-        public readonly ICoachRatingRepository coachRatingRepository;
-        private readonly IHttpContextAccessor httpContextAccessor;
-        public RateCoachesModel(ICoachRatingRepository coachRatingRepository, IHttpContextAccessor httpContextAccessor)
+        private readonly ICoachRatingRepository coachRatingRepository;
+        private readonly int userId;
+        public RateCoachesModel(ICoachRatingRepository coachRatingRepository, UserResolverService userResolver)
         {
             this.coachRatingRepository = coachRatingRepository;
-            this.httpContextAccessor = httpContextAccessor;
+            userId = userResolver.GetUserId();
         }
         public Customer Customer { get; set; }
-        public int UserID { get; set; }
-        public IList<Coach> CoachesList { get; set; }
-        public IList<Session> SessionsList { get; set; }
+        public IList<SessionEnrollment> SessionEnrollments { get; set; }
+        public SessionViewModel ChosenSession { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            Customer = await coachRatingRepository.GetUserByIdentityId<Customer>(int.Parse(userId));
-
-            SessionsList = await coachRatingRepository.GetUsersSessions(Customer.PersonID);
-
-            await coachRatingRepository.SetCoaches(SessionsList); //without doing this, cshtml file was throwing "ObjectReferenceNull Exception"
-
+            Customer = await coachRatingRepository.GetUserByIdentityId<Customer>(userId);
+            
+            SessionEnrollments = await coachRatingRepository.GetUsersSessionEnrollments(Customer.PersonID);
+            await coachRatingRepository.SetSessionsAndCoaches(SessionEnrollments); //without doing this, cshtml file was throwing "ObjectReferenceNull Exception"
+            SessionEnrollments = SessionEnrollments.OrderBy(s => s.Session.Start).ToList();
+            
             return Page();
         }
     }

@@ -3,15 +3,17 @@ using System;
 using FitnessClub.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FitnessClub.Migrations
 {
     [DbContext(typeof(FCContext))]
-    partial class FCContextModelSnapshot : ModelSnapshot
+    [Migration("20200514183913_PostgreSQL12")]
+    partial class PostgreSQL12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,17 +80,15 @@ namespace FitnessClub.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<int>("Rating")
+                    b.Property<int>("PersonID")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SessionID")
+                    b.Property<int>("Rating")
                         .HasColumnType("integer");
 
                     b.HasKey("CoachRatingID");
 
                     b.HasIndex("CoachPersonID");
-
-                    b.HasIndex("SessionID");
 
                     b.ToTable("CoachRatings");
                 });
@@ -210,9 +210,6 @@ namespace FitnessClub.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -351,6 +348,9 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<int?>("CoachPersonID")
+                        .HasColumnType("integer");
+
                     b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
@@ -376,7 +376,7 @@ namespace FitnessClub.Migrations
 
                     b.HasKey("SessionID");
 
-                    b.HasIndex("PersonID");
+                    b.HasIndex("CoachPersonID");
 
                     b.ToTable("Sessions");
                 });
@@ -642,15 +642,9 @@ namespace FitnessClub.Migrations
 
             modelBuilder.Entity("FitnessClub.Data.Models.CoachRating", b =>
                 {
-                    b.HasOne("FitnessClub.Data.Models.Coach", null)
+                    b.HasOne("FitnessClub.Data.Models.Coach", "Coach")
                         .WithMany("CoachRatings")
                         .HasForeignKey("CoachPersonID");
-
-                    b.HasOne("FitnessClub.Data.Models.Session", "Session")
-                        .WithMany()
-                        .HasForeignKey("SessionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.Holiday", b =>
@@ -680,9 +674,7 @@ namespace FitnessClub.Migrations
                 {
                     b.HasOne("FitnessClub.Data.Models.Coach", "Coach")
                         .WithMany("Sessions")
-                        .HasForeignKey("PersonID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CoachPersonID");
                 });
 
             modelBuilder.Entity("FitnessClub.Data.Models.SessionEnrollment", b =>

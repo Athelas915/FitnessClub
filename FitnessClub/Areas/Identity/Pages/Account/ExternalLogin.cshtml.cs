@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
@@ -138,8 +139,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 Customer.AspNetUser = user;
                 Customer.Email = Input.Email;
                 Address.Person = Customer;
-                Customer.CreatedBy = user.Id;
-                Address.CreatedBy = user.Id;
 
                 if ((_addressRepository.Any(Address.AddressID) == true) || (_customerRepository.Any(Customer.PersonID) == true))
                 {
@@ -149,8 +148,15 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 {
                     _customerRepository.Insert(Customer);
                     _addressRepository.Insert(Address);
-                    await _customerRepository.Submit();
-                    await _addressRepository.Submit();
+                    try
+                    {
+                        await _customerRepository.Submit();
+                        await _addressRepository.Submit();
+                    }
+                    catch (DbUpdateException)
+                    {
+                        return Page();
+                    }
                 }
 
                 if (result.Succeeded)

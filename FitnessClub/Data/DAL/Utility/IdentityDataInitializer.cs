@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using FitnessClub.Data.Models.Identity;
 
-namespace FitnessClub.Data.DAL
+namespace FitnessClub.Data.DAL.Utility
 {
     public static class IdentityDataInitializer
     {
@@ -83,7 +83,7 @@ namespace FitnessClub.Data.DAL
         }
         public static void SeedRoles(RoleManager<AspNetRole> roleManager)
         {
-            if (!roleManager.RoleExistsAsync
+                if (!roleManager.RoleExistsAsync
         ("Administrator").Result)
             {
                 AspNetRole role = new AspNetRole();

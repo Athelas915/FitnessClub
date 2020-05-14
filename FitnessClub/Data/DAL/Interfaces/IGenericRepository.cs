@@ -19,6 +19,7 @@ namespace FitnessClub.Data.DAL.Interfaces
             Func<IQueryable<OtherEntity>, IOrderedQueryable<OtherEntity>> orderBy = null,
             string includeProperties = "") where OtherEntity : class;
         Task<TEntity> GetByID(params object[] Ids);
+        Task<OtherEntity> GetByID<OtherEntity>(params object[] Ids) where OtherEntity : class;
         Task<PersonEntity> GetUserByIdentityId<PersonEntity>(int aspNetUserId) where PersonEntity : Person;
         void Insert(TEntity entity);
         void Delete(params object[] Ids);

@@ -19,6 +19,7 @@ using Serilog.Settings.Configuration;
 using Microsoft.AspNetCore.Http;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL;
+using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Repositories;
 using FitnessClub.Data.Models.Identity;
@@ -65,7 +66,7 @@ namespace FitnessClub
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<FCContext>()
-                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
+                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken, AspNetRoleClaim>>()
                 .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
             
             services.AddAuthentication()
@@ -78,8 +79,8 @@ namespace FitnessClub
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
             
-            services.AddAuthorization();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddAuthorization(); 
+            services.AddTransient<UserResolverService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

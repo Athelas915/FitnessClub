@@ -7,7 +7,7 @@ using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Repositories;
 using FitnessClub.Data.Models;
 
-namespace FitnessClub.Data.DAL
+namespace FitnessClub.Data.DAL.Utility
 {
     public static class RepositoryRegistration
     {

@@ -54,15 +54,20 @@ namespace FitnessClub.Data.DAL
                 .Where(w => w.ClrType.IsSubclassOf(typeof(BaseEntity)))
                 .Select(c => modelBuilder.Entity(c.ClrType)))
             {
+                
                 entity
                     .Property("CreatedOn")
                     .HasDefaultValueSql("now()")
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity
                     .Property("CreatedBy")
-                    .HasDefaultValue(0)
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             }
+
+            modelBuilder.Entity<AspNetUser>()
+                .HasIndex(x => x.Email)
+                .IsUnique();
+
             modelBuilder.Entity<SessionEnrollment>()
                 .HasKey(o => new { o.PersonID, o.SessionID });
             modelBuilder.Entity<Log>().ToTable("logs");
@@ -70,7 +75,23 @@ namespace FitnessClub.Data.DAL
             modelBuilder.Entity<AspNetUser>()
                 .HasOne(a => a.Person)
                 .WithOne(b => b.AspNetUser)
-                .HasForeignKey<Person>(b => b.AspNetUserId);
+                .HasForeignKey<Person>(b => b.AspNetUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Person>()
+                .HasOne(a => a.Address)
+                .WithOne(b => b.Person)
+                .HasForeignKey<Address>(b => b.PersonID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Coach>()
+                .HasMany(a => a.Sessions)
+                .WithOne(b => b.Coach);
+
+            modelBuilder.Entity<Session>()
+                .HasOne(a => a.Coach)
+                .WithMany(b => b.Sessions)
+                .HasForeignKey(b => b.PersonID);
         }
     }
 }

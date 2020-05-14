@@ -9,5 +9,6 @@ namespace FitnessClub.Data.Models
         public int CreatedBy { get; set; }
         [Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedOn { get; set; }
+        
     }
 }

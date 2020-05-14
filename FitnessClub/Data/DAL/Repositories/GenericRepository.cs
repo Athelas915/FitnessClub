@@ -5,12 +5,13 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 
 namespace FitnessClub.Data.DAL.Repositories
 {
-    public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
+    public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
         internal IUnitOfWork unitOfWork;
         internal DbSet<TEntity> dbSet;
@@ -98,8 +99,14 @@ namespace FitnessClub.Data.DAL.Repositories
         {
             return await dbSet.FindAsync(Ids);
         }
+        public virtual async Task<OtherEntity> GetByID<OtherEntity>(params object[] Ids) where OtherEntity : class
+        {
+            var query = unitOfWork.Context.Set<OtherEntity>();
+            return await query.FindAsync(Ids);
+        }
         public virtual void Insert(TEntity entity)
         {
+            entity.CreatedBy = unitOfWork.LoggedUserId;
             dbSet.Add(entity);
         }
         public void Delete(params object[] Ids)

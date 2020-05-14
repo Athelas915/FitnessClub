@@ -1,5 +1,7 @@
 ﻿using System;
 using FitnessClub.Data.Models.Identity;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace FitnessClub.Data.Models
 {
@@ -17,6 +19,7 @@ namespace FitnessClub.Data.Models
         public DateTime Birthdate { get; set; }
         public virtual AspNetUser AspNetUser { get; set; }
         public int AspNetUserId { get; set; }
+        public virtual Address Address { get; set; }
 
     }
 }

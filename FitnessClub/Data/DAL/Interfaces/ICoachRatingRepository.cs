@@ -6,8 +6,7 @@ namespace FitnessClub.Data.DAL.Interfaces
 {
     public interface ICoachRatingRepository : IGenericRepository<CoachRating>
     {
-        Task<IList<Session>> GetUsersSessions(int id);
-        Task<Coach> GetCoachById(int id);
-        Task SetCoaches(IList<Session> sessions);
+        Task<IList<SessionEnrollment>> GetUsersSessionEnrollments(int personId);
+        Task SetSessionsAndCoaches(IList<SessionEnrollment> sessionEnrollments);
     }
 }

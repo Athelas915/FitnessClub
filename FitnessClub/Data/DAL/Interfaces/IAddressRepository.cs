@@ -9,5 +9,6 @@ namespace FitnessClub.Data.DAL.Interfaces
 {
     public interface IAddressRepository : IGenericRepository<Address>
     {
+        new void Insert(Address address);
     }
 }

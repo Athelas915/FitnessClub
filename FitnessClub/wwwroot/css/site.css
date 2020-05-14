@@ -73,7 +73,6 @@ body {
 ul.menu {
     /*Navigation menus for internal panels (eg. customer's panel)*/
     list-style-type: none;
-    list-style;
     border: 3px solid black;
     color: black;
     padding: 0;
@@ -107,4 +106,9 @@ a.menu-link:hover {
 
 div.coll-fill {
     overflow: auto;
+}
+
+select.bigger-select {
+    min-width: 60px;
+    max-width: 60px;
 }
