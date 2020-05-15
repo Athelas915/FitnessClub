@@ -18,6 +18,7 @@ namespace FitnessClub.Data.Models
         public DateTime Start { get; set; }
         public DateTime Finish { get; set; }
         public int Room { get; set; }
+        public virtual CoachRating CoachRating { get; set; }
         public virtual ICollection<SessionEnrollment> SessionEnrollments { get; set; }
     }
 }

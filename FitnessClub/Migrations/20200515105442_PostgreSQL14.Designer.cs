@@ -3,15 +3,17 @@ using System;
 using FitnessClub.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FitnessClub.Migrations
 {
     [DbContext(typeof(FCContext))]
-    partial class FCContextModelSnapshot : ModelSnapshot
+    [Migration("20200515105442_PostgreSQL14")]
+    partial class PostgreSQL14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,9 +65,7 @@ namespace FitnessClub.Migrations
             modelBuilder.Entity("FitnessClub.Data.Models.CoachRating", b =>
                 {
                     b.Property<int>("CoachRatingID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
 
                     b.Property<int?>("CoachPersonID")
                         .HasColumnType("integer");
@@ -87,9 +87,6 @@ namespace FitnessClub.Migrations
                     b.HasKey("CoachRatingID");
 
                     b.HasIndex("CoachPersonID");
-
-                    b.HasIndex("SessionID")
-                        .IsUnique();
 
                     b.ToTable("CoachRatings");
                 });
@@ -351,6 +348,9 @@ namespace FitnessClub.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CoachRatingID")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
@@ -649,7 +649,7 @@ namespace FitnessClub.Migrations
 
                     b.HasOne("FitnessClub.Data.Models.Session", "Session")
                         .WithOne("CoachRating")
-                        .HasForeignKey("FitnessClub.Data.Models.CoachRating", "SessionID")
+                        .HasForeignKey("FitnessClub.Data.Models.CoachRating", "CoachRatingID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

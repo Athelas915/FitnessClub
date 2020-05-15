@@ -22,13 +22,37 @@ namespace FitnessClub.Data.DAL.Repositories
         }
         //simple method that sets Coach and Session objects in SessionEnrollment properties. 
         //I tried doing a deep copy instead of editting the parameters, but it makes the code hard to read.
-        public async Task SetSessionsAndCoaches(IList<SessionEnrollment> sessionEnrollments)
+        public async Task SetSessionAndCoach(SessionEnrollment sessionEnrollment)
         {
-            foreach (SessionEnrollment session in sessionEnrollments)
+            sessionEnrollment.Session = await GetByID<Session>(sessionEnrollment.SessionID);
+            sessionEnrollment.Session.Coach = await GetByID<Coach>(sessionEnrollment.Session.PersonID);
+        }
+        public async Task<IList<SessionEnrollment>> GetUsersUnratedEnrollments(int userId)
+        {
+            var customer = await GetUserByIdentityId<Customer>(userId);
+
+            var enrollments = await Get<SessionEnrollment>();
+            enrollments = enrollments.Where(a => a.PersonID == customer.PersonID).ToList();
+
+            var usersEnrollmentIds = enrollments.Select(b => b.SessionID).ToList();
+
+            var ratings = await Get<CoachRating>();
+
+            ratings = ratings.Where(c => c.CreatedBy == userId && usersEnrollmentIds.Contains(c.SessionID)).ToList();
+
+            var ratedSessions = ratings.Select(d => d.SessionID).ToList();
+
+            IList<SessionEnrollment> result = new List<SessionEnrollment>();
+
+            foreach (var enrollment in enrollments)
             {
-                session.Session = await GetByID<Session>(session.SessionID);
-                session.Session.Coach = await GetByID<Coach>(session.Session.PersonID);
+                if (!ratedSessions.Contains(enrollment.SessionID.Value))
+                {
+                    result.Add(enrollment);
+                }
             }
+
+            return result;
         }
     }
 }

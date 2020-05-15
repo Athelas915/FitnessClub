@@ -30,40 +30,41 @@
                             <th>Finish time</th>
                             <th>Room number</th>
                             <th></th>
+
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.SessionEnrollments.Select(s => new SessionViewModel(s.Session)))
                         {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.SessionType)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CoachFullname)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Weekday)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Date)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.StartTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FinishTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Room)
-                            </td>
-                            <td>
-                                @{
-                                    Model.ChosenSession = item;
-                                }
-                                <a class ="text-white btn btn-primary" asp-page="/CustomerPanel/CreateRating" asp-area="Identity" asp-route-id="@item.SessionID">Rate</a>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SessionType)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CoachFullname)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Weekday)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Date)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.StartTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FinishTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Room)
+                                </td>
+                                <td>
+                                    @{
+                                        Model.ChosenSession = item;
+                                    }
+                                    <a class="text-white btn btn-primary" asp-page="/CustomerPanel/CreateRating" asp-area="Identity" asp-route-id="@item.SessionID">Rate</a>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -71,36 +72,5 @@
 
 
         </div>
-        <!--
-    </div>
-    <div class="col-md-1">
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rating</th>
-                        <th>Submit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="form-group">
-                            <select asp-for="Model.CoachRating.Rating" class="form-control">
-                                <option value=0>0</option>
-                                <option value=1>1</option>
-                                <option value=2>2</option>
-                                <option value=3>3</option>
-                                <option value=4>4</option>
-                                <option value=5>5</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Register</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        -->
     </div>
 </div>

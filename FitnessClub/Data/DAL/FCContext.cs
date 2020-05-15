@@ -84,9 +84,10 @@ namespace FitnessClub.Data.DAL
                 .HasForeignKey<Address>(b => b.PersonID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Coach>()
-                .HasMany(a => a.Sessions)
-                .WithOne(b => b.Coach);
+            modelBuilder.Entity<Session>()
+                .HasOne(a => a.CoachRating)
+                .WithOne(b => b.Session)
+                .HasForeignKey<CoachRating>(b => b.SessionID);
 
             modelBuilder.Entity<Session>()
                 .HasOne(a => a.Coach)

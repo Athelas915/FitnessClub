@@ -17,18 +17,42 @@ namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
         {
             this.coachRatingRepository = coachRatingRepository;
         }
-        public SessionViewModel ChosenSession { get; set; }
+        public Session ChosenSession { get; set; }
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {
+            if (id == null)
+            {
+                return  RedirectToPage("./RateCoaches");
+            }
+            else
+            { 
+                ChosenSession = await coachRatingRepository.GetByID<Session>(id.Value);
+                ChosenSession.Coach = await coachRatingRepository.GetByID<Coach>(ChosenSession.PersonID);
+
+            }
+            return Page();
+        }
         [BindProperty]
         public CoachRating CoachRating { get; set; }
-        public async Task OnGetAsync(int? id)
+        
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
-            var session = await coachRatingRepository.GetByID<Session>(id);
-            session.Coach = await coachRatingRepository.GetByID<Coach>(session.PersonID);
-            ChosenSession = new SessionViewModel(session);
-        }
-        public void OnPost()
-        {
+            if (id == null)
+            {
+                return RedirectToPage("./RateCoaches");
+            }
+            CoachRating.Session = await coachRatingRepository.GetByID<Session>(id.Value);
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
 
+            Serilog.Log.Information("SessionID: " + id);
+
+            coachRatingRepository.Insert(CoachRating);
+            await coachRatingRepository.Submit();
+
+            return RedirectToPage("./RateCoaches");
         }
     }
 }

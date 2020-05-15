@@ -1,4 +1,5 @@
 ﻿@page
+@using FitnessClub.Data.Models.ViewModels;
 @model FitnessClub.Areas.Identity.Pages.CustomerPanel.CreateRatingModel
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
@@ -8,63 +9,65 @@
     <h4>Rate Coach</h4>
     <hr />
     <dl class="row">
+        @{var item = new SessionViewModel(Model.ChosenSession);
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChosenSession.SessionType)
+            @Html.DisplayNameFor(model => item.SessionType)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChosenSession.SessionType)
+            @Html.DisplayFor(model => item.SessionType)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChosenSession.CoachFullname)
+            @Html.DisplayNameFor(model => item.CoachFullname)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChosenSession.CoachFullname)
+            @Html.DisplayFor(model => item.CoachFullname)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChosenSession.Weekday)
+            @Html.DisplayNameFor(model => item.Weekday)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChosenSession.Weekday)
+            @Html.DisplayFor(model => item.Weekday)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChosenSession.Date)
+            @Html.DisplayNameFor(model => item.Date)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChosenSession.Date)
+            @Html.DisplayFor(model => item.Date)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChosenSession.StartTime)
+            @Html.DisplayNameFor(model => item.StartTime)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChosenSession.StartTime)
+            @Html.DisplayFor(model => item.StartTime)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChosenSession.FinishTime)
+            @Html.DisplayNameFor(model => item.FinishTime)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChosenSession.FinishTime)
+            @Html.DisplayFor(model => item.FinishTime)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChosenSession.Room)
+            @Html.DisplayNameFor(model => item.Room)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChosenSession.Room)
+            @Html.DisplayFor(model => item.Room)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CoachRating.Rating)
         </dt>
-        <dd class="col-sm-10">
-            <form>
-                <select asp-for="@Model.CoachRating.Rating" class="bigger-select form-control">
-                    <option value=0>0</option>
-                    <option value=1>1</option>
-                    <option value=2>2</option>
-                    <option value=3>3</option>
-                    <option value=4>4</option>
-                    <option value=5>5</option>
-                </select>
-                <button type="submit" class="btn btn-primary">Rate</button>
-            </form>
-        </dd>
+        }
+    <dd class="col-sm-10">
+        <form method="post" asp-route-id="@Model.ChosenSession.SessionID">
+            <select asp-for="@Model.CoachRating.Rating" class="bigger-select form-control">
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+            </select>
+            <input type="submit" value="Rate" class="btn btn-primary" />
+        </form>
+    </dd>
     </dl>
 </div>

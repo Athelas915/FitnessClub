@@ -22,15 +22,18 @@ namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
             this.coachRatingRepository = coachRatingRepository;
             userId = userResolver.GetUserId();
         }
-        public Customer Customer { get; set; }
         public IList<SessionEnrollment> SessionEnrollments { get; set; }
         public SessionViewModel ChosenSession { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
-            Customer = await coachRatingRepository.GetUserByIdentityId<Customer>(userId);
             
-            SessionEnrollments = await coachRatingRepository.GetUsersSessionEnrollments(Customer.PersonID);
-            await coachRatingRepository.SetSessionsAndCoaches(SessionEnrollments); //without doing this, cshtml file was throwing "ObjectReferenceNull Exception"
+            SessionEnrollments = await coachRatingRepository.GetUsersUnratedEnrollments(userId);
+            
+            foreach (var sessionEnrollment in SessionEnrollments)
+            {
+                await coachRatingRepository.SetSessionAndCoach(sessionEnrollment);
+            }
+
             SessionEnrollments = SessionEnrollments.OrderBy(s => s.Session.Start).ToList();
             
             return Page();
