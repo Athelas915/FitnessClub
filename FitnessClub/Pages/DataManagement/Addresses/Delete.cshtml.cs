@@ -5,20 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Addresses
 {
-    [Authorize(Roles = "Administrator")]
     public class DeleteModel : PageModel
     {
-        private readonly IAddressRepository addressRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public DeleteModel(IAddressRepository addressRepository)
+        public DeleteModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.addressRepository = addressRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -31,7 +29,8 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return NotFound();
             }
 
-            Address = await addressRepository.GetByID(id.Value);
+            Address = await _context.Addresses
+                .Include(a => a.Person).FirstOrDefaultAsync(m => m.AddressID == id);
 
             if (Address == null)
             {
@@ -47,12 +46,12 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return NotFound();
             }
 
-            Address = await addressRepository.GetByID(id.Value);
+            Address = await _context.Addresses.FindAsync(id);
 
             if (Address != null)
             {
-                addressRepository.Delete(Address);
-                await addressRepository.Submit();
+                _context.Addresses.Remove(Address);
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");

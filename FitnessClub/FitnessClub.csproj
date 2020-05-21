@@ -25,6 +25,14 @@
     <Compile Remove="Migrations\20200515100459_PostgreSQL14.Designer.cs" />
     <Compile Remove="Migrations\20200515110208_PostgreSQL15.cs" />
     <Compile Remove="Migrations\20200515110208_PostgreSQL15.Designer.cs" />
+    <Compile Remove="Migrations\20200519002626_PostgreSQL17.cs" />
+    <Compile Remove="Migrations\20200519002626_PostgreSQL17.Designer.cs" />
+    <Compile Remove="Migrations\20200519004008_PostgreSQL17.cs" />
+    <Compile Remove="Migrations\20200519004008_PostgreSQL17.Designer.cs" />
+    <Compile Remove="Migrations\20200519203641_PostgreSQL17.cs" />
+    <Compile Remove="Migrations\20200519203641_PostgreSQL17.Designer.cs" />
+    <Compile Remove="Migrations\20200519204034_PostgreSQL17.cs" />
+    <Compile Remove="Migrations\20200519204034_PostgreSQL17.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,51 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Pages\DataManagement\Addresses\Create.cshtml" />
-    <None Include="Pages\DataManagement\Addresses\Delete.cshtml" />
-    <None Include="Pages\DataManagement\Addresses\Details.cshtml" />
-    <None Include="Pages\DataManagement\Addresses\Edit.cshtml" />
-    <None Include="Pages\DataManagement\Addresses\Index.cshtml" />
-    <None Include="Pages\DataManagement\Coaches\Create.cshtml" />
-    <None Include="Pages\DataManagement\Coaches\Delete.cshtml" />
-    <None Include="Pages\DataManagement\Coaches\Details.cshtml" />
-    <None Include="Pages\DataManagement\Coaches\Edit.cshtml" />
-    <None Include="Pages\DataManagement\Coaches\Index.cshtml" />
-    <None Include="Pages\DataManagement\CoachRatings\Create.cshtml" />
-    <None Include="Pages\DataManagement\CoachRatings\Delete.cshtml" />
-    <None Include="Pages\DataManagement\CoachRatings\Details.cshtml" />
-    <None Include="Pages\DataManagement\CoachRatings\Edit.cshtml" />
-    <None Include="Pages\DataManagement\CoachRatings\Index.cshtml" />
-    <None Include="Pages\DataManagement\Customers\Create.cshtml" />
-    <None Include="Pages\DataManagement\Customers\Delete.cshtml" />
-    <None Include="Pages\DataManagement\Customers\Details.cshtml" />
-    <None Include="Pages\DataManagement\Customers\Edit.cshtml" />
-    <None Include="Pages\DataManagement\Customers\Index.cshtml" />
-    <None Include="Pages\DataManagement\Employees\Create.cshtml" />
-    <None Include="Pages\DataManagement\Employees\Delete.cshtml" />
-    <None Include="Pages\DataManagement\Employees\Details.cshtml" />
-    <None Include="Pages\DataManagement\Employees\Edit.cshtml" />
-    <None Include="Pages\DataManagement\Employees\Index.cshtml" />
-    <None Include="Pages\DataManagement\Holidays\Create.cshtml" />
-    <None Include="Pages\DataManagement\Holidays\Delete.cshtml" />
-    <None Include="Pages\DataManagement\Holidays\Details.cshtml" />
-    <None Include="Pages\DataManagement\Holidays\Edit.cshtml" />
-    <None Include="Pages\DataManagement\Holidays\Index.cshtml" />
-    <None Include="Pages\DataManagement\Memberships\Create.cshtml" />
-    <None Include="Pages\DataManagement\Memberships\Delete.cshtml" />
-    <None Include="Pages\DataManagement\Memberships\Details.cshtml" />
-    <None Include="Pages\DataManagement\Memberships\Edit.cshtml" />
-    <None Include="Pages\DataManagement\Memberships\Index.cshtml" />
-    <None Include="Pages\DataManagement\SessionEnrollments\Create.cshtml" />
-    <None Include="Pages\DataManagement\SessionEnrollments\Delete.cshtml" />
-    <None Include="Pages\DataManagement\SessionEnrollments\Details.cshtml" />
-    <None Include="Pages\DataManagement\SessionEnrollments\Edit.cshtml" />
-    <None Include="Pages\DataManagement\SessionEnrollments\Index.cshtml" />
-    <None Include="Pages\DataManagement\Sessions\Create.cshtml" />
-    <None Include="Pages\DataManagement\Sessions\Delete.cshtml" />
-    <None Include="Pages\DataManagement\Sessions\Details.cshtml" />
-    <None Include="Pages\DataManagement\Sessions\Edit.cshtml" />
-    <None Include="Pages\DataManagement\Sessions\Index.cshtml" />
     <None Include="wwwroot\google2054d70463facac7.html" />
   </ItemGroup>
 

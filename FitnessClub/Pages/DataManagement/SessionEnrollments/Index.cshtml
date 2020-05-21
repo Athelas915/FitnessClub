@@ -15,10 +15,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.SessionEnrollment[0].PersonID)
+                @Html.DisplayNameFor(model => model.SessionEnrollment[0].Session)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SessionEnrollment[0].Session)
+                @Html.DisplayNameFor(model => model.SessionEnrollment[0].Customer)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SessionEnrollment[0].CreatedBy)
@@ -33,10 +33,10 @@
 @foreach (var item in Model.SessionEnrollment) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonID)
+                @Html.DisplayFor(modelItem => item.Session.SessionID)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SessionID)
+                @Html.DisplayFor(modelItem => item.Customer.PersonID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)
@@ -45,9 +45,9 @@
                 @Html.DisplayFor(modelItem => item.CreatedOn)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-PersonID="@item.PersonID" asp-route-SessionID="@item.SessionID">Edit</a> |
-                <a asp-page="./Details" asp-route-PersonID="@item.PersonID" asp-route-SessionID="@item.SessionID">Details</a> |
-                <a asp-page="./Delete" asp-route-PersonID="@item.PersonID" asp-route-SessionID="@item.SessionID">Delete</a>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
 }

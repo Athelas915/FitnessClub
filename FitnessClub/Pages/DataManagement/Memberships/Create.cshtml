@@ -20,10 +20,6 @@
                 <span asp-validation-for="Membership.MembershipNo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Membership.PersonID" class="control-label"></label>
-                <select asp-for="Membership.PersonID" class="form-control" asp-items="ViewBag.PersonID"></select>
-            </div>
-            <div class="form-group">
                 <label asp-for="Membership.Start" class="control-label"></label>
                 <input asp-for="Membership.Start" class="form-control" />
                 <span asp-validation-for="Membership.Start" class="text-danger"></span>
@@ -32,6 +28,15 @@
                 <label asp-for="Membership.Finish" class="control-label"></label>
                 <input asp-for="Membership.Finish" class="form-control" />
                 <span asp-validation-for="Membership.Finish" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Membership.CustomerID" class="control-label"></label>
+                <select asp-for="Membership.CustomerID" class ="form-control" asp-items="ViewBag.CustomerID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Membership.CreatedBy" class="control-label"></label>
+                <input asp-for="Membership.CreatedBy" class="form-control" />
+                <span asp-validation-for="Membership.CreatedBy" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

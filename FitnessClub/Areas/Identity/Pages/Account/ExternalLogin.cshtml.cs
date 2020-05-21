@@ -23,23 +23,20 @@ namespace FitnessClub.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly IPersonRepository<Customer> _customerRepository;
-        private readonly IAddressRepository _addressRepository;
+        private readonly ICustomerRepository _customerRepository;
         private readonly SignInManager<AspNetUser> _signInManager;
         private readonly UserManager<AspNetUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            IPersonRepository<Customer> customerRepository,
-            IAddressRepository addressRepository,
+            ICustomerRepository customerRepository,
             SignInManager<AspNetUser> signInManager,
             UserManager<AspNetUser> userManager,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
             _customerRepository = customerRepository;
-            _addressRepository = addressRepository;
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
@@ -140,18 +137,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 Customer.Email = Input.Email;
                 Address.Person = Customer;
 
-                if ((_addressRepository.Any(Address.AddressID) == true) || (_customerRepository.Any(Customer.PersonID) == true))
                 {
-                    return RedirectToPage("..../Pages/Error");
-                }
-                else
-                {
-                    _customerRepository.Insert(Customer);
-                    _addressRepository.Insert(Address);
+                    await _customerRepository.Insert(Customer);
                     try
                     {
-                        await _customerRepository.Submit();
-                        await _addressRepository.Submit();
+                        await _customerRepository.Commit();
                     }
                     catch (DbUpdateException)
                     {

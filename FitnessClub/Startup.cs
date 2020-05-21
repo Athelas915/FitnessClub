@@ -22,6 +22,8 @@ using FitnessClub.Data.DAL;
 using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Repositories;
+using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.BLL.Services;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -60,15 +62,31 @@ namespace FitnessClub
 
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCConnectionString")));
 
-            RepositoryRegistration.Register(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class in the Data/DAL folder.
 
-            services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddIdentity<AspNetUser, AspNetRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.User.RequireUniqueEmail = true;
+            })
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<FCContext>()
-                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken, AspNetRoleClaim>>()
+                .AddUserStore<UserStoreFC>()
                 .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
-            
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<ICoachRepository, CoachRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ISessionRepository, SessionRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
+
+            services.AddScoped<ICoachRatingService, CoachRatingService>();
+            services.AddScoped<IAccountManagementService, AccountManagementService>();
+
+            services.AddTransient<UserResolverService>();
+
             services.AddAuthentication()
             .AddGoogle(options =>   
             {
@@ -79,8 +97,7 @@ namespace FitnessClub
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
             
-            services.AddAuthorization(); 
-            services.AddTransient<UserResolverService>();
+            services.AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,6 +155,16 @@ namespace FitnessClub
             {
                 endpoints.MapRazorPages();
             });
+        }
+        //This class is supposed to configure UserStore type. AutoSaveChanges = false means that operations on UserManager (such as AddUser) don't automatically commit changes to the context.
+        //Since I'm using repository pattern with unit of work, I want my UserManager changes to save at the same time with other repositories. This configuration enables such behavior.
+        //Also, the this long string of types in UserStore<> won't clog the Startup.ConfigureServices.
+        public class UserStoreFC : UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken, AspNetRoleClaim>, IUserStore<AspNetUser>
+        {
+            public UserStoreFC(FCContext context) : base(context)
+            {
+                AutoSaveChanges = false;
+            }
         }
     }
 }

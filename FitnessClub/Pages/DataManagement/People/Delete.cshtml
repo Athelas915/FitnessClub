@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Delete";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Delete</h1>
@@ -12,12 +13,6 @@
     <h4>Person</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Person.AspNetUserId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Person.AspNetUserId)
-        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Person.FirstName)
         </dt>
@@ -49,10 +44,10 @@
             @Html.DisplayFor(model => model.Person.Birthdate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Person.CreatedOn)
+            @Html.DisplayNameFor(model => model.Person.AspNetUser)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Person.CreatedOn)
+            @Html.DisplayFor(model => model.Person.AspNetUser.Id)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Person.CreatedBy)
@@ -60,8 +55,11 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Person.CreatedBy)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.CreatedOn)
+        </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Person.AspNetUserId)
+            @Html.DisplayFor(model => model.Person.CreatedOn)
         </dd>
     </dl>
     

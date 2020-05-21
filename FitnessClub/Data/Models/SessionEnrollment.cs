@@ -1,12 +1,11 @@
 ﻿namespace FitnessClub.Data.Models
 {
-    public class SessionEnrollment : BaseEntity
+    public class SessionEnrollment : DataEntity
     {
-        public int? SessionID { get; set; }
-        public int? PersonID { get; set; }
-        public int? CoachRatingID { get; set; }
         public virtual Session Session { get; set; }
+        public int SessionID { get; set; }
         public virtual Customer Customer { get; set; }
+        public int CustomerID { get; set; }
         public virtual CoachRating CoachRating { get; set; }
     }
 }

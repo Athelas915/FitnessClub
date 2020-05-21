@@ -5,25 +5,24 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.CoachRatings
 {
-    [Authorize(Roles = "Administrator")]
     public class CreateModel : PageModel
     {
-        private readonly ICoachRatingRepository coachRatingRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public CreateModel(ICoachRatingRepository coachRatingRepository)
+        public CreateModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.coachRatingRepository = coachRatingRepository;
+            _context = context;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-            ViewData["PersonID"] = new SelectList(await coachRatingRepository.Get<Coach>(), "PersonID", "LastName");
+        ViewData["CoachID"] = new SelectList(_context.Coaches, "PersonID", "LastName");
+        ViewData["CustomerID"] = new SelectList(_context.Customers, "PersonID", "LastName");
             return Page();
         }
 
@@ -39,8 +38,8 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return Page();
             }
 
-            coachRatingRepository.Insert(CoachRating);
-            await coachRatingRepository.Submit();
+            _context.CoachRatings.Add(CoachRating);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

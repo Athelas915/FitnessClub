@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Settings.Configuration;
 using FitnessClub.Data.DAL;
-using FitnessClub.Pages.DataManagement.People;
 
 namespace FitnessClub
 {

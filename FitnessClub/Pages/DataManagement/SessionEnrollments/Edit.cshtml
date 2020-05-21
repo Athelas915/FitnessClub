@@ -14,13 +14,17 @@
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SessionEnrollment.SessionID" />
+            <input type="hidden" asp-for="SessionEnrollment.CustomerID" />
             <div class="form-group">
-                <label asp-for="SessionEnrollment.SessionID" class="control-label"></label>
-                <select asp-for="SessionEnrollment.SessionID" class="form-control" asp-items="ViewBag.SessionID"></select>
+                <label asp-for="SessionEnrollment.CreatedBy" class="control-label"></label>
+                <input asp-for="SessionEnrollment.CreatedBy" class="form-control" />
+                <span asp-validation-for="SessionEnrollment.CreatedBy" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SessionEnrollment.PersonID" class="control-label"></label>
-                <select asp-for="SessionEnrollment.PersonID" class="form-control" asp-items="ViewBag.PersonID"></select>
+                <label asp-for="SessionEnrollment.CreatedOn" class="control-label"></label>
+                <input asp-for="SessionEnrollment.CreatedOn" class="form-control" />
+                <span asp-validation-for="SessionEnrollment.CreatedOn" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

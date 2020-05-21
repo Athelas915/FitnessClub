@@ -9,7 +9,7 @@ namespace FitnessClub.Data.Models
     {
         Male, Female
     }
-    public class Person : BaseEntity
+    public class Person : DataEntity
     {
         public int PersonID { get; set; }
         public string FirstName { get; set; }
@@ -18,8 +18,7 @@ namespace FitnessClub.Data.Models
         public Gender? Gender { get; set; }
         public DateTime Birthdate { get; set; }
         public virtual AspNetUser AspNetUser { get; set; }
-        public int AspNetUserId { get; set; }
+        public int UserID { get; set; }
         public virtual Address Address { get; set; }
-
     }
 }

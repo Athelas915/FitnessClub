@@ -5,36 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace FitnessClub.Pages.DataManagement.Employees
 {
-    [Authorize(Roles = "Administrator")]
     public class CreateModel : PageModel
     {
-        private readonly IPersonRepository<Employee> employeeRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public CreateModel(IPersonRepository<Employee> employeeRepository)
+        public CreateModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.employeeRepository = employeeRepository;
+            _context = context;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-            var users = await employeeRepository.Get<AspNetUser>();
-            var people = await employeeRepository.Get<Person>();
-            var usersToRemove = people.Select(c => c.AspNetUserId).ToList();
-
-            foreach (int userToRemove in usersToRemove)
-            {
-                users.Remove(users.Single(u => u.Id == userToRemove));
-            }
-
-            ViewData["Users"] = new SelectList(users, "Id", "Email");
+        ViewData["UserID"] = new SelectList(_context.AspNetUsers, "Id", "Id");
             return Page();
         }
 
@@ -50,8 +37,8 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return Page();
             }
 
-            employeeRepository.Insert(Employee);
-            await employeeRepository.Submit();
+            _context.Employees.Add(Employee);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

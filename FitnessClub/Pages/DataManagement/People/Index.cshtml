@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Index</h1>
@@ -13,9 +14,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Person[0].AspNetUserId)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Person[0].FirstName)
             </th>
@@ -32,13 +30,13 @@
                 @Html.DisplayNameFor(model => model.Person[0].Birthdate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Person[0].CreatedOn)
+                @Html.DisplayNameFor(model => model.Person[0].AspNetUser)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Person[0].CreatedBy)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Person[0].AspNetUserId)
+                @Html.DisplayNameFor(model => model.Person[0].CreatedOn)
             </th>
             <th></th>
         </tr>
@@ -46,9 +44,6 @@
     <tbody>
 @foreach (var item in Model.Person) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AspNetUserId)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
             </td>
@@ -65,13 +60,13 @@
                 @Html.DisplayFor(modelItem => item.Birthdate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedOn)
+                @Html.DisplayFor(modelItem => item.AspNetUser.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AspNetUserId)
+                @Html.DisplayFor(modelItem => item.CreatedOn)
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.PersonID">Edit</a> |

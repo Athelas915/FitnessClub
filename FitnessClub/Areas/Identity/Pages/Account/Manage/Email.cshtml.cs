@@ -107,7 +107,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
             }
-
+            
             StatusMessage = "Your email is unchanged.";
             return RedirectToPage();
         }

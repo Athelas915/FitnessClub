@@ -6,40 +6,48 @@ using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Repositories;
 using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
+using Microsoft.AspNetCore.Identity;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Security.Claims;
 
 namespace FitnessClub.Data.DAL
 {
-    public class UnitOfWork : IUnitOfWork, IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
-        public FCContext Context { get; }
-        public int LoggedUserId { get; }
-
-        public UnitOfWork(FCContext context, UserResolverService userResolver)
+        private readonly FCContext context;
+        private readonly Dictionary<string, IRepository> repositories;
+        public UnitOfWork(FCContext context)
         {
-            Context = context;
-            LoggedUserId = userResolver.GetUserId();
+            this.context = context;
+            repositories = new Dictionary<string, IRepository>();
         }
-    
+        public void Register(IRepository repository)
+        {
+            repositories.Add(repository.GetType().Name, repository);
+        }
+        public DbSet<TEntity> Set<TEntity>() where TEntity : BaseEntity
+        {
+            return context.Set<TEntity>();
+        }
         public async Task Save()
         {
-            await Context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
-
-
         private bool disposed = false;
-
         protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
                 if (disposing)
                 {
-                    Context.Dispose();
+                    context.Dispose();
                 }
             }
             this.disposed = true;
         }
-
         public void Dispose()
         {
             Dispose(true);

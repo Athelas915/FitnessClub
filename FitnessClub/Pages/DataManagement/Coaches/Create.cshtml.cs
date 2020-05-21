@@ -5,37 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace FitnessClub.Pages.DataManagement.Coaches
 {
-    [Authorize(Roles = "Administrator")]
     public class CreateModel : PageModel
     {
-        private readonly IPersonRepository<Coach> coachRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public CreateModel(IPersonRepository<Coach> coachRepository)
+        public CreateModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.coachRepository = coachRepository;
+            _context = context;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-            var users = await coachRepository.Get<AspNetUser>();
-            var people = await coachRepository.Get<Person>();
-            var usersToRemove = people.Select(c => c.AspNetUserId).ToList();
-
-            foreach (int userToRemove in usersToRemove)
-            {
-                users.Remove(users.Single(u => u.Id == userToRemove));
-            }
-
-            ViewData["Users"] = new SelectList(users, "Id", "Email");
-
+        ViewData["UserID"] = new SelectList(_context.AspNetUsers, "Id", "Id");
             return Page();
         }
 
@@ -51,8 +37,8 @@ namespace FitnessClub.Pages.DataManagement.Coaches
                 return Page();
             }
 
-            coachRepository.Insert(Coach);
-            await coachRepository.Submit();
+            _context.Coaches.Add(Coach);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

@@ -11,8 +11,7 @@ namespace FitnessClub.Data.DAL.Interfaces
     {
         Task<IList<Log>> Get(
             Expression<Func<Log, bool>> filter = null,
-            Func<IQueryable<Log>, IOrderedQueryable<Log>> orderBy = null,
-            string includeProperties = "");
-        void DeleteAll(IList<Log> logs);
+            Func<IQueryable<Log>, IOrderedQueryable<Log>> orderBy = null);
+        void DeleteAllLogs();
     }
 }

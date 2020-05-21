@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -14,10 +15,6 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Coach.PersonID" />
-            <div class="form-group">
-                <label asp-for="Coach.AspNetUser" class="control-label"></label>
-                <select asp-for="Coach.AspNetUserId" class="form-control" asp-items="ViewBag.Users"></select>
-            </div>
             <div class="form-group">
                 <label asp-for="Coach.FirstName" class="control-label"></label>
                 <input asp-for="Coach.FirstName" class="form-control" />
@@ -42,6 +39,21 @@
                 <label asp-for="Coach.Birthdate" class="control-label"></label>
                 <input asp-for="Coach.Birthdate" class="form-control" />
                 <span asp-validation-for="Coach.Birthdate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Coach.UserID" class="control-label"></label>
+                <select asp-for="Coach.UserID" class="form-control" asp-items="ViewBag.UserID"></select>
+                <span asp-validation-for="Coach.UserID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Coach.CreatedBy" class="control-label"></label>
+                <input asp-for="Coach.CreatedBy" class="form-control" />
+                <span asp-validation-for="Coach.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Coach.CreatedOn" class="control-label"></label>
+                <input asp-for="Coach.CreatedOn" class="form-control" />
+                <span asp-validation-for="Coach.CreatedOn" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

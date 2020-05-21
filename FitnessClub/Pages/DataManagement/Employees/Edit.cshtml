@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -14,10 +15,6 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Employee.PersonID" />
-            <div class="form-group">
-                <label asp-for="Employee.AspNetUser" class="control-label"></label>
-                <select asp-for="Employee.AspNetUserId" class="form-control" asp-items="ViewBag.Users"></select>
-            </div>
             <div class="form-group">
                 <label asp-for="Employee.FirstName" class="control-label"></label>
                 <input asp-for="Employee.FirstName" class="form-control" />
@@ -42,6 +39,21 @@
                 <label asp-for="Employee.Birthdate" class="control-label"></label>
                 <input asp-for="Employee.Birthdate" class="form-control" />
                 <span asp-validation-for="Employee.Birthdate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Employee.UserID" class="control-label"></label>
+                <select asp-for="Employee.UserID" class="form-control" asp-items="ViewBag.UserID"></select>
+                <span asp-validation-for="Employee.UserID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Employee.CreatedBy" class="control-label"></label>
+                <input asp-for="Employee.CreatedBy" class="form-control" />
+                <span asp-validation-for="Employee.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Employee.CreatedOn" class="control-label"></label>
+                <input asp-for="Employee.CreatedOn" class="form-control" />
+                <span asp-validation-for="Employee.CreatedOn" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
