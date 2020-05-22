@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +13,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly SignInManager<AspNetUser> _signInManager;
+        private readonly IAccountManagementService accountManagementService;
 
-        public IndexModel(
-            UserManager<AspNetUser> userManager,
-            SignInManager<AspNetUser> signInManager)
+        public IndexModel(IAccountManagementService accountManagementService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.accountManagementService = accountManagementService;
         }
 
         public string Username { get; set; }
@@ -38,10 +35,10 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
         }
 
-        private async Task LoadAsync(AspNetUser user)
+        private async Task LoadAsync(int userId)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var userName = await accountManagementService.GetUsername(userId);
+            var phoneNumber = await accountManagementService.GetPhoneNumber(userId);
 
             Username = userName;
 
@@ -53,42 +50,43 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+            var userId = accountManagementService.GetUserId(User);
 
-            await LoadAsync(user);
+            await LoadAsync(userId);
+            if (Username == null || Input.PhoneNumber == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+            var userId = accountManagementService.GetUserId(User);
 
             if (!ModelState.IsValid)
             {
-                await LoadAsync(user);
+                await LoadAsync(userId);
                 return Page();
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            var phoneNumber = await accountManagementService.GetPhoneNumber(userId);
+            if (phoneNumber == null)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+            else if (Input.PhoneNumber != phoneNumber)
+            {
+                var setPhoneResult = await accountManagementService.SetPhoneNumber(userId, Input.PhoneNumber);
+                if (setPhoneResult == null)
                 {
-                    var userId = await _userManager.GetUserIdAsync(user);
+                    return NotFound($"Unable to load user with ID '{userId}'.");
+                }
+                else if (!setPhoneResult.Succeeded)
+                {
                     throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
                 }
             }
-
-            await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }

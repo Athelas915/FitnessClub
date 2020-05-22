@@ -9,43 +9,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly ILogger<DownloadPersonalDataModel> _logger;
+        private readonly IAccountManagementService accountManagementService;
 
-        public DownloadPersonalDataModel(
-            UserManager<AspNetUser> userManager,
-            ILogger<DownloadPersonalDataModel> logger)
+        public DownloadPersonalDataModel(IAccountManagementService accountManagementService)
         {
-            _userManager = userManager;
-            _logger = logger;
+            this.accountManagementService = accountManagementService;
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
-
-            // Only include personal data for download
-            var personalData = new Dictionary<string, string>();
-            var personalDataProps = typeof(AspNetUser).GetProperties().Where(
-                            prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
-            foreach (var p in personalDataProps)
-            {
-                personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
-            }
+            var userId = accountManagementService.GetUserId(User);
+            var json = await accountManagementService.GetPersonalData(userId);
 
             Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
-            return new FileContentResult(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(personalData)), "text/json");
+            return new FileContentResult(json, "text/json");
         }
     }
 }

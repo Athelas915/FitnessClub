@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +13,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly SignInManager<AspNetUser> _signInManager;
+        private readonly IAccountManagementService accountManagementService;
 
-        public SetPasswordModel(
-            UserManager<AspNetUser> userManager,
-            SignInManager<AspNetUser> signInManager)
+        public SetPasswordModel(IAccountManagementService accountManagementService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.accountManagementService = accountManagementService;
         }
 
         [BindProperty]
@@ -45,15 +42,15 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            var userId = accountManagementService.GetUserId(User);
+
+            var hasPassword = await accountManagementService.HasPassword(userId);
+
+            if (hasPassword == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Unable to load user with ID '{userId}'.");
             }
-
-            var hasPassword = await _userManager.HasPasswordAsync(user);
-
-            if (hasPassword)
+            else if (hasPassword.Value)
             {
                 return RedirectToPage("./ChangePassword");
             }
@@ -68,14 +65,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+            var userId = accountManagementService.GetUserId(User);
 
-            var addPasswordResult = await _userManager.AddPasswordAsync(user, Input.NewPassword);
-            if (!addPasswordResult.Succeeded)
+            var addPasswordResult = await accountManagementService.AddPassword(userId, Input.NewPassword);
+            if (addPasswordResult == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+            else if (!addPasswordResult.Succeeded)
             {
                 foreach (var error in addPasswordResult.Errors)
                 {
@@ -84,7 +81,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your password has been set.";
 
             return RedirectToPage();

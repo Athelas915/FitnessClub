@@ -29,6 +29,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.Extensions.Options;
 
 namespace FitnessClub
 {

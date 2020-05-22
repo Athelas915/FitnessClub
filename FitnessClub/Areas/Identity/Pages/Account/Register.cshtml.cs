@@ -93,7 +93,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                
                 Customer.AspNetUser = user;
-                Customer.Email = Input.Email;
                 Address.Person = Customer;
 
                 {

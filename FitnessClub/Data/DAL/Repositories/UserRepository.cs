@@ -14,25 +14,23 @@ namespace FitnessClub.Data.DAL.Repositories
 {
     public class UserRepository : GenericRepository, IUserRepository
     {
-        public UserManager<AspNetUser> Manager { get; }
+        public UserManager<AspNetUser> UserManager { get; }
         public UserRepository(IUnitOfWork unitOfWork, UserManager<AspNetUser> userManager) : base(unitOfWork)
         {
-            Manager = userManager;
+            UserManager = userManager;
         }
-
-        public async Task<AspNetUser> GetUser(ClaimsPrincipal user)
-        {
-            return await Manager.GetUserAsync(user);
-        }
-
         public async Task<AspNetUser> GetUser(int userId)
         {
-            return await Manager.FindByIdAsync(userId.ToString());
-        }
+            return await UserManager.FindByIdAsync(userId.ToString());
 
-        public async Task<AspNetUser> GetUser(string email)
+        }
+        public async Task<AspNetUser> GetUserWithData(int userId)
         {
-            return await Manager.FindByEmailAsync(email);
+            var query = UserManager.Users.Where(a => a.Id == userId)
+                .Include(a => a.Person)
+                .ThenInclude(a => a.Address);
+
+            return await query.FirstOrDefaultAsync();
         }
     }
 }

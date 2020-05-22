@@ -134,7 +134,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 var user = new AspNetUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user);
                 Customer.AspNetUser = user;
-                Customer.Email = Input.Email;
                 Address.Person = Customer;
 
                 {

@@ -1,6 +1,8 @@
 ﻿using FitnessClub.Data.Models.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -8,22 +10,28 @@ namespace FitnessClub.Data.BLL.Interfaces
 {
     public interface IAccountManagementService
     {
-        Task<IdentityResult> AddLogin(AspNetUser user, ExternalLoginInfo info);
-        Task<IdentityResult> AddPassword(AspNetUser user, string newPassword);
-        Task<IdentityResult> ChangeEmail(AspNetUser user, string newEmail, string code);
-        Task<IdentityResult> ChangePassword(ClaimsPrincipal currentUser, string oldPassword, string newPassword);
-        Task<IdentityResult> ConfirmEmail(AspNetUser user, string code);
-        Task<IdentityResult> Create(AspNetUser user, string role);
-        Task<IdentityResult> DeleteSelfUser(ClaimsPrincipal currentUser, string inputPassword);
-        Task<string> GenerateChangeEmailToken(AspNetUser user, string newEmail);
-        Task<string> GeneratePasswordResetToken(AspNetUser user);
-        Task<UserLoginInfo> GetLogins(AspNetUser user);
-        Task<FileContentResult> GetPersonalData(AspNetUser user);
-        Task<string> GetPhoneNumber(AspNetUser user);
-        Task<bool?> HasPassword(ClaimsPrincipal currentUser);
-        Task<bool> IsEmailConfirmed(AspNetUser user);
-        Task<IdentityResult> RemoveLogin(AspNetUser user, string loginProvied, string providerKey);
-        Task<IdentityResult> ResetPasswordAsync(AspNetUser user, string code, string newPassword);
-        Task<IdentityResult> SetPhoneNumber(AspNetUser user, string newNumber);
+        int GetUserId(ClaimsPrincipal user);
+        Task<int> GetUserId(string email);
+        Task<IdentityResult> AddLogin(int userId);
+        Task<IdentityResult> AddPassword(int userId, string newPassword);
+        Task<IdentityResult> ChangeEmail(int userId, string newEmail, string code);
+        Task<IdentityResult> ChangePassword(int userId, string oldPassword, string newPassword);
+        AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl, int userId);
+        Task<IdentityResult> ConfirmEmail(int userId, string code);
+        Task<IdentityResult> Create(int userId, string role);
+        Task<IdentityResult> DeleteSelfUser(int userId, string inputPassword);
+        Task<string> GenerateChangeEmailToken(int userId, string newEmail);
+        Task<string> GenerateEmailConfirmationToken(int userId);
+        Task<string> GeneratePasswordResetToken(int userId);
+        Task<string> GetEmail(int userId);
+        Task<(IList<UserLoginInfo>, IList<AuthenticationScheme>)> GetLogins(int userId);
+        Task<byte[]> GetPersonalData(int userId);
+        Task<string> GetPhoneNumber(int userId);
+        Task<string> GetUsername(int userId);
+        Task<bool?> HasPassword(int userId);
+        Task<bool> IsEmailConfirmed(int userId);
+        Task<IdentityResult> RemoveLogin(int userId, string loginProvider, string providerKey);
+        Task<IdentityResult> ResetPasswordAsync(int userId, string code, string newPassword);
+        Task<IdentityResult> SetPhoneNumber(int userId, string newNumber);
     }
 }

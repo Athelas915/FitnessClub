@@ -34,7 +34,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var hasPassword = await accountManagementService.HasPassword(User);
+            var userId = accountManagementService.GetUserId(User);
+            var hasPassword = await accountManagementService.HasPassword(userId);
             if (hasPassword == null)
             {
                 return NotFound("Unable to load user with given ID.");
@@ -45,7 +46,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var result = await accountManagementService.DeleteSelfUser(User, Input.Password);
+            var userId = accountManagementService.GetUserId(User);
+            var result = await accountManagementService.DeleteSelfUser(userId, Input.Password);
 
             if (!result.Succeeded)
             {

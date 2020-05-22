@@ -48,7 +48,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var hasPassword = await accountManagementService.HasPassword(User);
+            var userId = accountManagementService.GetUserId(User);
+            var hasPassword = await accountManagementService.HasPassword(userId);
 
             if (hasPassword == null)
             {
@@ -68,7 +69,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             {
                 return Page();
             }
-            var changePasswordResult = await accountManagementService.ChangePassword(User, Input.OldPassword, Input.NewPassword);
+            var userId = accountManagementService.GetUserId(User);
+            var changePasswordResult = await accountManagementService.ChangePassword(userId, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
                 foreach (var error in changePasswordResult.Errors)
