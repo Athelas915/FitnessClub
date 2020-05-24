@@ -46,7 +46,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(int userId)
+        private async Task LoadAsync(string userId)
         {
             var email = await accountManagementService.GetEmail(userId);
             Email = email;
@@ -74,7 +74,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnPostChangeEmailAsync()
         {
             var userId = accountManagementService.GetUserId(User);
-            if (userId == -1)
+            if (userId == null)
             {
                 return NotFound($"Unable to load user.");
             }

@@ -18,30 +18,20 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly ICustomerRepository _customerRepository;
-        private readonly SignInManager<AspNetUser> _signInManager;
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IAccountManagementService accountManagementService;
+        private readonly IEmailSender emailSender;
 
-        public RegisterModel(
-            ICustomerRepository customerRepository,
-            UserManager<AspNetUser> userManager,
-            SignInManager<AspNetUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+        public RegisterModel(IAccountManagementService accountManagementService, IEmailSender emailSender)
         {
-            _customerRepository = customerRepository;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
-            _emailSender = emailSender;
+            this.accountManagementService = accountManagementService;
+            this.emailSender = emailSender;
         }
 
         [BindProperty]
@@ -78,61 +68,44 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await accountManagementService.GetExternalAuthenticationSchemes()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await accountManagementService.GetExternalAuthenticationSchemes()).ToList();
 
 
             if (ModelState.IsValid)
             {
-                var user = new AspNetUser { UserName = Input.Email, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-               
-                Customer.AspNetUser = user;
-                Address.Person = Customer;
+                var result = await accountManagementService.CreateUser(Input.Email, Input.Password, Customer, "Customer");
 
-                {
-                    await _customerRepository.Insert(Customer);
-                    try
-                    {
-                        await _customerRepository.Commit();
-                    }
-                    catch (DbUpdateException)
-                    {
-                        return Page();
-                    }
-                }
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    var userId = await accountManagementService.GetUserId(Input.Email);
 
-                    await _userManager.AddToRoleAsync(user, "Customer");
 
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var code = await accountManagementService.GenerateEmailConfirmationToken(userId);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code },
+                        values: new { area = "Identity", userId = userId, code = code },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    await emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (await accountManagementService.ConfirmedAccountRequired(userId))
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }

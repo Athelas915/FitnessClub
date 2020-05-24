@@ -9,19 +9,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly SignInManager<AspNetUser> _signInManager;
+        private readonly IAccountManagementService accountManagementService;
 
-        public ConfirmEmailChangeModel(UserManager<AspNetUser> userManager, SignInManager<AspNetUser> signInManager)
+        public ConfirmEmailChangeModel(IAccountManagementService accountManagementService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.accountManagementService = accountManagementService;
         }
 
         [TempData]
@@ -34,30 +33,17 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return RedirectToPage("/Index");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            var result = await accountManagementService.ChangeEmail(userId, email, code);
+            if (result == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
-            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            var result = await _userManager.ChangeEmailAsync(user, email, code);
             if (!result.Succeeded)
             {
                 StatusMessage = "Error changing email.";
                 return Page();
             }
-
-            // In our UI email and user name are one and the same, so when we update the email
-            // we need to update the user name.
-            var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
-            if (!setUserNameResult.Succeeded)
-            {
-                StatusMessage = "Error changing user name.";
-                return Page();
-            }
-
-            await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Thank you for confirming your email change.";
             return Page();
         }

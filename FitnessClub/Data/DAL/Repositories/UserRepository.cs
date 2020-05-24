@@ -19,14 +19,14 @@ namespace FitnessClub.Data.DAL.Repositories
         {
             UserManager = userManager;
         }
-        public async Task<AspNetUser> GetUser(int userId)
+        public async Task<AspNetUser> GetUser(string userId)
         {
-            return await UserManager.FindByIdAsync(userId.ToString());
+            return await UserManager.FindByIdAsync(userId);
 
         }
-        public async Task<AspNetUser> GetUserWithData(int userId)
+        public async Task<AspNetUser> GetUserWithData(string userId)
         {
-            var query = UserManager.Users.Where(a => a.Id == userId)
+            var query = UserManager.Users.Where(a => a.Id.ToString() == userId)
                 .Include(a => a.Person)
                 .ThenInclude(a => a.Address);
 

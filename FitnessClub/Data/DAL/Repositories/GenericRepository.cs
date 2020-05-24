@@ -1,6 +1,7 @@
 ﻿using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,10 @@ namespace FitnessClub.Data.DAL.Repositories
         {
             await unitOfWork.Save();
         }
+
+        public async Task<IDbContextTransaction> BeginTransaction() => await unitOfWork.BeginTransaction();
+
+
         public void Dispose()
         {
             unitOfWork.Dispose();

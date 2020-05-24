@@ -1,4 +1,5 @@
 ﻿using FitnessClub.Data.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace FitnessClub.Data.DAL.Interfaces
     public interface IRepository : IDisposable
     {
         Task Commit();
+        Task<IDbContextTransaction> BeginTransaction();
     }
     public interface IRepository<TEntity> : IRepository where TEntity : DataEntity
     {

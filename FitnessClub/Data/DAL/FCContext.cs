@@ -61,6 +61,7 @@ namespace FitnessClub.Data.DAL
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity
                     .Property("CreatedBy")
+                    .HasDefaultValueSql("-1")
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             }
 

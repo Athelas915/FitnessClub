@@ -5,6 +5,7 @@ using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using FitnessClub.Data.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
@@ -13,5 +14,6 @@ namespace FitnessClub.Data.DAL.Interfaces
         void Register(IRepository repository);
         DbSet<TEntity> Set<TEntity>() where TEntity : BaseEntity;
         Task Save();
+        Task<IDbContextTransaction> BeginTransaction();
     }
 }

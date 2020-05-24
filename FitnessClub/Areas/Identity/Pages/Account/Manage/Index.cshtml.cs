@@ -35,7 +35,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
         }
 
-        private async Task LoadAsync(int userId)
+        private async Task LoadAsync(string userId)
         {
             var userName = await accountManagementService.GetUsername(userId);
             var phoneNumber = await accountManagementService.GetPhoneNumber(userId);
@@ -53,7 +53,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             var userId = accountManagementService.GetUserId(User);
 
             await LoadAsync(userId);
-            if (Username == null || Input.PhoneNumber == null)
+            if (Username == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
@@ -71,11 +71,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             }
 
             var phoneNumber = await accountManagementService.GetPhoneNumber(userId);
-            if (phoneNumber == null)
-            {
-                return NotFound($"Unable to load user with ID '{userId}'.");
-            }
-            else if (Input.PhoneNumber != phoneNumber)
+            if (Input.PhoneNumber != phoneNumber)
             {
                 var setPhoneResult = await accountManagementService.SetPhoneNumber(userId, Input.PhoneNumber);
                 if (setPhoneResult == null)

@@ -70,7 +70,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Page("./ExternalLogins", pageHandler: "LinkLoginCallback");
-            var properties = accountManagementService.ConfigureExternalAuthenticationProperties(provider, redirectUrl, userId);
+            var properties = accountManagementService.ConfigureExternalAuthenticationProperties(provider, redirectUrl, userId: userId);
             return new ChallengeResult(provider, properties);
         }
 

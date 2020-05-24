@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FitnessClub.Data.DAL
 {
@@ -36,6 +37,9 @@ namespace FitnessClub.Data.DAL
         {
             await context.SaveChangesAsync();
         }
+
+        public async Task<IDbContextTransaction> BeginTransaction() => await context.Database.BeginTransactionAsync();
+
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)
         {

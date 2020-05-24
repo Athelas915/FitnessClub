@@ -12,7 +12,7 @@ namespace FitnessClub.Data.DAL.Interfaces
     public interface IUserRepository : IRepository
     {
         UserManager<AspNetUser> UserManager { get; }
-        Task<AspNetUser> GetUser(int userId);
-        Task<AspNetUser> GetUserWithData(int userId);
+        Task<AspNetUser> GetUser(string userId);
+        Task<AspNetUser> GetUserWithData(string userId);
     }
 }

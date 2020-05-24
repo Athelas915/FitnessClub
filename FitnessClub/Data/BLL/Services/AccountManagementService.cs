@@ -1,17 +1,17 @@
-﻿using System;
+﻿using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.Models;
+using FitnessClub.Data.Models.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.BLL.Interfaces;
-using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Text;
-using Microsoft.AspNetCore.Authentication;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Services
 {
@@ -26,43 +26,45 @@ namespace FitnessClub.Data.BLL.Services
             this.userRepository = userRepository;
             this.signInManager = signInManager;
         }
-        public int GetUserId(ClaimsPrincipal user)
+        public string GetUserId(ClaimsPrincipal user)
         {
             var userId = userRepository.UserManager.GetUserId(user);
-            if (userId == null)
-            {
-                return -1;
-            }
-            return int.Parse(userId);
+
+            return userId;
         }
-        public async Task<int> GetUserId(string email)
+        public async Task<string> GetUserId(string email)
         {
             var user = await userRepository.UserManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return -1;
-            }
-            return int.Parse(await userRepository.UserManager.GetUserIdAsync(user));
+            
+            return await userRepository.UserManager.GetUserIdAsync(user);
         }
-        public async Task<IdentityResult> AddLogin(int userId)
+        public async Task<IdentityResult> AddLogin(string userId)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
             }
-            var info = await signInManager.GetExternalLoginInfoAsync(userId.ToString());
+            var info = await signInManager.GetExternalLoginInfoAsync(userId);
             if (info == null)
             {
                 throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
             }
-
-            return await userRepository.UserManager.AddLoginAsync(user, info);
+            var result = await userRepository.UserManager.AddLoginAsync(user, info);
+            if (result.Succeeded)
+            {
+                await userRepository.Commit();
+            }
+            else
+            {
+                userRepository.Dispose();
+            }
+            return result;
         }
 
-        public async Task<IdentityResult> AddPassword(int userId, string newPassword)
+        public async Task<IdentityResult> AddPassword(string userId, string newPassword)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
@@ -71,18 +73,51 @@ namespace FitnessClub.Data.BLL.Services
             if (result.Succeeded)
             {
                 await signInManager.RefreshSignInAsync(user);
+                await userRepository.Commit();
+            }
+            else
+            {
+                userRepository.Dispose();
             }
             return result;
         }
 
-        public Task<IdentityResult> ChangeEmail(int userId, string newEmail, string code)
+        public async Task<IdentityResult> ChangeEmail(string userId, string newEmail, string code)
         {
-            throw new NotImplementedException();
+
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return null;
+            }
+
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var result = await userRepository.UserManager.ChangeEmailAsync(user, newEmail, code);
+            if (!result.Succeeded)
+            {
+                userRepository.Dispose();
+                return result;
+            }
+
+            // In our UI email and user name are one and the same, so when we update the email
+            // we need to update the user name.
+            var setUserNameResult = await userRepository.UserManager.SetUserNameAsync(user, newEmail);
+            if (!setUserNameResult.Succeeded)
+            {
+                userRepository.Dispose();
+                return result;
+            }
+
+            await signInManager.RefreshSignInAsync(user);
+
+            await userRepository.Commit();
+
+            return result;
         }
 
-        public async Task<IdentityResult> ChangePassword(int userId, string oldPassword, string newPassword)
+        public async Task<IdentityResult> ChangePassword(string userId, string oldPassword, string newPassword)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
@@ -94,27 +129,114 @@ namespace FitnessClub.Data.BLL.Services
                 await signInManager.RefreshSignInAsync(user);
                 Serilog.Log.Information("User with ID '{UserId}' deleted themselves.", await userRepository.UserManager.GetUserIdAsync(user));
             }
+            else
+            {
+                userRepository.Dispose();
+            }
             return result;
         }
 
-        public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl, int userId)
+        public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl, string userId = null) => 
+            signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, userId);
+
+        public async Task<IdentityResult> ConfirmEmail(string userId, string code)
         {
-            return signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, userId.ToString());
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return null;
+            }
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var result = await userRepository.UserManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                await userRepository.Commit();
+            }
+            else
+            {
+                userRepository.Dispose();
+            }   
+            return result;
         }
 
-        public Task<IdentityResult> ConfirmEmail(int userId, string code)
+        public async Task<bool> ConfirmedAccountRequired(string userId)
         {
-            throw new NotImplementedException();
+            var required = userRepository.UserManager.Options.SignIn.RequireConfirmedAccount;
+            if (!required)
+            {
+                var user = await userRepository.GetUser(userId);
+                await signInManager.SignInAsync(user, isPersistent: false);
+            }
+            return required;
         }
 
-        public Task<IdentityResult> Create(int userId, string role)
+        public async Task<IdentityResult> CreateUser(string email, Person person, ExternalLoginInfo info, params string[] roles)
         {
-            throw new NotImplementedException();
+            var user = new AspNetUser { UserName = email, Email = email };
+
+            var tr = await userRepository.BeginTransaction();
+            var result = await userRepository.UserManager.CreateAsync(user);
+            
+            if (result.Succeeded)
+            {
+                await userRepository.Commit();
+                result = await userRepository.UserManager.AddLoginAsync(user, info);
+                if (result.Succeeded)
+                {
+                    Serilog.Log.Information("User created an account using {Name} provider.", info.LoginProvider);
+                    await userRepository.Commit();
+
+                    user.Person = person;
+                    user.Person.CreatedBy = user.Id;
+                    user.Person.Address.CreatedBy = user.Id;
+
+                    foreach (var r in roles)
+                    {
+                        await userRepository.UserManager.AddToRoleAsync(user, r);
+                    }
+                    await signInManager.SignInAsync(user, isPersistent: false);
+
+                }
+                await userRepository.Commit();
+                await tr.CommitAsync();
+            }
+            else
+            {
+                userRepository.Dispose();
+            }
+            return result;
+        }
+        public async Task<IdentityResult> CreateUser(string email, string password, Person person, params string[] roles)
+        {
+            var user = new AspNetUser { UserName = email, Email = email };
+
+            var tr = await userRepository.BeginTransaction();
+            var result = await userRepository.UserManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                Serilog.Log.Information("User created a new account with password.");
+
+                await userRepository.Commit();
+
+                user.Person = person;
+                user.Person.CreatedBy = user.Id;
+                user.Person.Address.CreatedBy = user.Id;
+
+                await userRepository.UserManager.AddToRoleAsync(user, "Customer");
+                await userRepository.Commit();
+                await tr.CommitAsync();
+            }
+            else
+            {
+                userRepository.Dispose();
+            }
+            return result;
         }
 
-        public async Task<IdentityResult> DeleteSelfUser(int userId, string inputPassword)
+        public async Task<IdentityResult> DeleteSelfUser(string userId, string inputPassword)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             var hasPassword = await HasPassword(userId);
             if (hasPassword == null)
             {
@@ -134,6 +256,7 @@ namespace FitnessClub.Data.BLL.Services
             var result = await userRepository.UserManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
+                userRepository.Dispose();
                 throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");
             }
             await userRepository.Commit();
@@ -142,10 +265,15 @@ namespace FitnessClub.Data.BLL.Services
 
             return result;
         }
-
-        public async Task<string> GenerateChangeEmailToken(int userId, string newEmail)
+        public async Task<SignInResult> ExternalLoginSignIn(ExternalLoginInfo info)
         {
-            var user = await userRepository.GetUser(userId);
+            var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            return result;
+        }
+
+        public async Task<string> GenerateChangeEmailToken(string userId, string newEmail)
+        {
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
@@ -153,23 +281,24 @@ namespace FitnessClub.Data.BLL.Services
             return await userRepository.UserManager.GenerateChangeEmailTokenAsync(user, newEmail);
         }
 
-        public async Task<string> GenerateEmailConfirmationToken(int userId)
+        public async Task<string> GenerateEmailConfirmationToken(string userId)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
             }
             return await userRepository.UserManager.GenerateEmailConfirmationTokenAsync(user);
         }
-        public Task<string> GeneratePasswordResetToken(int userId)
+        public async Task<string> GeneratePasswordResetToken(string userId)
         {
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             throw new NotImplementedException();
         }
 
-        public async Task<string> GetEmail(int userId)
+        public async Task<string> GetEmail(string userId)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
@@ -177,7 +306,11 @@ namespace FitnessClub.Data.BLL.Services
             return await userRepository.UserManager.GetEmailAsync(user);
         }
 
-        public async Task<(IList<UserLoginInfo>, IList<AuthenticationScheme>)> GetLogins(int userId)
+        public async Task<ExternalLoginInfo> GetExternalLoginInfo() => await signInManager.GetExternalLoginInfoAsync();
+
+        public async Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemes() => await signInManager.GetExternalAuthenticationSchemesAsync();
+
+        public async Task<(IList<UserLoginInfo>, IList<AuthenticationScheme>)> GetLogins(string userId)
         {
             var user = await userRepository.GetUserWithData(userId);
             if (user == null)
@@ -185,13 +318,13 @@ namespace FitnessClub.Data.BLL.Services
                 return (null, null);
             }
             var currentLogins = await userRepository.UserManager.GetLoginsAsync(user);
-            var otherLogins = (await signInManager.GetExternalAuthenticationSchemesAsync())
+            var otherLogins = (await GetExternalAuthenticationSchemes())
                 .Where(auth => currentLogins.All(ul => auth.Name != ul.LoginProvider))
                 .ToList();
             return (currentLogins, otherLogins);
         }
 
-        public async Task<byte[]> GetPersonalData(int userId)
+        public async Task<byte[]> GetPersonalData(string userId)
         {
             var user = await userRepository.GetUserWithData(userId);
             if (user == null)
@@ -241,28 +374,28 @@ namespace FitnessClub.Data.BLL.Services
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(allData));
         }
         
-        public async Task<string> GetPhoneNumber(int userId)
+        public async Task<string> GetPhoneNumber(string userId)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return null;
+                throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
             }
             return await userRepository.UserManager.GetPhoneNumberAsync(user);
         }
 
-        public async Task<string> GetUsername(int userId)
+        public async Task<string> GetUsername(string userId)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
             }
             return await userRepository.UserManager.GetUserNameAsync(user);
         }
-        public async Task<bool?> HasPassword(int userId)
+        public async Task<bool?> HasPassword(string userId)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
@@ -270,11 +403,11 @@ namespace FitnessClub.Data.BLL.Services
             return await userRepository.UserManager.HasPasswordAsync(user);
         }
 
-        public async Task<bool> IsEmailConfirmed(int userId) => await userRepository.UserManager.IsEmailConfirmedAsync(await userRepository.GetUser(userId));
+        public async Task<bool> IsEmailConfirmed(string userId) => await userRepository.UserManager.IsEmailConfirmedAsync(await userRepository.GetUser(userId));
 
-        public async Task<IdentityResult> RemoveLogin(int userId, string loginProvider, string providerKey)
+        public async Task<IdentityResult> RemoveLogin(string userId, string loginProvider, string providerKey)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
@@ -284,18 +417,32 @@ namespace FitnessClub.Data.BLL.Services
             if (result.Succeeded)
             {
                 await signInManager.RefreshSignInAsync(user);
+                await userRepository.Commit();
+            }
+            else
+            {
+                userRepository.Dispose();
             }
             return result;
         }
 
-        public Task<IdentityResult> ResetPasswordAsync(int userId, string code, string newPassword)
+        public async Task<IdentityResult> ResetPasswordAsync(string userId, string code, string newPassword)
         {
-            throw new NotImplementedException();
+            var result = new IdentityResult();
+            if (result.Succeeded)
+            {
+                await userRepository.Commit();
+            }
+            else
+            {
+                userRepository.Dispose();
+            }
+            return result;
         }
 
-        public async Task<IdentityResult> SetPhoneNumber(int userId, string newNumber)
+        public async Task<IdentityResult> SetPhoneNumber(string userId, string newNumber)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return null;
@@ -303,7 +450,12 @@ namespace FitnessClub.Data.BLL.Services
             var result = await userRepository.UserManager.SetPhoneNumberAsync(user, newNumber);
             if (result.Succeeded)
             {
+                await userRepository.Commit();
                 await signInManager.RefreshSignInAsync(user);
+            }
+            else
+            {
+                userRepository.Dispose();
             }
             return result;
         }

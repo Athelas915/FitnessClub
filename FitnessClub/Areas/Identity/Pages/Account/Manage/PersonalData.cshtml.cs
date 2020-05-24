@@ -20,7 +20,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
         public IActionResult OnGet()
         {
             var userId = accountManagementService.GetUserId(User);
-            if (userId == -1)
+            if (userId == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
