@@ -15,7 +15,7 @@ namespace FitnessClub.Data.DAL.Interfaces
     }
     public interface IRepository<TEntity> : IRepository where TEntity : DataEntity
     {
-        IQueryable<TEntity> Get(
+        IEnumerable<TEntity> Get(
                Expression<Func<TEntity, bool>> filter = null,
                Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                string includeProperties = ""

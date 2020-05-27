@@ -13,11 +13,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
 
-        public IndexModel(IAccountManagementService accountManagementService)
+        public IndexModel(IUserService userService)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
         }
 
         public string Username { get; set; }
@@ -37,8 +37,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(string userId)
         {
-            var userName = await accountManagementService.GetUsername(userId);
-            var phoneNumber = await accountManagementService.GetPhoneNumber(userId);
+            var userName = await userService.GetUsername(userId);
+            var phoneNumber = await userService.GetPhoneNumber(userId);
 
             Username = userName;
 
@@ -50,7 +50,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
 
             await LoadAsync(userId);
             if (Username == null)
@@ -62,7 +62,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
 
             if (!ModelState.IsValid)
             {
@@ -70,10 +70,10 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var phoneNumber = await accountManagementService.GetPhoneNumber(userId);
+            var phoneNumber = await userService.GetPhoneNumber(userId);
             if (Input.PhoneNumber != phoneNumber)
             {
-                var setPhoneResult = await accountManagementService.SetPhoneNumber(userId, Input.PhoneNumber);
+                var setPhoneResult = await userService.SetPhoneNumber(userId, Input.PhoneNumber);
                 if (setPhoneResult == null)
                 {
                     return NotFound($"Unable to load user with ID '{userId}'.");

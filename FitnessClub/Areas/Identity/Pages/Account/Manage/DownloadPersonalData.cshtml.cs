@@ -15,17 +15,17 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
 
-        public DownloadPersonalDataModel(IAccountManagementService accountManagementService)
+        public DownloadPersonalDataModel(IUserService userService)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
-            var json = await accountManagementService.GetPersonalData(userId);
+            var userId = userService.GetUserId(User);
+            var json = await userService.GetPersonalData(userId);
 
             Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
             return new FileContentResult(json, "text/json");

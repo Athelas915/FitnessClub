@@ -16,11 +16,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
 
-        public ConfirmEmailChangeModel(IAccountManagementService accountManagementService)
+        public ConfirmEmailChangeModel(IUserService userService)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
         }
 
         [TempData]
@@ -33,7 +33,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return RedirectToPage("/Index");
             }
 
-            var result = await accountManagementService.ChangeEmail(userId, email, code);
+            var result = await userService.ChangeEmail(userId, email, code);
             if (result == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");

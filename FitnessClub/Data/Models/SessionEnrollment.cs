@@ -6,6 +6,5 @@
         public int SessionID { get; set; }
         public virtual Customer Customer { get; set; }
         public int CustomerID { get; set; }
-        public virtual CoachRating CoachRating { get; set; }
     }
 }

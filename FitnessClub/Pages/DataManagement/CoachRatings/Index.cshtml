@@ -24,6 +24,9 @@
                 @Html.DisplayNameFor(model => model.CoachRating[0].Customer)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.CoachRating[0].SessionID)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.CoachRating[0].CreatedBy)
             </th>
             <th>
@@ -43,6 +46,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Customer.PersonID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SessionID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

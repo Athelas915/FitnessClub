@@ -13,11 +13,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
 
-        public SetPasswordModel(IAccountManagementService accountManagementService)
+        public SetPasswordModel(IUserService userService)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
         }
 
         [BindProperty]
@@ -42,9 +42,9 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
 
-            var hasPassword = await accountManagementService.HasPassword(userId);
+            var hasPassword = await userService.HasPassword(userId);
 
             if (hasPassword == null)
             {
@@ -65,9 +65,9 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
 
-            var addPasswordResult = await accountManagementService.AddPassword(userId, Input.NewPassword);
+            var addPasswordResult = await userService.AddPassword(userId, Input.NewPassword);
             if (addPasswordResult == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");

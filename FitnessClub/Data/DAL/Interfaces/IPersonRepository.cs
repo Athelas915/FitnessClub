@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
-    public interface IEmployeeRepository : IPersonRepository<Employee>
+    public interface IPersonRepository<PEntity> : IRepository<PEntity> where PEntity : Person
     {
-        IEnumerable<Employee> GetAllWithHolidays();
-        Employee FindWithHolidays(int id);
+        IEnumerable<PEntity> GetAllWithAddresses();
+        PEntity FindWithAddress(int id);
     }
 }

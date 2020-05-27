@@ -8,19 +8,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<AspNetUser> _signInManager;
-        private readonly ILogger<LogoutModel> _logger;
+        private readonly ISignInService signInService;
 
-        public LogoutModel(SignInManager<AspNetUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(ISignInService signInService)
         {
-            _signInManager = signInManager;
-            _logger = logger;
+            this.signInService = signInService;
         }
 
         public void OnGet()
@@ -29,8 +28,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
+            await signInService.SignOut();
+            Serilog.Log.Information("User logged out.");
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);

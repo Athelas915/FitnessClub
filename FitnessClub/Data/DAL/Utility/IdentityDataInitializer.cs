@@ -4,18 +4,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using FitnessClub.Data.Models.Identity;
+using FitnessClub.Data.DAL.Interfaces;
 
 namespace FitnessClub.Data.DAL.Utility
 {
     public static class IdentityDataInitializer
     {
-        public static void SeedData(UserManager<AspNetUser> userManager, RoleManager<AspNetRole> roleManager)
+        public static async Task Save(IUnitOfWork unitOfWork)
         {
-            SeedRoles(roleManager);
-            SeedUsers(userManager);
+            await unitOfWork.Save();
+            return;
         }
-        public static void SeedUsers(UserManager<AspNetUser> userManager)
+        public static void SeedData(FCContext context, UserManager<AspNetUser> userManager, RoleManager<AspNetRole> roleManager)
         {
+            SeedRoles(context, roleManager);
+            SeedUsers(context, userManager);
+        }
+        public static void SeedUsers(FCContext context, UserManager<AspNetUser> userManager)
+        {
+            var tr = context.Database.BeginTransaction();
             if (userManager.FindByNameAsync
          ("Admin").Result == null)
             {
@@ -25,14 +32,16 @@ namespace FitnessClub.Data.DAL.Utility
                 user.EmailConfirmed = true;
 
                 IdentityResult result = userManager.CreateAsync(user, Startup.Configuration["DefaultAdminPassword"]).Result;
-
+                
                 if (result.Succeeded)
                 {
+                    context.SaveChanges();
                     userManager.AddToRoleAsync(user, "Administrator").Wait();
+                    context.SaveChanges();
                 }
+
             }
-            /* these users are for testing
-             * 
+            /*
             if (userManager.FindByNameAsync
          ("Coach1").Result == null)
             {
@@ -45,7 +54,9 @@ namespace FitnessClub.Data.DAL.Utility
 
                 if (result.Succeeded)
                 {
+                    context.SaveChanges();
                     userManager.AddToRoleAsync(user, "Coach").Wait();
+                    context.SaveChanges();
                 }
             }
             if (userManager.FindByNameAsync
@@ -60,7 +71,9 @@ namespace FitnessClub.Data.DAL.Utility
 
                 if (result.Succeeded)
                 {
+                    context.SaveChanges();
                     userManager.AddToRoleAsync(user, "Coach").Wait();
+                    context.SaveChanges();
                 }
             }
             if (userManager.FindByNameAsync
@@ -75,14 +88,16 @@ namespace FitnessClub.Data.DAL.Utility
 
                 if (result.Succeeded)
                 {
+                    context.SaveChanges();
                     userManager.AddToRoleAsync(user, "Coach").Wait();
+                    context.SaveChanges();
                 }
-            }
-            *
-            */
+            }*/
+            tr.Commit();
         }
-        public static void SeedRoles(RoleManager<AspNetRole> roleManager)
+        public static void SeedRoles(FCContext context, RoleManager<AspNetRole> roleManager)
         {
+            var tr = context.Database.BeginTransaction();
                 if (!roleManager.RoleExistsAsync
         ("Administrator").Result)
             {
@@ -93,6 +108,7 @@ namespace FitnessClub.Data.DAL.Utility
                 role.ConcurrencyStamp = "0";
                 IdentityResult roleResult = roleManager.
                 CreateAsync(role).Result;
+                context.SaveChanges();
             }
 
             if (!roleManager.RoleExistsAsync
@@ -105,6 +121,7 @@ namespace FitnessClub.Data.DAL.Utility
                 role.ConcurrencyStamp = "0";
                 IdentityResult roleResult = roleManager.
                 CreateAsync(role).Result;
+                context.SaveChanges();
             }
 
             if (!roleManager.RoleExistsAsync
@@ -117,6 +134,7 @@ namespace FitnessClub.Data.DAL.Utility
                 role.ConcurrencyStamp = "0";
                 IdentityResult roleResult = roleManager.
                 CreateAsync(role).Result;
+                context.SaveChanges();
             }
 
             if (!roleManager.RoleExistsAsync
@@ -129,7 +147,9 @@ namespace FitnessClub.Data.DAL.Utility
                 role.ConcurrencyStamp = "0";
                 IdentityResult roleResult = roleManager.
                 CreateAsync(role).Result;
+                context.SaveChanges();
             }
+            tr.Commit();
         }
     }
 }

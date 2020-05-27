@@ -10,16 +10,16 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
 
-        public PersonalDataModel(IAccountManagementService accountManagementService)
+        public PersonalDataModel(IUserService userService)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
         }
 
         public IActionResult OnGet()
         {
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
             if (userId == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");

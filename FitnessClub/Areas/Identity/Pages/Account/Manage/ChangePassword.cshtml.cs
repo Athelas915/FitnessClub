@@ -14,11 +14,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
 
-        public ChangePasswordModel(IAccountManagementService accountManagementService)
+        public ChangePasswordModel(IUserService userService)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
         }
 
         [BindProperty]
@@ -48,8 +48,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
-            var hasPassword = await accountManagementService.HasPassword(userId);
+            var userId = userService.GetUserId(User);
+            var hasPassword = await userService.HasPassword(userId);
 
             if (hasPassword == null)
             {
@@ -69,8 +69,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             {
                 return Page();
             }
-            var userId = accountManagementService.GetUserId(User);
-            var changePasswordResult = await accountManagementService.ChangePassword(userId, Input.OldPassword, Input.NewPassword);
+            var userId = userService.GetUserId(User);
+            var changePasswordResult = await userService.ChangePassword(userId, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
                 foreach (var error in changePasswordResult.Errors)

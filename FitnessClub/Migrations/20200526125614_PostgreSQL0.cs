@@ -226,11 +226,10 @@ namespace FitnessClub.Migrations
                 {
                     PersonID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
                     Gender = table.Column<int>(nullable: true),
                     Birthdate = table.Column<DateTime>(nullable: false),
                     UserID = table.Column<int>(nullable: false),
@@ -253,7 +252,7 @@ namespace FitnessClub.Migrations
                 {
                     AddressID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
                     Street = table.Column<string>(nullable: true),
                     ZipCode = table.Column<string>(nullable: true),
@@ -279,7 +278,7 @@ namespace FitnessClub.Migrations
                 {
                     HolidayID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
                     Start = table.Column<DateTime>(nullable: false),
                     Finish = table.Column<DateTime>(nullable: false),
@@ -302,7 +301,7 @@ namespace FitnessClub.Migrations
                 {
                     MembershipID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
                     MembershipNo = table.Column<int>(nullable: false),
                     Start = table.Column<DateTime>(nullable: false),
@@ -326,7 +325,7 @@ namespace FitnessClub.Migrations
                 {
                     SessionID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
                     SessionType = table.Column<int>(nullable: true),
                     Start = table.Column<DateTime>(nullable: false),
@@ -351,7 +350,7 @@ namespace FitnessClub.Migrations
                 {
                     CoachRatingID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
                     Rating = table.Column<int>(nullable: false),
                     CoachID = table.Column<int>(nullable: false),
@@ -387,19 +386,12 @@ namespace FitnessClub.Migrations
                 {
                     SessionID = table.Column<int>(nullable: false),
                     CustomerID = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
-                    CoachRatingID = table.Column<int>(nullable: true)
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SessionEnrollments", x => new { x.CustomerID, x.SessionID });
-                    table.ForeignKey(
-                        name: "FK_SessionEnrollments_CoachRatings_CoachRatingID",
-                        column: x => x.CoachRatingID,
-                        principalTable: "CoachRatings",
-                        principalColumn: "CoachRatingID",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_SessionEnrollments_People_CustomerID",
                         column: x => x.CustomerID,
@@ -525,11 +517,6 @@ namespace FitnessClub.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SessionEnrollments_CoachRatingID",
-                table: "SessionEnrollments",
-                column: "CoachRatingID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SessionEnrollments_SessionID",
                 table: "SessionEnrollments",
                 column: "SessionID");
@@ -561,6 +548,9 @@ namespace FitnessClub.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CoachRatings");
+
+            migrationBuilder.DropTable(
                 name: "Holidays");
 
             migrationBuilder.DropTable(
@@ -574,9 +564,6 @@ namespace FitnessClub.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "CoachRatings");
 
             migrationBuilder.DropTable(
                 name: "Sessions");

@@ -38,7 +38,7 @@ namespace FitnessClub.Data.DAL.Repositories
         {
             dbSet = unitOfWork.Set<TEntity>();
         }
-        public IQueryable<TEntity> Get(
+        public IEnumerable<TEntity> Get(
                Expression<Func<TEntity, bool>> filter = null,
                Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                string includeProperties = ""
@@ -68,7 +68,8 @@ namespace FitnessClub.Data.DAL.Repositories
         }
         public async Task<TEntity> GetById(params int[] Ids)
         {
-            return await dbSet.FindAsync(Ids);
+            var Vals = (from i in Ids select i).Cast<object>().ToArray();
+            return await dbSet.FindAsync(Vals);
         }
         public async Task Insert(TEntity entity)
         {

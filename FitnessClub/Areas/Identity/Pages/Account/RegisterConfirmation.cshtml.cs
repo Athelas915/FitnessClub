@@ -7,19 +7,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly IEmailSender _sender;
+        private readonly IUserService userService;
+        private readonly IEmailSender sender;
 
-        public RegisterConfirmationModel(UserManager<AspNetUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(IUserService userService, IEmailSender sender)
         {
-            _userManager = userManager;
-            _sender = sender;
+            this.userService = userService;
+            this.sender = sender;
         }
 
         public string Email { get; set; }
@@ -35,8 +36,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return RedirectToPage("/Index");
             }
 
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            var userId = await userService.GetUserId(email);
+            if (userId == null)
             {
                 return NotFound($"Unable to load user with email '{email}'.");
             }
@@ -46,8 +47,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
             DisplayConfirmAccountLink = true;
             if (DisplayConfirmAccountLink)
             {
-                var userId = await _userManager.GetUserIdAsync(user);
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var code = await userService.GenerateEmailConfirmationToken(userId);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 EmailConfirmationUrl = Url.Page(
                     "/Account/ConfirmEmail",

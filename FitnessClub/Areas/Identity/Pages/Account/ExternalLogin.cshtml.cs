@@ -24,12 +24,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
+        private readonly ISignInService signInService;
         private readonly IEmailSender emailSender;
 
-        public ExternalLoginModel(IAccountManagementService accountManagementService, IEmailSender emailSender)
+        public ExternalLoginModel(IUserService userService, ISignInService signInService, IEmailSender emailSender)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
+            this.signInService = signInService;
             this.emailSender = emailSender;
         }
         [BindProperty]
@@ -60,7 +62,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         {
             // Request a redirect to the external login provider.
             var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl });
-            var properties = accountManagementService.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            var properties = signInService.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
 
@@ -73,13 +75,13 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new {ReturnUrl = returnUrl });
             }
 
-            var info = await accountManagementService.GetExternalLoginInfo();
+            var info = await signInService.GetExternalLoginInfo();
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
-            var result = await accountManagementService.ExternalLoginSignIn(info);
+            var result = await signInService.ExternalLoginSignIn(info);
             if (result.Succeeded)
             {
                 Serilog.Log.Information("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
@@ -109,7 +111,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             // Get the information about the user from the external login provider
-            var info = await accountManagementService.GetExternalLoginInfo();
+            var info = await signInService.GetExternalLoginInfo();
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information during confirmation.";
@@ -118,11 +120,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var result = await accountManagementService.CreateUser(Input.Email, Customer, info, "Customer");
+                var result = await userService.CreateUser(Input.Email, Customer, info, "Customer");
                 if (result.Succeeded)
                 {
-                    var userId = await accountManagementService.GetUserId(Input.Email);
-                    var code = await accountManagementService.GenerateEmailConfirmationToken(userId);
+                    var userId = await userService.GetUserId(Input.Email);
+                    var code = await userService.GenerateEmailConfirmationToken(userId);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
@@ -133,7 +135,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                     await emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (await accountManagementService.ConfirmedAccountRequired(userId))
+                    if (await userService.ConfirmedAccountRequired(userId))
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
                     }

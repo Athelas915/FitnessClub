@@ -83,8 +83,12 @@ namespace FitnessClub
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ILogRepository, LogRepository>();
 
-            services.AddScoped<ICoachRatingService, CoachRatingService>();
-            services.AddScoped<IAccountManagementService, AccountManagementService>();
+            services.AddScoped<ICoachService, CoachService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISignInService, SignInService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddTransient<UserResolverService>();
 
@@ -102,7 +106,7 @@ namespace FitnessClub
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<AspNetUser> userManager, RoleManager<AspNetRole> roleManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, FCContext context, UserManager<AspNetUser> userManager, RoleManager<AspNetRole> roleManager)
         {
             //Serilog settings for different environments. They're kept here instead of "appsettings.json" because of issues with that method:
             //1. New version of serilog package can't handle parsing {date} when used inside json;
@@ -150,7 +154,7 @@ namespace FitnessClub
             app.UseAuthentication();
             app.UseAuthorization();
 
-            IdentityDataInitializer.SeedData(userManager, roleManager);
+            IdentityDataInitializer.SeedData(context, userManager, roleManager);
 
             app.UseEndpoints(endpoints =>
             {

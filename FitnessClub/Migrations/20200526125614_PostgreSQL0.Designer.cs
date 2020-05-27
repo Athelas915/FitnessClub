@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitnessClub.Migrations
 {
     [DbContext(typeof(FCContext))]
-    [Migration("20200519004535_PostgreSQL0")]
+    [Migration("20200526125614_PostgreSQL0")]
     partial class PostgreSQL0
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,9 @@ namespace FitnessClub.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("-1");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -73,7 +75,9 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("-1");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -108,7 +112,9 @@ namespace FitnessClub.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("-1");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -272,7 +278,9 @@ namespace FitnessClub.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("-1");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -309,7 +317,9 @@ namespace FitnessClub.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("-1");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -318,9 +328,6 @@ namespace FitnessClub.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
@@ -356,7 +363,9 @@ namespace FitnessClub.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("-1");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -390,11 +399,10 @@ namespace FitnessClub.Migrations
                     b.Property<int>("SessionID")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CoachRatingID")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("-1");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -402,8 +410,6 @@ namespace FitnessClub.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.HasKey("CustomerID", "SessionID");
-
-                    b.HasIndex("CoachRatingID");
 
                     b.HasIndex("SessionID");
 
@@ -693,10 +699,6 @@ namespace FitnessClub.Migrations
 
             modelBuilder.Entity("FitnessClub.Data.Models.SessionEnrollment", b =>
                 {
-                    b.HasOne("FitnessClub.Data.Models.CoachRating", "CoachRating")
-                        .WithMany()
-                        .HasForeignKey("CoachRatingID");
-
                     b.HasOne("FitnessClub.Data.Models.Customer", "Customer")
                         .WithMany("SessionEnrollments")
                         .HasForeignKey("CustomerID")

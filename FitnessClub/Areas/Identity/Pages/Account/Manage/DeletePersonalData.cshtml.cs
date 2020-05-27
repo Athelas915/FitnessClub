@@ -13,11 +13,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
 
-        public DeletePersonalDataModel(IAccountManagementService accountManagementService)
+        public DeletePersonalDataModel(IUserService userService)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
         }
 
         [BindProperty]
@@ -34,8 +34,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
-            var hasPassword = await accountManagementService.HasPassword(userId);
+            var userId = userService.GetUserId(User);
+            var hasPassword = await userService.HasPassword(userId);
             if (hasPassword == null)
             {
                 return NotFound("Unable to load user with given ID.");
@@ -46,8 +46,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
-            var result = await accountManagementService.DeleteSelfUser(userId, Input.Password);
+            var userId = userService.GetUserId(User);
+            var result = await userService.DeleteSelfUser(userId, Input.Password);
 
             if (!result.Succeeded)
             {

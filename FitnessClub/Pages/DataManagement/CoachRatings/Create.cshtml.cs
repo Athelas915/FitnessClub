@@ -21,8 +21,9 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
 
         public IActionResult OnGet()
         {
-        ViewData["CoachID"] = new SelectList(_context.Coaches, "PersonID", "LastName");
-        ViewData["CustomerID"] = new SelectList(_context.Customers, "PersonID", "LastName");
+            ViewData["CoachID"] = new SelectList(_context.Coaches, "PersonID", "LastName");
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "PersonID", "LastName");
+            ViewData["SessionID"] = new SelectList(_context.Sessions, "SessionID", "SessionID");
             return Page();
         }
 

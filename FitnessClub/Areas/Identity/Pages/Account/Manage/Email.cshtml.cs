@@ -17,12 +17,12 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public partial class EmailModel : PageModel
     {
-        private readonly IAccountManagementService accountManagementService;
+        private readonly IUserService userService;
         private readonly IEmailSender emailSender;
 
-        public EmailModel(IAccountManagementService accountManagementService, IEmailSender emailSender)
+        public EmailModel(IUserService userService, IEmailSender emailSender)
         {
-            this.accountManagementService = accountManagementService;
+            this.userService = userService;
             this.emailSender = emailSender;
         }
 
@@ -48,7 +48,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(string userId)
         {
-            var email = await accountManagementService.GetEmail(userId);
+            var email = await userService.GetEmail(userId);
             Email = email;
 
             Input = new InputModel
@@ -56,12 +56,12 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 NewEmail = email,
             };
 
-            IsEmailConfirmed = await accountManagementService.IsEmailConfirmed(userId);
+            IsEmailConfirmed = await userService.IsEmailConfirmed(userId);
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
 
             await LoadAsync(userId);
             if (Email == null)
@@ -73,7 +73,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostChangeEmailAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
             if (userId == null)
             {
                 return NotFound($"Unable to load user.");
@@ -85,10 +85,10 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var email = await accountManagementService.GetEmail(userId);
+            var email = await userService.GetEmail(userId);
             if (Input.NewEmail != email)
             {
-                var code = await accountManagementService.GenerateChangeEmailToken(userId, Input.NewEmail);
+                var code = await userService.GenerateChangeEmailToken(userId, Input.NewEmail);
                 if (code == null)
                 {
                     return NotFound($"Unable to load user with ID '{userId}'.");
@@ -113,7 +113,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostSendVerificationEmailAsync()
         {
-            var userId = accountManagementService.GetUserId(User);
+            var userId = userService.GetUserId(User);
 
             if (!ModelState.IsValid)
             {
@@ -121,8 +121,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var email = await accountManagementService.GetEmail(userId);
-            var code = await accountManagementService.GenerateEmailConfirmationToken(userId);
+            var email = await userService.GetEmail(userId);
+            var code = await userService.GenerateEmailConfirmationToken(userId);
             if (code == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
