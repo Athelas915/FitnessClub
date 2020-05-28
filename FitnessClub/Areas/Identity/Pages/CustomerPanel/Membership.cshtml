@@ -1,21 +1,49 @@
 ﻿@page
-@model FitnessClub.Areas.Identity.Pages.CustomerPanel.MembershipModel
+
+@using FitnessClub.Areas.Identity.Pages.CustomerPanel;
+@model MembershipModel
 @{
-    ViewData["Title"] = "_CustomerPanel";
-    Layout = "~/Pages/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Membership";
+    ViewData["ActivePage"] = CustomerPanelNavPages.Membership;
+    Layout = "./_Layout";
 }
 
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
-<h1>Customer Panel</h1>
-
+<h4>@ViewData["Title"]</h4>
 <div class="row">
-    <div class="col-md-3">
-        <partial name="./Shared/_Menu" />
-    </div>
     <div class="col-md-9">
-        <h1>This page will have information about user's pass status.</h1>
+        <table class="table">
+            <thead>
+                <tr class="no-color">
+                    <th>
+                        @Html.DisplayNameFor(model => model.Memberships.First().MembershipNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Memberships.First().Start)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Memberships.First().Finish)
+                    </th>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Memberships)
+                {
+                    <tr class="@(item.Active ? "green" : "no-color")">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MembershipNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Start)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Finish)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

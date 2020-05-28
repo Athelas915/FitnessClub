@@ -1,10 +1,5 @@
-﻿using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.Identity;
+﻿using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Interfaces

@@ -2,7 +2,6 @@
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;

@@ -1,16 +1,11 @@
 ﻿using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Services

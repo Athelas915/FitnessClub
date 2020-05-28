@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using FitnessClub.Data.Models.Identity;
+﻿using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore.Storage;
+using System;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Interfaces
 {

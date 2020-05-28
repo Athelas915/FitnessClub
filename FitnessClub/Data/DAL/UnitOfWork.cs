@@ -1,18 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.DAL.Repositories;
-using FitnessClub.Data.DAL.Utility;
-using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Identity;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FitnessClub.Data.DAL
 {

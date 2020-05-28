@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models.Identity;
-using FitnessClub.Data.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+
+//this class generates users in the database. Useful for development.
 
 namespace FitnessClub.Data.DAL.Utility
 {

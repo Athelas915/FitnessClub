@@ -1,15 +1,10 @@
-﻿using System;
-using System.Linq;
-using FitnessClub.Data.Models;
+﻿using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Design;
+using System.Linq;
 
 namespace FitnessClub.Data.DAL
 {

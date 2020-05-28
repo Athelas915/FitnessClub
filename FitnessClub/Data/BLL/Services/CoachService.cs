@@ -1,11 +1,9 @@
 ﻿using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Utility;
-using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Services

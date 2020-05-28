@@ -1,8 +1,5 @@
-﻿using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.ViewModels;
-using System;
+﻿using FitnessClub.Data.Models.ViewModels;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Interfaces

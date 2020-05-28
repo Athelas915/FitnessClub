@@ -114,11 +114,12 @@ namespace FitnessClub.Data.BLL.Services
                 Serilog.Log.Information($"Couldn't find the user with id {customerId}");
                 return null;
             }
-            var memberships = customer.Memberships;
+            var memberships = customer.Memberships.AsEnumerable();
             foreach (var m in memberships)
             {
                 m.Customer = customer;
             }
+            memberships = memberships.OrderBy(a => a.Start);
             return customer.Memberships.Select(a => new MembershipViewModel(a));
         }
 

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data;
+﻿using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.Models;
 
 namespace FitnessClub.Data.DAL.Repositories
-{ 
+{
     public class LogRepository : GenericRepository, ILogRepository
     {
         private readonly DbSet<Log> dbSet;

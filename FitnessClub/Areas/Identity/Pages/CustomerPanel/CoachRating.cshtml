@@ -1,100 +1,99 @@
 ﻿@page
-@model FitnessClub.Areas.Identity.Pages.CustomerPanel.CoachRatingModel
+
+@using FitnessClub.Areas.Identity.Pages.CustomerPanel;
+@model CoachRatingModel
 @{
-    ViewData["Title"] = "_CustomerPanel";
-    Layout = "~/Pages/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Coach Rating";
+    ViewData["ActivePage"] = CustomerPanelNavPages.CoachRating;
+    Layout = "./_Layout";
 }
 
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
-<h1>Customer Panel</h1>
-
+<h4>@ViewData["Title"]</h4>
 <div class="row">
-    <div class="col-md-3">
-        <partial name="./Shared/_Menu" />
-    </div>
     <div class="col-md-9">
-            <table class="table">
-                <thead>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Sessions.First().SessionType)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Sessions.First().CoachFullName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Sessions.First().Weekday)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Sessions.First().Date)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Sessions.First().StartTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Sessions.First().FinishTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Sessions.First().Room)
+                    </th>
+                    <th>
+                        Rate:
+                    </th>
+                    <th>
+                        Submit
+                    </th>
+            </thead>
+            <tbody>
+                @{
+                    var i = 0;
+                }
+                @foreach (var item in Model.Sessions)
+                {
                     <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Sessions.First().SessionType)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Sessions.First().CoachFullName)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Sessions.First().Weekday)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Sessions.First().Date)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Sessions.First().StartTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Sessions.First().FinishTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Sessions.First().Room)
-                        </th>
-                        <th>
-                            Rate:
-                        </th>
-                        <th>
-                            Submit
-                        </th>
-                </thead>
-                <tbody>
-                    @{ 
-                        var i = 0;
-                    }
-                    @foreach (var item in Model.Sessions)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.SessionType)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CoachFullName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Weekday)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Date)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.StartTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FinishTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Room)
-                            </td>
-                            <td>
-                                <form id="@i" method="post">
-                                    <input asp-for="@Model.ChosenSessionID" type="hidden" value="@item.SessionID" />
-                                    <select asp-for="@Model.Rating" class="bigger-select form-control">
-                                        <option value=0>0</option>
-                                        <option value=1>1</option>
-                                        <option value=2>2</option>
-                                        <option value=3>3</option>
-                                        <option value=4>4</option>
-                                        <option value=5>5</option>
-                                    </select>
-                                </form>
-                            </td>
-                            <td>
-                                <input form="@i" type="submit" value="Rate" class="btn btn-primary" asp-route-id="@i" />
-                            </td>
-                        </tr>
-                        {i++;}
-                    }
-                </tbody>
-            </table>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SessionType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CoachFullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Weekday)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Date)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FinishTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Room)
+                        </td>
+                        <td>
+                            <form id="@i" method="post">
+                                <input asp-for="@Model.ChosenSessionID" type="hidden" value="@item.SessionID" />
+                                <select asp-for="@Model.Rating" class="bigger-select form-control">
+                                    <option value=0>0</option>
+                                    <option value=1>1</option>
+                                    <option value=2>2</option>
+                                    <option value=3>3</option>
+                                    <option value=4>4</option>
+                                    <option value=5>5</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <input form="@i" type="submit" value="Rate" class="btn btn-primary" asp-route-id="@i" />
+                        </td>
+                    </tr>
+                    { i++; }
+                }
+            </tbody>
+        </table>
     </div>
 </div>
