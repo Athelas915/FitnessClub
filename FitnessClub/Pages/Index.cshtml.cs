@@ -16,13 +16,13 @@ using FitnessClub.Data.DAL;
 namespace FitnessClub.Pages
 {
     public class IndexModel : PageModel
-    {   
+    {
         public IndexModel()
         {
-
         }
         public void OnGet()
         {
+
         }
     }
 }

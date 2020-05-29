@@ -11,10 +11,17 @@ namespace FitnessClub.Data.BLL.Services
     public class CoachService : EmployeeService, ICoachService
     {
         private readonly ISessionRepository sessionRepository;
+        private readonly ICoachRepository coachRepository;
         private readonly int userId;
-        public CoachService(ISessionRepository sessionRepository, IEmployeeRepository employeeRepository, UserResolverService userResolverService) : base(sessionRepository, employeeRepository, userResolverService)
+        public CoachService(
+            ISessionRepository sessionRepository,
+            IEmployeeRepository employeeRepository,
+            ICoachRepository coachRepository,
+            UserResolverService userResolverService
+            ) : base(sessionRepository, employeeRepository, userResolverService)
         {
             this.sessionRepository = sessionRepository;
+            this.coachRepository = coachRepository;
             userId = userResolverService.GetUserId();
         }
 

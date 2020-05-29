@@ -21,7 +21,7 @@ namespace FitnessClub.Data.BLL.Services
             this.customerRepository = customerRepository;
             userId = userResolverService.GetUserId();
         }
-        public int GetCurrentCustomerId()
+        public int GetCurrentPersonId()
         {
             var customer = customerRepository.Get(filter: a => a.UserID == userId, includeProperties: "Address").FirstOrDefault();
             if (customer == null)

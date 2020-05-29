@@ -30,7 +30,7 @@ namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
         public int ChosenSessionID { get; set; }
         public IActionResult OnGet()
         {
-            var customerId = customerService.GetCurrentCustomerId();
+            var customerId = customerService.GetCurrentPersonId();
             if (customerId == 1)
             {
                 Serilog.Log.Information($"Couldn't find id of the logged in customer.");
@@ -46,7 +46,7 @@ namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
             {
                 return RedirectToPage();
             }
-            var customerId = customerService.GetCurrentCustomerId();
+            var customerId = customerService.GetCurrentPersonId();
             if (customerId == -1)
             {
                 Serilog.Log.Information($"Couldn't find id of the logged in customer.");

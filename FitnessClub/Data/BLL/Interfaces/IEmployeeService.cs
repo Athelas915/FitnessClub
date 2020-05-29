@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Interfaces
 {
-    public interface IEmployeeService
+    public interface IEmployeeService : IPersonService
     {
         IEnumerable<HolidayViewModel> ViewHolidays(int employeeId);
         IEnumerable<HolidayViewModel> ViewUpcomingHolidays(int employeeId);

@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Interfaces
 {
-    public interface ICustomerService
+    public interface ICustomerService : IPersonService
     {
-        int GetCurrentCustomerId();
         IEnumerable<MembershipViewModel> ViewMemberships(int customerId);
         IEnumerable<SessionViewModel> ViewSessions(int customerId);
         IEnumerable<SessionViewModel> ViewEnrolledUpcomingSessions(int customerId);

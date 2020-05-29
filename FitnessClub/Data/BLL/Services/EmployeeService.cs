@@ -22,6 +22,17 @@ namespace FitnessClub.Data.BLL.Services
             userId = userResolverService.GetUserId();
         }
 
+        public int GetCurrentPersonId()
+        {
+            var customer = employeeRepository.Get(filter: a => a.UserID == userId, includeProperties: "Address").FirstOrDefault();
+            if (customer == null)
+            {
+                Serilog.Log.Information($"Couldn't find the currently logged in user.");
+                return -1;
+            }
+            return customer.PersonID;
+        }
+
         public async Task AddHoliday(int employeeId, HolidayViewModel inputHoliday)
         {
             var employee = employeeRepository.FindWithHolidays(employeeId);
