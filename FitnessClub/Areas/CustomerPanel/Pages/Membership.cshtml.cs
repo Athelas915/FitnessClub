@@ -23,10 +23,10 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
         public IActionResult OnGet()
         {
             var customerId = customerService.GetCurrentPersonId();
-            if (customerId == 1)
+            if (customerId == -1)
             {
                 Serilog.Log.Information($"Couldn't find id of the logged in customer.");
-                return RedirectToPage("./CustomerPanel");
+                return RedirectToPage("./Index");
             }
             Memberships = customerService.ViewMemberships(customerId);
 

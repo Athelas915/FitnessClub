@@ -35,6 +35,8 @@
     <Compile Remove="Migrations\20200519204034_PostgreSQL17.Designer.cs" />
     <Compile Remove="Migrations\20200527004501_PostgreSQL1.cs" />
     <Compile Remove="Migrations\20200527004501_PostgreSQL1.Designer.cs" />
+    <Compile Remove="Migrations\20200530211106_PostgreSQL1.cs" />
+    <Compile Remove="Migrations\20200530211106_PostgreSQL1.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

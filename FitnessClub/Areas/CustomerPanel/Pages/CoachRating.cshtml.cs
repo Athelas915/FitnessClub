@@ -31,10 +31,10 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
         public IActionResult OnGet()
         {
             var customerId = customerService.GetCurrentPersonId();
-            if (customerId == 1)
+            if (customerId == -1)
             {
                 Serilog.Log.Information($"Couldn't find id of the logged in customer.");
-                return RedirectToPage("./CustomerPanel");
+                return RedirectToPage("./Index");
             }
             Sessions = customerService.ViewUnratedSessions(customerId);
 
@@ -50,7 +50,7 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
             if (customerId == -1)
             {
                 Serilog.Log.Information($"Couldn't find id of the logged in customer.");
-                return RedirectToPage("./CustomerPanel");
+                return RedirectToPage("./Index");
             }
 
             await customerService.RateCoach(customerId, ChosenSessionID, Rating);
