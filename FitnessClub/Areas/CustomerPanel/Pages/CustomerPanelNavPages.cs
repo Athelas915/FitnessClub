@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 
-namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
+namespace FitnessClub.Areas.CustomerPanel.Pages
 {
     public static class CustomerPanelNavPages
     {

@@ -38,7 +38,7 @@ namespace FitnessClub.Data.BLL.Services
             return new CoachViewModel(session.Coach);
         }
 
-        public async Task<IEnumerable<CustomerViewModel>> ViewCustomers(int sessionId)
+        public IEnumerable<CustomerViewModel> ViewCustomers(int sessionId)
         {
             var session = sessionRepository.FindWithEnrollments(sessionId);
             if (session == null)

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
+namespace FitnessClub.Areas.CustomerPanel.Pages
 {
     [Authorize(Roles = "Customer")]
     public class CustomerPanelModel : PageModel

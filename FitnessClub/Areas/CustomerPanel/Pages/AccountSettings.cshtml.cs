@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 
-namespace FitnessClub.Areas.Identity.Pages.CustomerPanel
+namespace FitnessClub.Areas.CustomerPanel.Pages
 {
     [Authorize(Roles = "Customer")]
-    public class CalendarModel : PageModel
+    public class AccountSettingsModel : PageModel
     {
         public void OnGet()
         {
