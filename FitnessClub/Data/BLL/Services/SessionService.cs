@@ -4,45 +4,70 @@ using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Services
 {
-    public class SessionService : EmployeeService, ISessionService
+    public class SessionService : ISessionService
     {
         private readonly ISessionRepository sessionRepository;
+        private readonly ICustomerRepository customerRepository;
         private readonly int userId;
-        public SessionService(ISessionRepository sessionRepository, IEmployeeRepository employeeRepository, UserResolverService userResolverService) : base(sessionRepository, employeeRepository, userResolverService)
+        public SessionService(ISessionRepository sessionRepository, ICustomerRepository customerRepository, UserResolverService userResolverService)
         {
             this.sessionRepository = sessionRepository;
+            this.customerRepository = customerRepository;
             userId = userResolverService.GetUserId();
         }
 
-        public async Task AssignCoach(int sessionId)
-        {
-            await Task.Yield();
-            throw new NotImplementedException();
-        }
-
-        public async Task UnassignCoach(int sessionId)
-        {
-            await Task.Yield();
-            throw new NotImplementedException();
-        }
 
         public CoachViewModel ViewCoach(int sessionId)
         {
-            throw new NotImplementedException();
+            var session = sessionRepository.FindWithCoach(sessionId);
+            if (session == null)
+            {
+                Serilog.Log.Information($"Couldn't find the session with id {sessionId}.");
+                return null;
+            }
+            else if (session.Coach == null)
+            {
+                Serilog.Log.Information($"The session with id {sessionId} doesn't have assigned coach yet.");
+                return null;
+            }
+            return new CoachViewModel(session.Coach);
         }
 
-        public IEnumerable<CustomerViewModel> ViewCustomers(int sessionId)
+        public async Task<IEnumerable<CustomerViewModel>> ViewCustomers(int sessionId)
         {
-            throw new NotImplementedException();
+            var session = sessionRepository.FindWithEnrollments(sessionId);
+            if (session == null)
+            {
+                Serilog.Log.Information($"Couldn't find the session with id {sessionId}.");
+                return null;
+            }
+            var enrollments = session.SessionEnrollments.AsEnumerable();
+            var customerIds = enrollments.Select(a => a.CustomerID);
+            var customers = customerRepository.Get(filter: a => customerIds.Contains(a.PersonID));
+
+            return customers.Select(a => new CustomerViewModel(a));
         }
 
         public IDictionary<SessionViewModel, int> ViewRatings(int sessionId)
         {
-            throw new NotImplementedException();
+            var session = sessionRepository.FindWithRatings(sessionId);
+            if (session == null)
+            {
+                Serilog.Log.Information($"Couldn't find the session with id {sessionId}.");
+                return null;
+            }
+            var sessionView = new SessionViewModel(session);
+            var output = new Dictionary<SessionViewModel, int>();
+            foreach (var r in session.CoachRatings)
+            {
+                output.Add(sessionView, r.Rating);
+            }
+            return output;
         }
     }
 }

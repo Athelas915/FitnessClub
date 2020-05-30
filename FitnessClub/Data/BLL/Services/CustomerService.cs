@@ -23,7 +23,7 @@ namespace FitnessClub.Data.BLL.Services
         }
         public int GetCurrentPersonId()
         {
-            var customer = customerRepository.Get(filter: a => a.UserID == userId, includeProperties: "Address").FirstOrDefault();
+            var customer = customerRepository.Get(filter: a => a.UserID == userId).FirstOrDefault();
             if (customer == null)
             {
                 Serilog.Log.Information($"Couldn't find the currently logged in user.");
@@ -41,9 +41,16 @@ namespace FitnessClub.Data.BLL.Services
                 return;
             }
 
-            customer.SessionEnrollments.Remove(enrollment);
+            var result = customer.SessionEnrollments.Remove(enrollment);
+            if (!result)
+            {
+                customerRepository.Dispose();
+            }
+            else
+            {
+                await sessionRepository.Commit();
+            }
 
-            await sessionRepository.Commit();
         }
         public async Task Enroll(int customerId, int sessionId)
         {
@@ -120,7 +127,7 @@ namespace FitnessClub.Data.BLL.Services
                 m.Customer = customer;
             }
             memberships = memberships.OrderBy(a => a.Start);
-            return customer.Memberships.Select(a => new MembershipViewModel(a));
+            return memberships.Select(a => new MembershipViewModel(a));
         }
 
         public IEnumerable<SessionViewModel> ViewPastSessions(int customerId)

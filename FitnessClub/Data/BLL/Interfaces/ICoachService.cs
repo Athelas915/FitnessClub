@@ -11,6 +11,6 @@ namespace FitnessClub.Data.BLL.Interfaces
         IEnumerable<SessionViewModel> ViewAssignedSessions(int coachId);
         IEnumerable<SessionViewModel> ViewPastSessions(int coachId);
         IEnumerable<SessionViewModel> ViewUnassignedUpcomingSessions();
-        IDictionary<SessionViewModel, int> ViewRatings(int coachId);
+        Task<IDictionary<SessionViewModel, int>> ViewRatings(int coachId);
     }
 }

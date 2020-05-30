@@ -24,13 +24,13 @@ namespace FitnessClub.Data.BLL.Services
 
         public int GetCurrentPersonId()
         {
-            var customer = employeeRepository.Get(filter: a => a.UserID == userId, includeProperties: "Address").FirstOrDefault();
-            if (customer == null)
+            var employee = employeeRepository.Get(filter: a => a.UserID == userId).FirstOrDefault();
+            if (employee == null)
             {
                 Serilog.Log.Information($"Couldn't find the currently logged in user.");
                 return -1;
             }
-            return customer.PersonID;
+            return employee.PersonID;
         }
 
         public async Task AddHoliday(int employeeId, HolidayViewModel inputHoliday)
@@ -81,23 +81,88 @@ namespace FitnessClub.Data.BLL.Services
 
         public async Task RemoveHoliday(int employeeId, HolidayViewModel inputHoliday)
         {
-            await Task.Yield();
-            throw new NotImplementedException();
+            var employee = employeeRepository.FindWithHolidays(employeeId);
+            var holiday = employee.Holidays.Where(a => a.HolidayID == inputHoliday.HolidayID).FirstOrDefault();
+            if (employee == null || holiday == null)
+            {
+                Serilog.Log.Information($"Couldn't find the holiday with given session id {inputHoliday.HolidayID} and person id {employeeId}");
+                return;
+            }
+            var result = employee.Holidays.Remove(holiday);
+            if (!result)
+            {
+                employeeRepository.Dispose();
+            }
+            else
+            {
+                await employeeRepository.Commit();
+            }
         }
 
         public IEnumerable<HolidayViewModel> ViewHolidays(int employeeId)
         {
-            throw new NotImplementedException();
+            var employee = employeeRepository.FindWithHolidays(employeeId);
+            if (employee == null)
+            {
+                Serilog.Log.Information($"Couldn't find the user with id {employeeId}");
+                return null;
+            }
+            var holidays = employee.Holidays.AsEnumerable();
+            foreach (var h in holidays)
+            {
+                h.Employee = employee;
+            }
+            holidays = holidays.OrderBy(a => a.Start);
+            return holidays.Select(a => new HolidayViewModel(a));
         }
 
         public IEnumerable<HolidayViewModel> ViewPastHolidays(int employeeId)
         {
-            throw new NotImplementedException();
+            var employee = employeeRepository.FindWithHolidays(employeeId);
+            if (employee == null)
+            {
+                Serilog.Log.Information($"Couldn't find the user with id {employeeId}");
+                return null;
+            }
+            var holidays = employee.Holidays.AsEnumerable().Where(a => a.Finish < DateTime.Now);
+            foreach (var h in holidays)
+            {
+                h.Employee = employee;
+            }
+            holidays = holidays.OrderBy(a => a.Start);
+            return holidays.Select(a => new HolidayViewModel(a));
         }
 
         public IEnumerable<HolidayViewModel> ViewUpcomingHolidays(int employeeId)
         {
-            throw new NotImplementedException();
+            var employee = employeeRepository.FindWithHolidays(employeeId);
+            if (employee == null)
+            {
+                Serilog.Log.Information($"Couldn't find the user with id {employeeId}");
+                return null;
+            }
+            var holidays = employee.Holidays.AsEnumerable().Where(a => a.Start > DateTime.Now);
+            foreach (var h in holidays)
+            {
+                h.Employee = employee;
+            }
+            holidays = holidays.OrderBy(a => a.Start);
+            return holidays.Select(a => new HolidayViewModel(a));
+        }
+        public IEnumerable<HolidayViewModel> ViewAllCurrentHolidays()
+        {
+            var employees = employeeRepository.GetAllWithHolidays();
+            foreach (var e in employees)
+            {
+                foreach (var h in e.Holidays)
+                {
+                    if (h.Start < DateTime.Now && h.Finish > DateTime.Now)
+                    {
+                        h.Employee = e;
+                        yield return new HolidayViewModel(h);
+                    }
+                }
+            }
         }
     }
 }
