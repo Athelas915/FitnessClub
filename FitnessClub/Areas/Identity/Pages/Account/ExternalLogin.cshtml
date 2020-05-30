@@ -31,7 +31,7 @@
             <button type="submit" class="btn btn-primary">Register</button>
         </div>
         <partial name="./Templates/_PersonalDataForm.cshtml" for="@Model.Customer">
-        <partial name="./Templates/_AddressForm.cshtml" for="@Model.Address">
+        <partial name="./Templates/_AddressForm.cshtml" for="@Model.Customer.Address">
     </div>
 </form>
 

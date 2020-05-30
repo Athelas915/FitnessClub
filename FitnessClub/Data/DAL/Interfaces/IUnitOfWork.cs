@@ -1,13 +1,16 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
-using FitnessClub.Data.Models;
+﻿using FitnessClub.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
-        public int LoggedUserId { get; }
-        public FCContext Context { get; }
+        void Register(IRepository repository);
+        DbSet<TEntity> Set<TEntity>() where TEntity : BaseEntity;
         Task Save();
+        Task<IDbContextTransaction> BeginTransaction();
     }
 }

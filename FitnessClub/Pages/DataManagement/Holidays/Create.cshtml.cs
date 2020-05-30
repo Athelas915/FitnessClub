@@ -5,25 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Holidays
 {
-    [Authorize(Roles = "Administrator")]
     public class CreateModel : PageModel
     {
-        private readonly IHolidayRepository holidayRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public CreateModel(IHolidayRepository holidayRepository)
+        public CreateModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.holidayRepository = holidayRepository;
+            _context = context;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-            ViewData["PersonID"] = new SelectList(await holidayRepository.Get<Employee>(), "PersonID", "LastName");
+        ViewData["EmployeeID"] = new SelectList(_context.Holidays, "PersonID", "LastName");
             return Page();
         }
 
@@ -39,8 +37,8 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return Page();
             }
 
-            holidayRepository.Insert(Holiday);
-            await holidayRepository.Submit();
+            _context.Holidays.Add(Holiday);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

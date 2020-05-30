@@ -5,20 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.CoachRatings
 {
-    [Authorize(Roles = "Administrator")]
     public class DetailsModel : PageModel
     {
-        private readonly ICoachRatingRepository coachRatingRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public DetailsModel(ICoachRatingRepository coachRatingRepository)
+        public DetailsModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.coachRatingRepository = coachRatingRepository;
+            _context = context;
         }
 
         public CoachRating CoachRating { get; set; }
@@ -30,7 +28,9 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return NotFound();
             }
 
-            CoachRating = await coachRatingRepository.GetByID(id.Value);
+            CoachRating = await _context.CoachRatings
+                .Include(c => c.Coach)
+                .Include(c => c.Customer).FirstOrDefaultAsync(m => m.CoachRatingID == id);
 
             if (CoachRating == null)
             {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.Models
 {
-    public class Log
+    public class Log : BaseEntity
     {
         public int Id { get; set; }
         [Column("exception", TypeName = "text")]

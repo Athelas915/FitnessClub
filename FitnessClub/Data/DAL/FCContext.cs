@@ -1,15 +1,10 @@
-﻿using System;
-using System.Linq;
-using FitnessClub.Data.Models;
+﻿using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Identity;
-using FitnessClub;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace FitnessClub.Data.DAL
 {
@@ -51,16 +46,17 @@ namespace FitnessClub.Data.DAL
 
             foreach (var entity in modelBuilder.Model
                 .GetEntityTypes()
-                .Where(w => w.ClrType.IsSubclassOf(typeof(BaseEntity)))
+                .Where(w => w.ClrType.IsSubclassOf(typeof(DataEntity)))
                 .Select(c => modelBuilder.Entity(c.ClrType)))
             {
-                
+
                 entity
                     .Property("CreatedOn")
                     .HasDefaultValueSql("now()")
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity
                     .Property("CreatedBy")
+                    .HasDefaultValueSql("-1")
                     .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             }
 
@@ -69,30 +65,62 @@ namespace FitnessClub.Data.DAL
                 .IsUnique();
 
             modelBuilder.Entity<SessionEnrollment>()
-                .HasKey(o => new { o.PersonID, o.SessionID });
+                .HasKey(o => new { o.CustomerID, o.SessionID });
             modelBuilder.Entity<Log>().ToTable("logs");
 
             modelBuilder.Entity<AspNetUser>()
                 .HasOne(a => a.Person)
                 .WithOne(b => b.AspNetUser)
-                .HasForeignKey<Person>(b => b.AspNetUserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey<Person>(b => b.UserID)
+                .IsRequired();
 
             modelBuilder.Entity<Person>()
                 .HasOne(a => a.Address)
                 .WithOne(b => b.Person)
                 .HasForeignKey<Address>(b => b.PersonID)
-                .OnDelete(DeleteBehavior.Cascade);
+                .IsRequired();
+
+            modelBuilder.Entity<Customer>()
+                .HasMany(a => a.Memberships)
+                .WithOne(b => b.Customer)
+                .HasForeignKey(b => b.CustomerID)
+                .IsRequired();
+
+            modelBuilder.Entity<Customer>()
+                .HasMany(a => a.SessionEnrollments)
+                .WithOne(b => b.Customer)
+                .HasForeignKey(b => b.CustomerID)
+                .IsRequired();
+
+            modelBuilder.Entity<Customer>()
+                .HasMany(a => a.CoachRatings)
+                .WithOne(b => b.Customer)
+                .HasForeignKey(b => b.CustomerID)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Coach>()
+                .HasMany(a => a.CoachRatings)
+                .WithOne(b => b.Coach)
+                .HasForeignKey(b => b.CoachID)
+                .IsRequired();
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(a => a.Holidays)
+                .WithOne(b => b.Employee)
+                .HasForeignKey(b => b.EmployeeID)
+                .IsRequired();
+
+            modelBuilder.Entity<Coach>()
+                .HasMany(a => a.Sessions)
+                .WithOne(b => b.Coach)
+                .HasForeignKey(b => b.CoachID)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Session>()
-                .HasOne(a => a.CoachRating)
+                .HasMany(a => a.SessionEnrollments)
                 .WithOne(b => b.Session)
-                .HasForeignKey<CoachRating>(b => b.SessionID);
-
-            modelBuilder.Entity<Session>()
-                .HasOne(a => a.Coach)
-                .WithMany(b => b.Sessions)
-                .HasForeignKey(b => b.PersonID);
+                .HasForeignKey(b => b.SessionID)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -11,19 +11,20 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly IUserService userService;
+        private readonly IEmailSender emailSender;
 
-        public ForgotPasswordModel(UserManager<AspNetUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(IUserService userService, IEmailSender emailSender)
         {
-            _userManager = userManager;
-            _emailSender = emailSender;
+            this.userService = userService;
+            this.emailSender = emailSender;
         }
 
         [BindProperty]
@@ -40,8 +41,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                var userId = await userService.GetUserId(Input.Email);
+                if (userId == null || !(await userService.IsEmailConfirmed(userId)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
@@ -49,7 +50,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
 
                 // For more information on how to enable account confirmation and password reset please 
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var code = await userService.GeneratePasswordResetToken(userId);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
@@ -57,7 +58,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
+                await emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

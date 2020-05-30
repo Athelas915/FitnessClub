@@ -6,19 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Sessions
 {
-    [Authorize(Roles = "Administrator")]
     public class EditModel : PageModel
     {
-        private readonly ISessionRepository sessionRepository;
-        public EditModel(ISessionRepository sessionRepository)
+        private readonly FitnessClub.Data.DAL.FCContext _context;
+
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.sessionRepository = sessionRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -31,13 +30,14 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await sessionRepository.GetByID(id.Value);
+            Session = await _context.Sessions
+                .Include(s => s.Coach).FirstOrDefaultAsync(m => m.SessionID == id);
 
             if (Session == null)
             {
                 return NotFound();
             }
-           ViewData["PersonID"] = new SelectList(await sessionRepository.Get<Coach>(), "PersonID", "LastName");
+           ViewData["CoachID"] = new SelectList(_context.Coaches, "PersonID", "LastName");
             return Page();
         }
 
@@ -50,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return Page();
             }
 
-            sessionRepository.Update(Session);
+            _context.Attach(Session).State = EntityState.Modified;
 
             try
             {
-                await sessionRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,8 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Sessions
 
         private bool SessionExists(int id)
         {
-            return sessionRepository.Any(id);
-
+            return _context.Sessions.Any(e => e.SessionID == id);
         }
     }
 }

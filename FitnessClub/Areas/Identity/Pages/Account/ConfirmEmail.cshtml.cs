@@ -9,17 +9,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
+        private readonly IUserService userService;
 
-        public ConfirmEmailModel(UserManager<AspNetUser> userManager)
+        public ConfirmEmailModel(IUserService userService)
         {
-            _userManager = userManager;
+             this.userService = userService;
         }
 
         [TempData]
@@ -32,14 +33,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return RedirectToPage("/Index");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            var result = await userService.ConfirmEmail(userId, code);
+            if (result == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
-
-            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            var result = await _userManager.ConfirmEmailAsync(user, code);
             StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
             return Page();
         }

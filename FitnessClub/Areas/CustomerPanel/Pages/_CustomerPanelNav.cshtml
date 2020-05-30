@@ -1,0 +1,14 @@
+﻿@using FitnessClub.Areas.CustomerPanel.Pages;
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+
+<ul class="menu">
+    <li class="menu-item"><a class="menu-link @CustomerPanelNavPages.CalendarNavClass(ViewContext)" id="calendar" asp-page="./Calendar">Calendar</a></li>
+    <li class="menu-item"><a class="menu-link @CustomerPanelNavPages.CoachRatingNavClass(ViewContext)" id="coach-rating" asp-page="./CoachRating">Coach Rating</a></li>
+    <li class="menu-item"><a class="menu-link @CustomerPanelNavPages.MembershipNavClass(ViewContext)" id="membership" asp-page="./Membership">Membership</a></li>
+    <li class="menu-item"><a class="menu-link @CustomerPanelNavPages.AccountSettingsNavClass(ViewContext)" id="account-settings" asp-page="./AccountSettings">Account Settings</a></li>
+</ul>
+

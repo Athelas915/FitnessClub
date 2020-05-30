@@ -5,25 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Addresses
 {
-    [Authorize(Roles = "Administrator")]
     public class CreateModel : PageModel
     {
-        private readonly IAddressRepository addressRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public CreateModel(IAddressRepository addressRepository)
+        public CreateModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.addressRepository = addressRepository;
+            _context = context;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-            ViewData["Genders"] = new SelectList(await addressRepository.Get<Person>(), "PersonID", "LastName");
+        ViewData["PersonID"] = new SelectList(_context.People, "PersonID", "LastName");
             return Page();
         }
 
@@ -39,15 +37,8 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return Page();
             }
 
-            if (addressRepository.Any(Address.AddressID) == true)
-            {
-                return RedirectToPage("./Error");
-            }
-            else
-            {
-                addressRepository.Insert(Address);
-                await addressRepository.Submit();
-            }
+            _context.Addresses.Add(Address);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Details</h1>
@@ -11,12 +12,6 @@
     <h4>Employee</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Employee.AspNetUserId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Employee.AspNetUserId)
-        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Employee.FirstName)
         </dt>
@@ -30,12 +25,6 @@
             @Html.DisplayFor(model => model.Employee.LastName)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Employee.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Employee.Email)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Employee.Gender)
         </dt>
         <dd class="col-sm-10">
@@ -46,6 +35,12 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Employee.Birthdate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Employee.AspNetUser)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Employee.AspNetUser.Id)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Employee.CreatedBy)

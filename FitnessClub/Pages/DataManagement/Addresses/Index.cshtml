@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Index</h1>
@@ -13,9 +14,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Address[0].Person)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Address[0].Street)
             </th>
@@ -32,6 +30,9 @@
                 @Html.DisplayNameFor(model => model.Address[0].Country)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Address[0].Person)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Address[0].CreatedBy)
             </th>
             <th>
@@ -43,9 +44,6 @@
     <tbody>
 @foreach (var item in Model.Address) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AddressID)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Street)
             </td>
@@ -61,6 +59,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Country)
             </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.Person.PersonID)
+            </th>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)
             </td>

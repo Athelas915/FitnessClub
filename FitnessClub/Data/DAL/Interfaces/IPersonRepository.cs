@@ -1,10 +1,11 @@
 ﻿using FitnessClub.Data.Models;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace FitnessClub.Data.DAL.Interfaces
 {
-    public interface IPersonRepository<PersonEntity> : IGenericRepository<PersonEntity> where PersonEntity : Person
+    public interface IPersonRepository<PEntity> : IRepository<PEntity> where PEntity : Person
     {
-        new void Insert(PersonEntity person);
+        IEnumerable<PEntity> GetAllWithAddresses();
+        PEntity FindWithAddress(int id);
     }
 }

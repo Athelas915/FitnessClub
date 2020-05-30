@@ -6,40 +6,40 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.SessionEnrollments
 {
-    [Authorize(Roles = "Administrator")]
     public class EditModel : PageModel
     {
-        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
+            _context = context;
         }
 
         [BindProperty]
         public SessionEnrollment SessionEnrollment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? PersonID, int? SessionID)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if ((PersonID == null) || (SessionID == null))
+            if (id == null)
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
+            SessionEnrollment = await _context.SessionEnrollments
+                .Include(s => s.Customer)
+                .Include(s => s.Session).FirstOrDefaultAsync(m => m.CustomerID == id);
 
             if (SessionEnrollment == null)
             {
                 return NotFound();
             }
-            ViewData["PersonID"] = new SelectList(await sessionEnrollmentRepository.Get<Customer>(), "PersonID", "LastName");
-            ViewData["SessionID"] = new SelectList(await sessionEnrollmentRepository.Get<Session>(), "SessionID", "SessionID");
+           ViewData["CustomerID"] = new SelectList(_context.Customers, "PersonID", "LastName");
+           ViewData["SessionID"] = new SelectList(_context.Sessions, "SessionID", "SessionID");
             return Page();
         }
 
@@ -52,15 +52,15 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
                 return Page();
             }
 
-            sessionEnrollmentRepository.Update(SessionEnrollment);
+            _context.Attach(SessionEnrollment).State = EntityState.Modified;
 
             try
             {
-                await sessionEnrollmentRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SessionEnrollmentExists(SessionEnrollment.PersonID.Value, SessionEnrollment.SessionID.Value))
+                if (!SessionEnrollmentExists(SessionEnrollment.CustomerID))
                 {
                     return NotFound();
                 }
@@ -73,9 +73,9 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
             return RedirectToPage("./Index");
         }
 
-        private bool SessionEnrollmentExists(int PersonID, int SessionID)
+        private bool SessionEnrollmentExists(int id)
         {
-            return sessionEnrollmentRepository.Any(PersonID, SessionID);
+            return _context.SessionEnrollments.Any(e => e.CustomerID == id);
         }
     }
 }

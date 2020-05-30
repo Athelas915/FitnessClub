@@ -1,0 +1,20 @@
+﻿@page
+
+@using FitnessClub.Areas.CustomerPanel.Pages;
+@model CalendarModel
+@{
+    ViewData["Title"] = "Calendar";
+    ViewData["ActivePage"] = CustomerPanelNavPages.Calendar;
+    Layout = "./_Layout";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<h4>@ViewData["Title"]</h4>
+<div class="row">
+    <div class="col-md-9">
+        <h1>This page will have a calendar with all sessions.</h1>
+    </div>
+</div>

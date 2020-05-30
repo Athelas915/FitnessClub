@@ -5,20 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Employees
 {
-    [Authorize(Roles = "Administrator")]
     public class DeleteModel : PageModel
     {
-        private readonly IPersonRepository<Employee> employeeRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public DeleteModel(IPersonRepository<Employee> employeeRepository)
+        public DeleteModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.employeeRepository = employeeRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -31,7 +29,8 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return NotFound();
             }
 
-            Employee = await employeeRepository.GetByID(id.Value);
+            Employee = await _context.Employees
+                .Include(e => e.AspNetUser).FirstOrDefaultAsync(m => m.PersonID == id);
 
             if (Employee == null)
             {
@@ -47,12 +46,12 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return NotFound();
             }
 
-            Employee = await employeeRepository.GetByID(id.Value);
+            Employee = await _context.Employees.FindAsync(id);
 
             if (Employee != null)
             {
-                employeeRepository.Delete(Employee);
-                await employeeRepository.Submit();
+                _context.Employees.Remove(Employee);
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");

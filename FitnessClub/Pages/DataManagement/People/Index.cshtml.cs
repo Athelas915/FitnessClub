@@ -5,26 +5,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.People
 {
-    [Authorize(Roles = "Administrator")]
     public class IndexModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public IndexModel(IPersonRepository<Person> personRepository)
+        public IndexModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.personRepository = personRepository;
+            _context = context;
         }
-        public IList<Person> Person { get; set; }
+
+        public IList<Person> Person { get;set; }
 
         public async Task OnGetAsync()
         {
-            Person = await personRepository.Get();
+            Person = await _context.People
+                .Include(p => p.AspNetUser).ToListAsync();
         }
     }
 }

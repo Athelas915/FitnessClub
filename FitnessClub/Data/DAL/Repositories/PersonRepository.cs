@@ -1,25 +1,16 @@
-﻿using System;
-using FitnessClub.Data.DAL.Interfaces;
+﻿using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FitnessClub.Data.DAL.Repositories
 {
-    public class PersonRepository<PersonEntity> : GenericRepository<PersonEntity>, IPersonRepository<PersonEntity>, IDisposable where PersonEntity : Person
+    public abstract class PersonRepository<PEntity> : GenericRepository<PEntity>, IPersonRepository<PEntity> where PEntity : Person
     {
         public PersonRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
-        public override void Insert(PersonEntity person)
-        {
-            if (unitOfWork.LoggedUserId == -1)
-            {
-                person.CreatedBy = person.AspNetUser.Id;
-                dbSet.Add(person);
-            }
-            else
-            {
-                base.Insert(person);
-            }
-        }
+        public IEnumerable<PEntity> GetAllWithAddresses() => Get(includeProperties: "Address");
+        public PEntity FindWithAddress(int id) => Get(filter: a => a.PersonID == id, includeProperties: "Address").FirstOrDefault();
     }
 }

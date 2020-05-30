@@ -6,52 +6,38 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace FitnessClub.Pages.DataManagement.Coaches
 {
-    [Authorize(Roles = "Administrator")]
     public class EditModel : PageModel
     {
-        private readonly IPersonRepository<Coach> coachRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(IPersonRepository<Coach> coachRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.coachRepository = coachRepository;
+            _context = context;
         }
 
         [BindProperty]
         public Coach Coach { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
-        {if (id == null)
+        {
+            if (id == null)
             {
                 return NotFound();
             }
 
-            Coach = await coachRepository.GetByID(id.Value);
+            Coach = await _context.Coaches
+                .Include(c => c.AspNetUser).FirstOrDefaultAsync(m => m.PersonID == id);
 
             if (Coach == null)
             {
                 return NotFound();
             }
-
-            var users = await coachRepository.Get<AspNetUser>();
-            var people = await coachRepository.Get<Person>();
-            people.Remove(Coach);
-            var usersToRemove = people.Select(c => c.AspNetUserId).ToList();
-
-            foreach (int userToRemove in usersToRemove)
-            {
-                users.Remove(users.Single(u => u.Id == userToRemove));
-            }
-
-            ViewData["Users"] = new SelectList(users, "Id", "Email");
-
+           ViewData["UserID"] = new SelectList(_context.AspNetUsers, "Id", "Id");
             return Page();
         }
 
@@ -64,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Coaches
                 return Page();
             }
 
-            coachRepository.Update(Coach);
+            _context.Attach(Coach).State = EntityState.Modified;
 
             try
             {
-                await coachRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -87,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Coaches
 
         private bool CoachExists(int id)
         {
-            return coachRepository.Any(id);
+            return _context.Coaches.Any(e => e.PersonID == id);
         }
     }
 }

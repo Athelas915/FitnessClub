@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Logs
 {
-    [Authorize(Roles = "Administrator")]
+    //[Authorize(Roles = "Administrator")]
     public class LogListModel: PageModel
     {
         private readonly ILogRepository logRepository;
@@ -31,9 +31,9 @@ namespace FitnessClub.Pages.DataManagement.Logs
         {
             Logs = await logRepository.Get();
 
-            logRepository.DeleteAll(Logs);
+            logRepository.DeleteAllLogs();
 
-            await logRepository.Submit();
+            await logRepository.Commit();
 
             return RedirectToPage("./LogList");
         }

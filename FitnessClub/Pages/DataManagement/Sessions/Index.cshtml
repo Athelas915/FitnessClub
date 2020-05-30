@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Index</h1>
@@ -13,9 +14,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Session[0].Coach)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Session[0].SessionType)
             </th>
@@ -29,20 +27,20 @@
                 @Html.DisplayNameFor(model => model.Session[0].Room)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Session[0].CreatedOn)
+                @Html.DisplayNameFor(model => model.Session[0].Coach)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Session[0].CreatedBy)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Session[0].CreatedOn)
+            </th>
             <th></th>
         </tr>
     </thead>
-    <tbody> 
+    <tbody>
 @foreach (var item in Model.Session) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PersonID)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SessionType)
             </td>
@@ -56,10 +54,13 @@
                 @Html.DisplayFor(modelItem => item.Room)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedOn)
+                @Html.DisplayFor(modelItem => item.Coach.PersonID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedOn)
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.SessionID">Edit</a> |

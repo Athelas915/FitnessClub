@@ -104,6 +104,10 @@ a.menu-link:hover {
     text-decoration: none;
 }
 
+a.menu-link-onclik {
+    background-color: #95ff95;
+  }
+
 div.coll-fill {
     overflow: auto;
 }
@@ -111,4 +115,12 @@ div.coll-fill {
 select.bigger-select {
     min-width: 60px;
     max-width: 60px;
+}
+
+tr.green {
+    background-color: #65ff86;
+    margin: 1px;
+}
+tr.no-color {
+    margin: 1px;
 }

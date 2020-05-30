@@ -18,33 +18,22 @@ using Microsoft.EntityFrameworkCore;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
+using FitnessClub.Data.BLL.Interfaces;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly IPersonRepository<Customer> _customerRepository;
-        private readonly IAddressRepository _addressRepository;
-        private readonly SignInManager<AspNetUser> _signInManager;
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IUserService userService;
+        private readonly ISignInService signInService;
+        private readonly IEmailSender emailSender;
 
-        public RegisterModel(
-            IPersonRepository<Customer> customerRepository,
-            IAddressRepository addressRepository,
-            UserManager<AspNetUser> userManager,
-            SignInManager<AspNetUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+        public RegisterModel(IUserService userService, ISignInService signInService, IEmailSender emailSender)
         {
-            _customerRepository = customerRepository;
-            _addressRepository = addressRepository;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
-            _emailSender = emailSender;
+            this.userService = userService;
+            this.signInService = signInService;
+            this.emailSender = emailSender;
         }
 
         [BindProperty]
@@ -81,69 +70,44 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await signInService.GetExternalAuthenticationSchemes()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await signInService.GetExternalAuthenticationSchemes()).ToList();
 
 
             if (ModelState.IsValid)
             {
-                var user = new AspNetUser { UserName = Input.Email, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-               
-                Customer.AspNetUser = user;
-                Customer.Email = Input.Email;
-                Address.Person = Customer;
+                var result = await userService.CreateUser(Input.Email, Input.Password, Customer, "Customer");
 
-                if ((_addressRepository.Any(Address.AddressID) == true) || (_customerRepository.Any(Customer.PersonID) == true))
-                {
-                    return RedirectToPage("..../Pages/Error");
-                }
-                else
-                {
-                    _customerRepository.Insert(Customer);
-                    _addressRepository.Insert(Address);
-                    try
-                    {
-                        await _customerRepository.Submit();
-                        await _addressRepository.Submit();
-                    }
-                    catch (DbUpdateException)
-                    {
-                        return Page();
-                    }
-                }
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    var userId = await userService.GetUserId(Input.Email);
 
-                    await _userManager.AddToRoleAsync(user, "Customer");
 
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var code = await userService.GenerateEmailConfirmationToken(userId);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code },
+                        values: new { area = "Identity", userId = userId, code = code },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    await emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (await userService.ConfirmedAccountRequired(userId))
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }
