@@ -4,6 +4,7 @@ using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,15 @@ namespace FitnessClub.Data.BLL.Services
     {
         private readonly IUserRepository userRepository;
         private readonly SignInManager<AspNetUser> signInManager;
+        private readonly ILogger<UserService> logger;
         public UserService(
             IUserRepository userRepository,
-            SignInManager<AspNetUser> signInManager)
+            SignInManager<AspNetUser> signInManager,
+            ILogger<UserService> logger)
         {
             this.userRepository = userRepository;
             this.signInManager = signInManager;
+            this.logger = logger;
         }
 
         //Data getters
@@ -44,7 +48,7 @@ namespace FitnessClub.Data.BLL.Services
             {
                 return null;
             }
-            Serilog.Log.Information("User with ID '{UserId}' asked for their personal data.", userId);
+            logger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
             //only include personal data for download
 
             var allData = new Dictionary<string, Dictionary<string, string>>();
@@ -153,7 +157,7 @@ namespace FitnessClub.Data.BLL.Services
                 result = await userRepository.UserManager.AddLoginAsync(user, info);
                 if (result.Succeeded)
                 {
-                    Serilog.Log.Information("User created an account using {Name} provider.", info.LoginProvider);
+                    logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
                     await userRepository.Commit();
 
                     user.Person = person;
@@ -185,7 +189,7 @@ namespace FitnessClub.Data.BLL.Services
 
             if (result.Succeeded)
             {
-                Serilog.Log.Information("User created a new account with password.");
+                logger.LogInformation("User created a new account with password.");
 
                 await userRepository.Commit();
 
@@ -270,7 +274,7 @@ namespace FitnessClub.Data.BLL.Services
             {
                 await userRepository.Commit();
                 await signInManager.RefreshSignInAsync(user);
-                Serilog.Log.Information("User with ID '{UserId}' deleted themselves.", await userRepository.UserManager.GetUserIdAsync(user));
+                logger.LogInformation("User with ID '{UserId}' deleted themselves.", await userRepository.UserManager.GetUserIdAsync(user));
             }
             else
             {
@@ -344,7 +348,7 @@ namespace FitnessClub.Data.BLL.Services
             }
             await userRepository.Commit();
             await signInManager.SignOutAsync();
-            Serilog.Log.Information("User with ID '{UserId}' deleted themselves.", userId);
+            logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
 
             return result;
         }

@@ -24,7 +24,7 @@ namespace FitnessClub.Data.Models.ViewModels
         public int MembershipNo { get; set; }
         [DisplayName("Start Date")]
         public string Start { get; set; }
-        [DisplayName("Expiration Number")]
+        [DisplayName("Expiration Date")]
         public string Finish { get; set; }
         [DisplayName("Customer")]
         public string CustomerFullName { get; set; }

@@ -22,7 +22,6 @@ namespace FitnessClub.Pages
         }
         public void OnGet()
         {
-
         }
     }
 }

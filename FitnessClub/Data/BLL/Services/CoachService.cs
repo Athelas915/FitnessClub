@@ -2,6 +2,7 @@
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models.ViewModels;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,17 +14,19 @@ namespace FitnessClub.Data.BLL.Services
     {
         private readonly ISessionRepository sessionRepository;
         private readonly ICoachRepository coachRepository;
-        private readonly int userId;
+        private readonly ILogger<CoachService> logger;
         public CoachService(
             ISessionRepository sessionRepository,
             IEmployeeRepository employeeRepository,
             ICoachRepository coachRepository,
-            UserResolverService userResolverService
-            ) : base(sessionRepository, employeeRepository, userResolverService)
+            UserResolverService userResolverService,
+            ILogger<CoachService> logger,
+            ILogger<EmployeeService> employeeLogger
+            ) : base(sessionRepository, employeeRepository, userResolverService, employeeLogger)
         {
             this.sessionRepository = sessionRepository;
             this.coachRepository = coachRepository;
-            userId = userResolverService.GetUserId();
+            this.logger = logger;
         }
 
         public async Task AssignToSession(int coachId, int sessionId)
@@ -32,17 +35,17 @@ namespace FitnessClub.Data.BLL.Services
             var session = sessionRepository.FindWithCoach(sessionId);
             if (coach == null )
             {
-                Serilog.Log.Information($"Couldn't find the coach with id {coachId}.");
+                logger.LogInformation($"Couldn't find the coach with id {coachId}.");
                 return;
             }
             else if (session == null)
             {
-                Serilog.Log.Information($"Couldn't find the session with id {sessionId}.");
+                logger.LogInformation($"Couldn't find the session with id {sessionId}.");
                 return;
             }
             if (session.Coach != null)
             {
-                Serilog.Log.Information($"Session already has assigned coach. Removed coach with id {session.Coach.PersonID} from the session and assigned the new one.");
+                logger.LogInformation($"Session already has assigned coach. Removed coach with id {session.Coach.PersonID} from the session and assigned the new one.");
             }
             session.Coach = coach;
             session.CoachID = coach.PersonID;
@@ -56,7 +59,7 @@ namespace FitnessClub.Data.BLL.Services
             var session = coach.Sessions.Where(a => a.SessionID == sessionId).FirstOrDefault();
             if (coach == null || session == null)
             {
-                Serilog.Log.Information($"Couldn't find the session with given session id {sessionId} and person id {coachId}");
+                logger.LogInformation($"Couldn't find the session with given session id {sessionId} and person id {coachId}");
                 return;
             }
 
@@ -76,7 +79,7 @@ namespace FitnessClub.Data.BLL.Services
             var coach = coachRepository.FindWithSessions(coachId);
             if (coach == null)
             {
-                Serilog.Log.Information($"Couldn't find the coach with given id {coachId}");
+                logger.LogInformation($"Couldn't find the coach with given id {coachId}");
                 return null;
             }
             var sessions = coach.Sessions.AsEnumerable();
@@ -94,7 +97,7 @@ namespace FitnessClub.Data.BLL.Services
             var coach = coachRepository.FindWithSessions(coachId);
             if (coach == null)
             {
-                Serilog.Log.Information($"Couldn't find the coach with given id {coachId}");
+                logger.LogInformation($"Couldn't find the coach with given id {coachId}");
                 return null;
             }
             var sessions = coach.Sessions.AsEnumerable();
@@ -112,7 +115,7 @@ namespace FitnessClub.Data.BLL.Services
             var coach = coachRepository.FindWithRatings(coachId);
             if (coach == null)
             {
-                Serilog.Log.Information($"Couldn't find the coach with given id {coachId}");
+                logger.LogInformation($"Couldn't find the coach with given id {coachId}");
                 return null;
             }
             var ratings = coach.CoachRatings.AsEnumerable();

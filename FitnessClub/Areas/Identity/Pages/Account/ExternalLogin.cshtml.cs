@@ -27,12 +27,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         private readonly IUserService userService;
         private readonly ISignInService signInService;
         private readonly IEmailSender emailSender;
+        private readonly ILogger<ExternalLoginModel> logger;
 
-        public ExternalLoginModel(IUserService userService, ISignInService signInService, IEmailSender emailSender)
+        public ExternalLoginModel(IUserService userService, ISignInService signInService, IEmailSender emailSender, ILogger<ExternalLoginModel> logger)
         {
             this.userService = userService;
             this.signInService = signInService;
             this.emailSender = emailSender;
+            this.logger = logger;
         }
         [BindProperty]
         public InputModel Input { get; set; }
@@ -84,7 +86,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
             var result = await signInService.ExternalLoginSignIn(info);
             if (result.Succeeded)
             {
-                Serilog.Log.Information("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+                logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)

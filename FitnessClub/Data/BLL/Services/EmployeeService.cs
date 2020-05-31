@@ -3,6 +3,7 @@ using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.ViewModels;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace FitnessClub.Data.BLL.Services
     {
         private readonly ISessionRepository sessionRepository;
         private readonly IEmployeeRepository employeeRepository;
+        private readonly ILogger<EmployeeService> logger;
         private readonly int userId;
-        public EmployeeService(ISessionRepository sessionRepository, IEmployeeRepository employeeRepository, UserResolverService userResolverService)
+        public EmployeeService(ISessionRepository sessionRepository, IEmployeeRepository employeeRepository, UserResolverService userResolverService, ILogger<EmployeeService> logger)
         {
             this.sessionRepository = sessionRepository;
             this.employeeRepository = employeeRepository;
+            this.logger = logger;
             userId = userResolverService.GetUserId();
         }
 
@@ -27,7 +30,7 @@ namespace FitnessClub.Data.BLL.Services
             var employee = employeeRepository.Get(filter: a => a.UserID == userId).FirstOrDefault();
             if (employee == null)
             {
-                Serilog.Log.Information($"Couldn't find the currently logged in user.");
+                logger.LogInformation($"Couldn't find the currently logged in user.");
                 return -1;
             }
             return employee.PersonID;
@@ -38,7 +41,7 @@ namespace FitnessClub.Data.BLL.Services
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {employeeId}");
+                logger.LogInformation($"Couldn't find the user with id {employeeId}");
                 return;
             }
             var holiday = new Holiday()
@@ -59,12 +62,12 @@ namespace FitnessClub.Data.BLL.Services
             var holiday = employee.Holidays.Where(a => a.HolidayID == inputHoliday.HolidayID).FirstOrDefault();
             if (employee == null || holiday == null)
             {
-                Serilog.Log.Information($"Couldn't find the holiday with given session id {inputHoliday.HolidayID} and person id {employeeId}");
+                logger.LogInformation($"Couldn't find the holiday with given session id {inputHoliday.HolidayID} and person id {employeeId}");
                 return false;
             }
             else if (holiday.Finish < DateTime.Now)
             {
-                Serilog.Log.Information($"The holidays already ended. Users can edit only the holidays that are upcoming.");
+                logger.LogInformation($"The holidays already ended. Users can edit only the holidays that are upcoming.");
                 return false;
             }
             if (holiday.Start > DateTime.Now)
@@ -85,7 +88,7 @@ namespace FitnessClub.Data.BLL.Services
             var holiday = employee.Holidays.Where(a => a.HolidayID == inputHoliday.HolidayID).FirstOrDefault();
             if (employee == null || holiday == null)
             {
-                Serilog.Log.Information($"Couldn't find the holiday with given session id {inputHoliday.HolidayID} and person id {employeeId}");
+                logger.LogInformation($"Couldn't find the holiday with given session id {inputHoliday.HolidayID} and person id {employeeId}");
                 return;
             }
             var result = employee.Holidays.Remove(holiday);
@@ -104,7 +107,7 @@ namespace FitnessClub.Data.BLL.Services
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {employeeId}");
+                logger.LogInformation($"Couldn't find the user with id {employeeId}");
                 return null;
             }
             var holidays = employee.Holidays.AsEnumerable();
@@ -121,7 +124,7 @@ namespace FitnessClub.Data.BLL.Services
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {employeeId}");
+                logger.LogInformation($"Couldn't find the user with id {employeeId}");
                 return null;
             }
             var holidays = employee.Holidays.AsEnumerable().Where(a => a.Finish < DateTime.Now);
@@ -138,7 +141,7 @@ namespace FitnessClub.Data.BLL.Services
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {employeeId}");
+                logger.LogInformation($"Couldn't find the user with id {employeeId}");
                 return null;
             }
             var holidays = employee.Holidays.AsEnumerable().Where(a => a.Start > DateTime.Now);

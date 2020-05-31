@@ -22,12 +22,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         private readonly ISignInService signInService;
         private readonly IUserService userService;
         private readonly IEmailSender emailSender;
+        private readonly ILogger<LoginModel> logger;
 
-        public LoginModel(IUserService userService, ISignInService signInService, IEmailSender emailSender)
+        public LoginModel(IUserService userService, ISignInService signInService, IEmailSender emailSender, ILogger<LoginModel> logger)
         {
             this.userService = userService;
             this.signInService = signInService;
             this.emailSender = emailSender;
+            this.logger = logger;
         }
 
         [BindProperty]
@@ -82,7 +84,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 var result = await signInService.SignIn(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    Serilog.Log.Information("User logged in.");
+                    logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -91,7 +93,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 }
                 if (result.IsLockedOut)
                 {
-                    Serilog.Log.Warning("User account locked out.");
+                    logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
                 else

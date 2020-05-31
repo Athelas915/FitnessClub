@@ -3,6 +3,7 @@ using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.ViewModels;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace FitnessClub.Data.BLL.Services
     {
         private readonly ISessionRepository sessionRepository;
         private readonly ICustomerRepository customerRepository;
+        private readonly ILogger<CustomerService> logger;
         private readonly int userId;
-        public CustomerService(ISessionRepository sessionRepository, ICustomerRepository customerRepository, UserResolverService userResolverService)
+        public CustomerService(ISessionRepository sessionRepository, ICustomerRepository customerRepository, UserResolverService userResolverService, ILogger<CustomerService> logger)
         {
             this.sessionRepository = sessionRepository;
             this.customerRepository = customerRepository;
+            this.logger = logger;
             userId = userResolverService.GetUserId();
         }
         public int GetCurrentPersonId()
@@ -26,7 +29,7 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.Get(filter: a => a.UserID == userId).FirstOrDefault();
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the currently logged in user.");
+                logger.LogInformation($"Couldn't find the currently logged in user.");
                 return -1;
             }
             return customer.PersonID;
@@ -37,7 +40,7 @@ namespace FitnessClub.Data.BLL.Services
             var enrollment = customer.SessionEnrollments.Where(a => a.CustomerID == customerId && a.SessionID == sessionId).FirstOrDefault();
             if (customer == null || enrollment == null)
             {
-                Serilog.Log.Information($"Couldn't find the enrollment with given session id {sessionId} and person id {customerId}");
+                logger.LogInformation($"Couldn't find the enrollment with given session id {sessionId} and person id {customerId}");
                 return;
             }
 
@@ -57,7 +60,7 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return;
             }
             var enrollment = new SessionEnrollment() 
@@ -76,13 +79,13 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.FindWithRatings(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return;
             }
             var coachId = (await sessionRepository.GetById(sessionId)).CoachID;
             if (coachId == null)
             {
-                Serilog.Log.Information($"Couldn't find coach for session with id {sessionId}. Perhaps coach was deleted from the databse.");
+                logger.LogInformation($"Couldn't find coach for session with id {sessionId}. Perhaps coach was deleted from the databse.");
                 return;
             }
 
@@ -104,7 +107,7 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return null;
             }
             var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
@@ -118,7 +121,7 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.FindWithMemberships(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return null;
             }
             var memberships = customer.Memberships.AsEnumerable();
@@ -135,7 +138,7 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return null;
             }
             var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
@@ -149,7 +152,7 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return null;
             }
             var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
@@ -163,7 +166,7 @@ namespace FitnessClub.Data.BLL.Services
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return null;
             }
             var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
@@ -178,7 +181,7 @@ namespace FitnessClub.Data.BLL.Services
             customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
-                Serilog.Log.Information($"Couldn't find the user with id {customerId}");
+                logger.LogInformation($"Couldn't find the user with id {customerId}");
                 return null;
             }
             var enrolledSessionIds = customer.SessionEnrollments.Select(a => a.SessionID);

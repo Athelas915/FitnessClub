@@ -16,10 +16,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account
     public class LogoutModel : PageModel
     {
         private readonly ISignInService signInService;
-
-        public LogoutModel(ISignInService signInService)
+        private readonly ILogger<LogoutModel> logger;
+        public LogoutModel(ISignInService signInService, ILogger<LogoutModel> logger)
         {
             this.signInService = signInService;
+            this.logger = logger;
         }
 
         public void OnGet()
@@ -29,7 +30,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await signInService.SignOut();
-            Serilog.Log.Information("User logged out.");
+            logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);

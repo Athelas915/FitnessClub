@@ -11,6 +11,7 @@ using FitnessClub.Data.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace FitnessClub.Areas.CustomerPanel.Pages
 {
@@ -18,9 +19,11 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
     public class CoachRatingModel : PageModel
     {
         private readonly ICustomerService customerService;
-        public CoachRatingModel(ICustomerService customerService)
+        private readonly ILogger<CoachRatingModel> logger;
+        public CoachRatingModel(ICustomerService customerService, ILogger<CoachRatingModel> logger)
         {
             this.customerService = customerService;
+            this.logger = logger;
         }
         public IEnumerable<SessionViewModel> Sessions { get; set; }
         [BindProperty]
@@ -33,7 +36,7 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
             var customerId = customerService.GetCurrentPersonId();
             if (customerId == -1)
             {
-                Serilog.Log.Information($"Couldn't find id of the logged in customer.");
+                logger.LogInformation($"Couldn't find id of the logged in customer.");
                 return RedirectToPage("./Index");
             }
             Sessions = customerService.ViewUnratedSessions(customerId);
@@ -49,7 +52,7 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
             var customerId = customerService.GetCurrentPersonId();
             if (customerId == -1)
             {
-                Serilog.Log.Information($"Couldn't find id of the logged in customer.");
+                logger.LogInformation($"Couldn't find id of the logged in customer.");
                 return RedirectToPage("./Index");
             }
 

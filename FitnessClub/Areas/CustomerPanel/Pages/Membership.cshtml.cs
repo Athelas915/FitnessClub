@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.Models.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace FitnessClub.Areas.CustomerPanel.Pages
 {
@@ -14,9 +15,11 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
     public class MembershipModel : PageModel
     {
         private readonly ICustomerService customerService;
-        public MembershipModel(ICustomerService customerService)
+        private readonly ILogger<MembershipModel> logger;
+        public MembershipModel(ICustomerService customerService, ILogger<MembershipModel> logger)
         {
             this.customerService = customerService;
+            this.logger = logger;
         }
 
         public IEnumerable<MembershipViewModel> Memberships { get; set; }
@@ -25,7 +28,7 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
             var customerId = customerService.GetCurrentPersonId();
             if (customerId == -1)
             {
-                Serilog.Log.Information($"Couldn't find id of the logged in customer.");
+                logger.LogInformation($"Couldn't find id of the logged in customer.");
                 return RedirectToPage("./Index");
             }
             Memberships = customerService.ViewMemberships(customerId);
