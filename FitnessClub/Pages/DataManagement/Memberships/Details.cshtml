@@ -19,12 +19,6 @@
             @Html.DisplayFor(model => model.Membership.MembershipNo)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Membership.PersonID)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Membership.PersonID)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Membership.Start)
         </dt>
         <dd class="col-sm-10">
@@ -35,6 +29,12 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Membership.Finish)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Membership.Customer)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Membership.Customer.PersonID)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Membership.CreatedBy)

@@ -6,6 +6,6 @@ namespace FitnessClub.Data.Models
     {
         public virtual ICollection<SessionEnrollment> SessionEnrollments { get; set; }
         public virtual ICollection<Membership> Memberships { get; set; }
-        public virtual Person Person { get; set; }
+        public virtual ICollection<CoachRating> CoachRatings { get; set; }
     }
 }

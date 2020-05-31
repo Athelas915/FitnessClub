@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -14,11 +15,6 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Session.SessionID" />
-            <div class="form-group">
-                <label asp-for="Session.PersonID" class="control-label"></label>
-                <select asp-for="Session.PersonID" class="form-control" asp-items="ViewBag.PersonID"></select>
-                <span asp-validation-for="Session.PersonID" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Session.SessionType" class="control-label"></label>
                 <input asp-for="Session.SessionType" class="form-control" />
@@ -38,6 +34,21 @@
                 <label asp-for="Session.Room" class="control-label"></label>
                 <input asp-for="Session.Room" class="form-control" />
                 <span asp-validation-for="Session.Room" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Session.CoachID" class="control-label"></label>
+                <select asp-for="Session.CoachID" class="form-control" asp-items="ViewBag.CoachID"></select>
+                <span asp-validation-for="Session.CoachID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Session.CreatedBy" class="control-label"></label>
+                <input asp-for="Session.CreatedBy" class="form-control" />
+                <span asp-validation-for="Session.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Session.CreatedOn" class="control-label"></label>
+                <input asp-for="Session.CreatedOn" class="form-control" />
+                <span asp-validation-for="Session.CreatedOn" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

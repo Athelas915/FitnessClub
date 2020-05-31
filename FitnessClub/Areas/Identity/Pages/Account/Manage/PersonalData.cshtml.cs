@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,23 +10,19 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly UserManager<AspNetUser> _userManager;
-        private readonly ILogger<PersonalDataModel> _logger;
+        private readonly IUserService userService;
 
-        public PersonalDataModel(
-            UserManager<AspNetUser> userManager,
-            ILogger<PersonalDataModel> logger)
+        public PersonalDataModel(IUserService userService)
         {
-            _userManager = userManager;
-            _logger = logger;
+            this.userService = userService;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            var userId = userService.GetUserId(User);
+            if (userId == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
             return Page();

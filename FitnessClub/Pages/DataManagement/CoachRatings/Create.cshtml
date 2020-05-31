@@ -15,13 +15,26 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="CoachRating.PersonID" class="control-label"></label>
-                <select asp-for="CoachRating.PersonID" class="form-control" asp-items="ViewBag.PersonID"></select>
-            </div>
-            <div class="form-group">
                 <label asp-for="CoachRating.Rating" class="control-label"></label>
                 <input asp-for="CoachRating.Rating" class="form-control" />
                 <span asp-validation-for="CoachRating.Rating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoachRating.CoachID" class="control-label"></label>
+                <select asp-for="CoachRating.CoachID" class ="form-control" asp-items="ViewBag.CoachID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoachRating.CustomerID" class="control-label"></label>
+                <select asp-for="CoachRating.CustomerID" class ="form-control" asp-items="ViewBag.CustomerID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoachRating.SessionID" class="control-label"></label>
+                <select asp-for="CoachRating.SessionID" class ="form-control" asp-items="ViewBag.SessionID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoachRating.CreatedBy" class="control-label"></label>
+                <input asp-for="CoachRating.CreatedBy" class="form-control" />
+                <span asp-validation-for="CoachRating.CreatedBy" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Settings.Configuration;
 using FitnessClub.Data.DAL;
-using FitnessClub.Pages.DataManagement.People;
 
 namespace FitnessClub
 {
@@ -20,7 +19,6 @@ namespace FitnessClub
         {
             CreateHostBuilder(args).Build().Run();
         }
-
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(logging =>

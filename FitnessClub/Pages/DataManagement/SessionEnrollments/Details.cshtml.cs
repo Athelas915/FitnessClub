@@ -5,31 +5,32 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
+
 namespace FitnessClub.Pages.DataManagement.SessionEnrollments
 {
-    [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public DetailsModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
+        public DetailsModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
+            _context = context;
         }
 
         public SessionEnrollment SessionEnrollment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? PersonID, int? SessionID)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if ((PersonID == null) || (SessionID == null))
+            if (id == null)
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
+            SessionEnrollment = await _context.SessionEnrollments
+                .Include(s => s.Customer)
+                .Include(s => s.Session).FirstOrDefaultAsync(m => m.CustomerID == id);
 
             if (SessionEnrollment == null)
             {

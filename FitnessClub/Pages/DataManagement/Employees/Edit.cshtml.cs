@@ -6,20 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Employees
 {
-    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IPersonRepository<Employee> employeeRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(IPersonRepository<Employee> employeeRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.employeeRepository = employeeRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -32,12 +30,14 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return NotFound();
             }
 
-            Employee = await employeeRepository.GetByID(id.Value);
+            Employee = await _context.Employees
+                .Include(e => e.AspNetUser).FirstOrDefaultAsync(m => m.PersonID == id);
 
             if (Employee == null)
             {
                 return NotFound();
             }
+           ViewData["UserID"] = new SelectList(_context.AspNetUsers, "Id", "Id");
             return Page();
         }
 
@@ -50,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Employees
                 return Page();
             }
 
-            employeeRepository.Update(Employee);
+            _context.Attach(Employee).State = EntityState.Modified;
 
             try
             {
-                await employeeRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Employees
 
         private bool EmployeeExists(int id)
         {
-            return employeeRepository.Any(id);
+            return _context.Employees.Any(e => e.PersonID == id);
         }
     }
 }

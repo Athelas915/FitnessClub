@@ -16,10 +16,6 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Holiday.HolidayID" />
             <div class="form-group">
-                <label asp-for="Holiday.PersonID" class="control-label"></label>
-                <select asp-for="Holiday.PersonID" class="form-control" asp-items="ViewBag.PersonID"></select>
-            </div>
-            <div class="form-group">
                 <label asp-for="Holiday.Start" class="control-label"></label>
                 <input asp-for="Holiday.Start" class="form-control" />
                 <span asp-validation-for="Holiday.Start" class="text-danger"></span>
@@ -28,6 +24,21 @@
                 <label asp-for="Holiday.Finish" class="control-label"></label>
                 <input asp-for="Holiday.Finish" class="form-control" />
                 <span asp-validation-for="Holiday.Finish" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Holiday.EmployeeID" class="control-label"></label>
+                <select asp-for="Holiday.EmployeeID" class="form-control" asp-items="ViewBag.EmployeeID"></select>
+                <span asp-validation-for="Holiday.EmployeeID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Holiday.CreatedBy" class="control-label"></label>
+                <input asp-for="Holiday.CreatedBy" class="form-control" />
+                <span asp-validation-for="Holiday.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Holiday.CreatedOn" class="control-label"></label>
+                <input asp-for="Holiday.CreatedOn" class="form-control" />
+                <span asp-validation-for="Holiday.CreatedOn" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

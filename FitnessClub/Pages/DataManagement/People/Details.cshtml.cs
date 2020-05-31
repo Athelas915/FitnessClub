@@ -5,20 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.People
 {
-    [Authorize(Policy = "SignedIn")]
     public class DetailsModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public DetailsModel(IPersonRepository<Person> personRepository)
+        public DetailsModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.personRepository = personRepository;
+            _context = context;
         }
 
         public Person Person { get; set; }
@@ -30,7 +28,8 @@ namespace FitnessClub.Pages.DataManagement.People
                 return NotFound();
             }
 
-            Person = await personRepository.GetByID(id.Value);
+            Person = await _context.People
+                .Include(p => p.AspNetUser).FirstOrDefaultAsync(m => m.PersonID == id);
 
             if (Person == null)
             {

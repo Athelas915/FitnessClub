@@ -5,33 +5,33 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.SessionEnrollments
 {
-    [Authorize(Policy = "SignedIn")]
     public class DeleteModel : PageModel
     {
-        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public DeleteModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
+        public DeleteModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
+            _context = context;
         }
 
         [BindProperty]
         public SessionEnrollment SessionEnrollment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? PersonID, int? SessionID)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if ((PersonID == null) || (SessionID == null))
+            if (id == null)
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
+            SessionEnrollment = await _context.SessionEnrollments
+                .Include(s => s.Customer)
+                .Include(s => s.Session).FirstOrDefaultAsync(m => m.CustomerID == id);
 
             if (SessionEnrollment == null)
             {
@@ -40,20 +40,19 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? PersonID, int? SessionID)
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if ((PersonID == null) || (SessionID == null))
+            if (id == null)
             {
                 return NotFound();
             }
 
-            SessionEnrollment = await sessionEnrollmentRepository.GetByID(PersonID.Value, SessionID.Value);
+            SessionEnrollment = await _context.SessionEnrollments.FindAsync(id);
 
             if (SessionEnrollment != null)
             {
-                sessionEnrollmentRepository.Delete(SessionEnrollment);
-                await sessionEnrollmentRepository.Submit();
-
+                _context.SessionEnrollments.Remove(SessionEnrollment);
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");

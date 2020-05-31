@@ -6,20 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Holidays
 {
-    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IHolidayRepository holidayRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(IHolidayRepository holidayRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.holidayRepository = holidayRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -32,13 +30,14 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return NotFound();
             }
 
-            Holiday = await holidayRepository.GetByID(id.Value);
+            Holiday = await _context.Holidays
+                .Include(h => h.Employee).FirstOrDefaultAsync(m => m.HolidayID == id);
 
             if (Holiday == null)
             {
                 return NotFound();
             }
-            ViewData["PersonID"] = new SelectList(await holidayRepository.Get<Employee>(), "PersonID", "LastName");
+           ViewData["EmployeeID"] = new SelectList(_context.Holidays, "PersonID", "LastName");
             return Page();
         }
 
@@ -51,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Holidays
                 return Page();
             }
 
-            holidayRepository.Update(Holiday);
+            _context.Attach(Holiday).State = EntityState.Modified;
 
             try
             {
-                await holidayRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Holidays
 
         private bool HolidayExists(int id)
         {
-            return holidayRepository.Any(id);
+            return _context.Holidays.Any(e => e.HolidayID == id);
         }
     }
 }

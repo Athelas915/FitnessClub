@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Details</h1>
@@ -24,12 +25,6 @@
             @Html.DisplayFor(model => model.Customer.LastName)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Customer.Email)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Customer.Gender)
         </dt>
         <dd class="col-sm-10">
@@ -40,6 +35,12 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Customer.Birthdate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Customer.AspNetUser)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Customer.AspNetUser.Id)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Customer.CreatedBy)

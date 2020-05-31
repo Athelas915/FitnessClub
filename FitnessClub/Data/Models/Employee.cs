@@ -5,6 +5,5 @@ namespace FitnessClub.Data.Models
     public class Employee : Person
     {
         public virtual ICollection<Holiday> Holidays { get; set; }
-        public virtual Person Person { get; set; }
     }
 }

@@ -6,20 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.People
 {
-    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(IPersonRepository<Person> personRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.personRepository = personRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -32,12 +30,14 @@ namespace FitnessClub.Pages.DataManagement.People
                 return NotFound();
             }
 
-            Person = await personRepository.GetByID(id.Value);
+            Person = await _context.People
+                .Include(p => p.AspNetUser).FirstOrDefaultAsync(m => m.PersonID == id);
 
             if (Person == null)
             {
                 return NotFound();
             }
+           ViewData["UserID"] = new SelectList(_context.AspNetUsers, "Id", "Id");
             return Page();
         }
 
@@ -50,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.People
                 return Page();
             }
 
-            personRepository.Update(Person);
+            _context.Attach(Person).State = EntityState.Modified;
 
             try
             {
-                await personRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.People
 
         private bool PersonExists(int id)
         {
-            return personRepository.Any(id);
+            return _context.People.Any(e => e.PersonID == id);
         }
     }
 }

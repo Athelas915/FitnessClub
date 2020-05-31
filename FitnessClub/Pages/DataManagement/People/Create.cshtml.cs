@@ -5,23 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.People
 {
-    [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly IPersonRepository<Person> personRepository;
-        public CreateModel(IPersonRepository<Person> personRepository)
+        private readonly FitnessClub.Data.DAL.FCContext _context;
+
+        public CreateModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.personRepository = personRepository;
+            _context = context;
         }
 
         public IActionResult OnGet()
         {
+        ViewData["UserID"] = new SelectList(_context.AspNetUsers, "Id", "Id");
             return Page();
         }
 
@@ -37,8 +37,8 @@ namespace FitnessClub.Pages.DataManagement.People
                 return Page();
             }
 
-            personRepository.Insert(Person);
-            await personRepository.Submit();
+            _context.People.Add(Person);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

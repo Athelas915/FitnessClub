@@ -6,20 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Memberships
 {
-    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IMembershipRepository membershipRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(IMembershipRepository membershipRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.membershipRepository = membershipRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -32,13 +30,14 @@ namespace FitnessClub.Pages.DataManagement.Memberships
                 return NotFound();
             }
 
-            Membership = await membershipRepository.GetByID(id.Value);
+            Membership = await _context.Memberships
+                .Include(m => m.Customer).FirstOrDefaultAsync(m => m.MembershipID == id);
 
             if (Membership == null)
             {
                 return NotFound();
             }
-            ViewData["PersonID"] = new SelectList(await membershipRepository.Get<Customer>(), "PersonID", "LastName");
+           ViewData["CustomerID"] = new SelectList(_context.Customers, "PersonID", "LastName");
             return Page();
         }
 
@@ -51,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Memberships
                 return Page();
             }
 
-            membershipRepository.Update(Membership);
+            _context.Attach(Membership).State = EntityState.Modified;
 
             try
             {
-                await membershipRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Memberships
 
         private bool MembershipExists(int id)
         {
-            return membershipRepository.Any(id);
+            return _context.Memberships.Any(e => e.MembershipID == id);
         }
     }
 }

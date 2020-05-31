@@ -6,20 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Addresses
 {
-    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly IAddressRepository addressRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(IAddressRepository addressRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.addressRepository = addressRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -32,13 +30,14 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return NotFound();
             }
 
-            Address = await addressRepository.GetByID(id.Value);
+            Address = await _context.Addresses
+                .Include(a => a.Person).FirstOrDefaultAsync(m => m.AddressID == id);
 
             if (Address == null)
             {
                 return NotFound();
             }
-           ViewData["PersonID"] = new SelectList(await addressRepository.Get<Person>(), "PersonID", "LastName");
+           ViewData["PersonID"] = new SelectList(_context.People, "PersonID", "LastName");
             return Page();
         }
 
@@ -51,11 +50,11 @@ namespace FitnessClub.Pages.DataManagement.Addresses
                 return Page();
             }
 
-            addressRepository.Update(Address);
+            _context.Attach(Address).State = EntityState.Modified;
 
             try
             {
-                await addressRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +73,7 @@ namespace FitnessClub.Pages.DataManagement.Addresses
 
         private bool AddressExists(int id)
         {
-            return addressRepository.Any(id);
+            return _context.Addresses.Any(e => e.AddressID == id);
         }
     }
 }

@@ -5,26 +5,24 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.SessionEnrollments
 {
-    [Authorize(Policy = "SignedIn")]
     public class CreateModel : PageModel
     {
-        private readonly ISessionEnrollmentRepository sessionEnrollmentRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public CreateModel(ISessionEnrollmentRepository sessionEnrollmentRepository)
+        public CreateModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.sessionEnrollmentRepository = sessionEnrollmentRepository;
+            _context = context;
         }
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
-            ViewData["PersonID"] = new SelectList(await sessionEnrollmentRepository.Get<Customer>(), "PersonID", "LastName");
-            ViewData["SessionID"] = new SelectList(await sessionEnrollmentRepository.Get<Session>(), "SessionID", "SessionID");
+        ViewData["CustomerID"] = new SelectList(_context.Customers, "PersonID", "LastName");
+        ViewData["SessionID"] = new SelectList(_context.Sessions, "SessionID", "SessionID");
             return Page();
         }
 
@@ -40,15 +38,8 @@ namespace FitnessClub.Pages.DataManagement.SessionEnrollments
                 return Page();
             }
 
-            if (sessionEnrollmentRepository.Any(SessionEnrollment.PersonID.Value, SessionEnrollment.SessionID.Value) == true)
-            {
-                return RedirectToPage("./Error");
-            }
-            else
-            {
-                sessionEnrollmentRepository.Insert(SessionEnrollment);
-                await sessionEnrollmentRepository.Submit();
-            }
+            _context.SessionEnrollments.Add(SessionEnrollment);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

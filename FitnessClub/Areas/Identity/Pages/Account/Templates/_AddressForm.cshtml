@@ -1,0 +1,33 @@
+﻿@model FitnessClub.Data.Models.Address
+
+<body>
+    <div id="address" class="col-md-4 col-md-offset-2">
+        <h4>Address</h4>
+        <hr />
+        <div class="form-group">
+            <label asp-for="@Model.Street" class="control-label"></label>
+            <input asp-for="@Model.Street" class="form-control" />
+            <span asp-validation-for="@Model.Street" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.ZipCode" class="control-label"></label>
+            <input asp-for="@Model.ZipCode" class="form-control" />
+            <span asp-validation-for="@Model.ZipCode" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.City" class="control-label"></label>
+            <input asp-for="@Model.City" class="form-control" />
+            <span asp-validation-for="@Model.City" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Region" class="control-label"></label>
+            <input asp-for="@Model.Region" class="form-control" />
+            <span asp-validation-for="@Model.Region" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Country" class="control-label"></label>
+            <input asp-for="@Model.Country" class="form-control" />
+            <span asp-validation-for="@Model.Country" class="text-danger"></span>
+        </div>
+    </div>
+</body>

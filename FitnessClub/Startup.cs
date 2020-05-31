@@ -19,12 +19,17 @@ using Serilog.Settings.Configuration;
 using Microsoft.AspNetCore.Http;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.DAL;
+using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.DAL.Repositories;
+using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.BLL.Services;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.Extensions.Options;
 
 namespace FitnessClub
 {
@@ -42,15 +47,15 @@ namespace FitnessClub
             if (env.EnvironmentName == "Development")
             {
                 //In development, the connection string is taken from secrets.json file that isn't checked in at github.
-                Configuration["ConnectionStrings:FCConnectionString"] = Configuration.GetConnectionString("FCContextDevelopment"); 
+                Configuration["ConnectionStrings:FCConnectionString"] = Configuration.GetConnectionString("FCContextDevelopment");
             }
             else
             {
                 //In production, the connection string is taken from environment variable set during app deployment.
                 Configuration["ConnectionStrings:FCConnectionString"] = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_FCContext");
+                Configuration["DefaultAdminPassword"] = Environment.GetEnvironmentVariable("DefaultPassword");
             }
         }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -58,15 +63,35 @@ namespace FitnessClub
 
             services.AddDbContext<FCContext>(options => options.UseNpgsql(Configuration.GetConnectionString("FCConnectionString")));
 
-            RegisterRepositories(services); //this function keeps the code cleaner: there are many repositories to register, so they are stored in separate class.
 
-            services.AddIdentity<AspNetUser, AspNetRole>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddIdentity<AspNetUser, AspNetRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.User.RequireUniqueEmail = true;
+            })
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<FCContext>()
-                .AddUserStore<UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken,AspNetRoleClaim>>()
+                .AddUserStore<UserStoreFC>()
                 .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
-            
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<ICoachRepository, CoachRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ISessionRepository, SessionRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
+
+            services.AddScoped<ICoachService, CoachService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISignInService, SignInService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddTransient<UserResolverService>();
+
             services.AddAuthentication()
             .AddGoogle(options =>   
             {
@@ -77,21 +102,17 @@ namespace FitnessClub
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
             
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("SignedIn", policy =>
-                    policy.RequireAuthenticatedUser());
-            });
+            services.AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, FCContext context, UserManager<AspNetUser> userManager, RoleManager<AspNetRole> roleManager)
         {
             //Serilog settings for different environments. They're kept here instead of "appsettings.json" because of issues with that method:
             //1. New version of serilog package can't handle parsing {date} when used inside json;
             //2. Connection string for Serilog.Sinks.PostgreSQL in appsettings needs to be stored as full string, and the package doesn't support using 
             //string's name given during configuration.If the app run on MS SQL, it would have been possible.
-            //Workarounds has been tested and keeping them here appeared to be the cleanest option.
+            //Other workarounds has been tested and keeping them here appeared to be the cleanest option.
             if (env.IsDevelopment())
             {
                 Serilog.Log.Logger = new LoggerConfiguration()
@@ -133,25 +154,22 @@ namespace FitnessClub
             app.UseAuthentication();
             app.UseAuthorization();
 
+            IdentityDataInitializer.SeedData(context, userManager, roleManager);
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
             });
         }
-        private static void RegisterRepositories(IServiceCollection services)
+        //This class is supposed to configure UserStore type. AutoSaveChanges = false means that operations on UserManager (such as AddUser) don't automatically commit changes to the context.
+        //Since I'm using repository pattern with unit of work, I want my UserManager changes to save at the same time with other repositories. This configuration enables such behavior.
+        //Also, the this long string of types in UserStore<> won't clog the Startup.ConfigureServices.
+        public class UserStoreFC : UserStore<AspNetUser, AspNetRole, FCContext, int, AspNetUserClaim, AspNetUserRole, AspNetUserLogin, AspNetUserToken, AspNetRoleClaim>, IUserStore<AspNetUser>
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IAddressRepository, AddressRepository>();
-            services.AddScoped<IPersonRepository<Coach>, PersonRepository<Coach>>();
-            services.AddScoped<ICoachRatingRepository, CoachRatingRepository>();
-            services.AddScoped<IPersonRepository<Customer>, PersonRepository<Customer>>();
-            services.AddScoped<IPersonRepository<Employee>, PersonRepository<Employee>>();
-            services.AddScoped<IHolidayRepository, HolidayRepository>();
-            services.AddScoped<IMembershipRepository, MembershipRepository>();
-            services.AddScoped<IPersonRepository<Person>, PersonRepository<Person>>();
-            services.AddScoped<ISessionEnrollmentRepository, SessionEnrollmentRepository>();
-            services.AddScoped<ISessionRepository, SessionRepository>();
-            services.AddScoped<ILogRepository, LogRepository>();
+            public UserStoreFC(FCContext context) : base(context)
+            {
+                AutoSaveChanges = false;
+            }
         }
     }
 }

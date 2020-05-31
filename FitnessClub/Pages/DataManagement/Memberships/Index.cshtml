@@ -18,13 +18,13 @@
                 @Html.DisplayNameFor(model => model.Membership[0].MembershipNo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Membership[0].PersonID)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Membership[0].Start)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Membership[0].Finish)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Membership[0].Customer)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Membership[0].CreatedBy)
@@ -42,13 +42,13 @@
                 @Html.DisplayFor(modelItem => item.MembershipNo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonID)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Start)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Finish)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.PersonID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

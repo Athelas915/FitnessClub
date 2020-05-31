@@ -68,47 +68,6 @@ namespace FitnessClub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "People",
-                columns: table => new
-                {
-                    PersonID = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false, defaultValue: 0),
-                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    Gender = table.Column<int>(nullable: true),
-                    Birthdate = table.Column<DateTime>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    PersonID1 = table.Column<int>(nullable: true),
-                    Employee_PersonID1 = table.Column<int>(nullable: true),
-                    EmployeePersonID = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_People", x => x.PersonID);
-                    table.ForeignKey(
-                        name: "FK_People_People_EmployeePersonID",
-                        column: x => x.EmployeePersonID,
-                        principalTable: "People",
-                        principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_People_People_PersonID1",
-                        column: x => x.PersonID1,
-                        principalTable: "People",
-                        principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_People_People_Employee_PersonID1",
-                        column: x => x.Employee_PersonID1,
-                        principalTable: "People",
-                        principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -262,19 +221,45 @@ namespace FitnessClub.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "People",
+                columns: table => new
+                {
+                    PersonID = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    Gender = table.Column<int>(nullable: true),
+                    Birthdate = table.Column<DateTime>(nullable: false),
+                    UserID = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_People", x => x.PersonID);
+                    table.ForeignKey(
+                        name: "FK_People_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Addresses",
                 columns: table => new
                 {
                     AddressID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false, defaultValue: 0),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
-                    PersonID = table.Column<int>(nullable: true),
                     Street = table.Column<string>(nullable: true),
                     ZipCode = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
                     Region = table.Column<string>(nullable: true),
-                    Country = table.Column<string>(nullable: true)
+                    Country = table.Column<string>(nullable: true),
+                    PersonID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -284,30 +269,7 @@ namespace FitnessClub.Migrations
                         column: x => x.PersonID,
                         principalTable: "People",
                         principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CoachRatings",
-                columns: table => new
-                {
-                    CoachRatingID = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false, defaultValue: 0),
-                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
-                    PersonID = table.Column<int>(nullable: false),
-                    CoachPersonID = table.Column<int>(nullable: true),
-                    Rating = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CoachRatings", x => x.CoachRatingID);
-                    table.ForeignKey(
-                        name: "FK_CoachRatings_People_CoachPersonID",
-                        column: x => x.CoachPersonID,
-                        principalTable: "People",
-                        principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -316,22 +278,21 @@ namespace FitnessClub.Migrations
                 {
                     HolidayID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false, defaultValue: 0),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
-                    PersonID = table.Column<int>(nullable: false),
-                    EmployeePersonID = table.Column<int>(nullable: true),
                     Start = table.Column<DateTime>(nullable: false),
-                    Finish = table.Column<DateTime>(nullable: false)
+                    Finish = table.Column<DateTime>(nullable: false),
+                    EmployeeID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Holidays", x => x.HolidayID);
                     table.ForeignKey(
-                        name: "FK_Holidays_People_EmployeePersonID",
-                        column: x => x.EmployeePersonID,
+                        name: "FK_Holidays_People_EmployeeID",
+                        column: x => x.EmployeeID,
                         principalTable: "People",
                         principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -340,23 +301,22 @@ namespace FitnessClub.Migrations
                 {
                     MembershipID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false, defaultValue: 0),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
                     MembershipNo = table.Column<int>(nullable: false),
-                    PersonID = table.Column<int>(nullable: false),
-                    CustomerPersonID = table.Column<int>(nullable: true),
                     Start = table.Column<DateTime>(nullable: false),
-                    Finish = table.Column<DateTime>(nullable: false)
+                    Finish = table.Column<DateTime>(nullable: false),
+                    CustomerID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Memberships", x => x.MembershipID);
                     table.ForeignKey(
-                        name: "FK_Memberships_People_CustomerPersonID",
-                        column: x => x.CustomerPersonID,
+                        name: "FK_Memberships_People_CustomerID",
+                        column: x => x.CustomerID,
                         principalTable: "People",
                         principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -365,24 +325,59 @@ namespace FitnessClub.Migrations
                 {
                     SessionID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedBy = table.Column<int>(nullable: false, defaultValue: 0),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
-                    PersonID = table.Column<int>(nullable: false),
-                    CoachPersonID = table.Column<int>(nullable: true),
                     SessionType = table.Column<int>(nullable: true),
                     Start = table.Column<DateTime>(nullable: false),
                     Finish = table.Column<DateTime>(nullable: false),
-                    Room = table.Column<int>(nullable: false)
+                    Room = table.Column<int>(nullable: false),
+                    CoachID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sessions", x => x.SessionID);
                     table.ForeignKey(
-                        name: "FK_Sessions_People_CoachPersonID",
-                        column: x => x.CoachPersonID,
+                        name: "FK_Sessions_People_CoachID",
+                        column: x => x.CoachID,
                         principalTable: "People",
                         principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CoachRatings",
+                columns: table => new
+                {
+                    CoachRatingID = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
+                    Rating = table.Column<int>(nullable: false),
+                    CoachID = table.Column<int>(nullable: false),
+                    CustomerID = table.Column<int>(nullable: true),
+                    SessionID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoachRatings", x => x.CoachRatingID);
+                    table.ForeignKey(
+                        name: "FK_CoachRatings_People_CoachID",
+                        column: x => x.CoachID,
+                        principalTable: "People",
+                        principalColumn: "PersonID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CoachRatings_People_CustomerID",
+                        column: x => x.CustomerID,
+                        principalTable: "People",
+                        principalColumn: "PersonID",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_CoachRatings_Sessions_SessionID",
+                        column: x => x.SessionID,
+                        principalTable: "Sessions",
+                        principalColumn: "SessionID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -390,20 +385,19 @@ namespace FitnessClub.Migrations
                 columns: table => new
                 {
                     SessionID = table.Column<int>(nullable: false),
-                    PersonID = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false, defaultValue: 0),
-                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()"),
-                    CustomerPersonID = table.Column<int>(nullable: true)
+                    CustomerID = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false, defaultValueSql: "-1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SessionEnrollments", x => new { x.PersonID, x.SessionID });
+                    table.PrimaryKey("PK_SessionEnrollments", x => new { x.CustomerID, x.SessionID });
                     table.ForeignKey(
-                        name: "FK_SessionEnrollments_People_CustomerPersonID",
-                        column: x => x.CustomerPersonID,
+                        name: "FK_SessionEnrollments_People_CustomerID",
+                        column: x => x.CustomerID,
                         principalTable: "People",
                         principalColumn: "PersonID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SessionEnrollments_Sessions_SessionID",
                         column: x => x.SessionID,
@@ -415,7 +409,8 @@ namespace FitnessClub.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_PersonID",
                 table: "Addresses",
-                column: "PersonID");
+                column: "PersonID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_AspNetRoleId",
@@ -469,6 +464,12 @@ namespace FitnessClub.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_Email",
+                table: "AspNetUsers",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -485,39 +486,35 @@ namespace FitnessClub.Migrations
                 column: "AspNetUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CoachRatings_CoachPersonID",
+                name: "IX_CoachRatings_CoachID",
                 table: "CoachRatings",
-                column: "CoachPersonID");
+                column: "CoachID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Holidays_EmployeePersonID",
+                name: "IX_CoachRatings_CustomerID",
+                table: "CoachRatings",
+                column: "CustomerID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoachRatings_SessionID",
+                table: "CoachRatings",
+                column: "SessionID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Holidays_EmployeeID",
                 table: "Holidays",
-                column: "EmployeePersonID");
+                column: "EmployeeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Memberships_CustomerPersonID",
+                name: "IX_Memberships_CustomerID",
                 table: "Memberships",
-                column: "CustomerPersonID");
+                column: "CustomerID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_People_EmployeePersonID",
+                name: "IX_People_UserID",
                 table: "People",
-                column: "EmployeePersonID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_People_PersonID1",
-                table: "People",
-                column: "PersonID1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_People_Employee_PersonID1",
-                table: "People",
-                column: "Employee_PersonID1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SessionEnrollments_CustomerPersonID",
-                table: "SessionEnrollments",
-                column: "CustomerPersonID");
+                column: "UserID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SessionEnrollments_SessionID",
@@ -525,9 +522,9 @@ namespace FitnessClub.Migrations
                 column: "SessionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sessions_CoachPersonID",
+                name: "IX_Sessions_CoachID",
                 table: "Sessions",
-                column: "CoachPersonID");
+                column: "CoachID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -569,13 +566,13 @@ namespace FitnessClub.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Sessions");
 
             migrationBuilder.DropTable(
                 name: "People");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

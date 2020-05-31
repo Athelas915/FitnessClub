@@ -6,20 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.CoachRatings
 {
-    [Authorize(Policy = "SignedIn")]
     public class EditModel : PageModel
     {
-        private readonly ICoachRatingRepository coachRatingRepository;
+        private readonly FitnessClub.Data.DAL.FCContext _context;
 
-        public EditModel(ICoachRatingRepository coachRatingRepository)
+        public EditModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.coachRatingRepository = coachRatingRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -32,13 +30,17 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return NotFound();
             }
 
-            CoachRating = await coachRatingRepository.GetByID(id.Value);
+            CoachRating = await _context.CoachRatings
+                .Include(c => c.Coach)
+                .Include(c => c.Customer).FirstOrDefaultAsync(m => m.CoachRatingID == id);
 
             if (CoachRating == null)
             {
                 return NotFound();
             }
-            ViewData["PersonID"] = new SelectList(await coachRatingRepository.Get<Coach>(), "PersonID", "LastName");
+           ViewData["CoachID"] = new SelectList(_context.Coaches, "PersonID", "LastName");
+           ViewData["CustomerID"] = new SelectList(_context.Customers, "PersonID", "LastName");
+            ViewData["SessionID"] = new SelectList(_context.Sessions, "SessionID", "SessionID");
             return Page();
         }
 
@@ -51,11 +53,11 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
                 return Page();
             }
 
-            coachRatingRepository.Update(CoachRating);
+            _context.Attach(CoachRating).State = EntityState.Modified;
 
             try
             {
-                await coachRatingRepository.Submit();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +76,7 @@ namespace FitnessClub.Pages.DataManagement.CoachRatings
 
         private bool CoachRatingExists(int id)
         {
-            return coachRatingRepository.Any(id);
+            return _context.CoachRatings.Any(e => e.CoachRatingID == id);
         }
     }
 }

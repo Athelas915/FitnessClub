@@ -5,19 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL;
 using FitnessClub.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessClub.Pages.DataManagement.Sessions
 {
-    [Authorize(Policy = "SignedIn")]
     public class DeleteModel : PageModel
     {
-        private readonly ISessionRepository sessionRepository;
-        public DeleteModel(ISessionRepository sessionRepository)
+        private readonly FitnessClub.Data.DAL.FCContext _context;
+
+        public DeleteModel(FitnessClub.Data.DAL.FCContext context)
         {
-            this.sessionRepository = sessionRepository;
+            _context = context;
         }
 
         [BindProperty]
@@ -30,7 +29,8 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await sessionRepository.GetByID(id.Value);
+            Session = await _context.Sessions
+                .Include(s => s.Coach).FirstOrDefaultAsync(m => m.SessionID == id);
 
             if (Session == null)
             {
@@ -46,12 +46,12 @@ namespace FitnessClub.Pages.DataManagement.Sessions
                 return NotFound();
             }
 
-            Session = await sessionRepository.GetByID(id.Value);
+            Session = await _context.Sessions.FindAsync(id);
 
             if (Session != null)
             {
-                sessionRepository.Delete(Session);
-                await sessionRepository.Submit();
+                _context.Sessions.Remove(Session);
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");
