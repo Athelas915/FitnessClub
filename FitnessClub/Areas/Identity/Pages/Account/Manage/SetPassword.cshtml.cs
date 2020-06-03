@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,12 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly IUserService userService;
-
-        public SetPasswordModel(IUserService userService)
+        private readonly IPasswordService passwordService;
+        private readonly string userId;
+        public SetPasswordModel(IPasswordService passwordService, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.passwordService = passwordService;
+            userId = userResolver.GetUserId(User);
         }
 
         [BindProperty]
@@ -42,9 +44,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = userService.GetUserId(User);
-
-            var hasPassword = await userService.HasPassword(userId);
+            var hasPassword = await passwordService.HasPassword(userId);
 
             if (hasPassword == null)
             {
@@ -65,9 +65,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var userId = userService.GetUserId(User);
-
-            var addPasswordResult = await userService.AddPassword(userId, Input.NewPassword);
+            var addPasswordResult = await passwordService.AddPassword(userId, Input.NewPassword);
             if (addPasswordResult == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");

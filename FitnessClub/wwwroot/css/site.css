@@ -90,6 +90,10 @@ li.menu-item:hover {
     /*single items in menu*/
     background-color: #65ff86;
 }
+li.menu-item.active {
+    background-color: #46eeff;
+}
+
 
 a.menu-link {
     /*links used in menu*/

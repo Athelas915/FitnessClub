@@ -4,16 +4,16 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Interfaces
 {
-    public interface ICustomerService : IPersonService
+    public interface ICustomerService
     {
-        IEnumerable<MembershipViewModel> ViewMemberships(int customerId);
-        IEnumerable<SessionViewModel> ViewSessions(int customerId);
-        IEnumerable<SessionViewModel> ViewEnrolledUpcomingSessions(int customerId);
-        IEnumerable<SessionViewModel> ViewUnenrolledUpcomingSessions(int customerId);
-        IEnumerable<SessionViewModel> ViewPastSessions(int customerId);
-        Task Enroll(int customerId, int sessionId);
-        Task CancelEnrollment(int customerId, int sessionId);
-        IEnumerable<SessionViewModel> ViewUnratedSessions(int customerId);
-        Task RateCoach(int customerId, int sessionId, int inputRating);
+        IEnumerable<MembershipViewModel> ViewMemberships(int userId);
+        IEnumerable<SessionViewModel> ViewSessions(int userId);
+        IEnumerable<SessionViewModel> ViewEnrolledUpcomingSessions(int userId);
+        IEnumerable<SessionViewModel> ViewUnenrolledUpcomingSessions(int userId);
+        IEnumerable<SessionViewModel> ViewPastSessions(int userId);
+        Task Enroll(int userId, int sessionId);
+        Task CancelEnrollment(int userId, int sessionId);
+        IEnumerable<SessionViewModel> ViewUnratedSessions(int userId);
+        Task RateCoach(int userId, int sessionId, int inputRating);
     }
 }

@@ -7,5 +7,10 @@ namespace FitnessClub.Data.DAL.Interfaces
     {
         IEnumerable<PEntity> GetAllWithAddresses();
         PEntity FindWithAddress(int id);
+        int GetPersonIdByUserId(int userId);
+    }
+    public interface IPersonRepository : IPersonRepository<Person>
+    {
+
     }
 }

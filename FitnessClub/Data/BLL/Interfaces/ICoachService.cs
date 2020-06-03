@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Interfaces
 {
-    public interface ICoachService : IEmployeeService
+    public interface ICoachService
     {
-        Task AssignToSession(int coachId, int sessionId);
-        Task UnassignFromSession(int coachId, int sessionId);
-        IEnumerable<SessionViewModel> ViewAssignedSessions(int coachId);
-        IEnumerable<SessionViewModel> ViewPastSessions(int coachId);
+        Task AssignToSession(int userId, int sessionId);
+        Task UnassignFromSession(int userId, int sessionId);
+        IEnumerable<SessionViewModel> ViewAssignedSessions(int userId);
+        IEnumerable<SessionViewModel> ViewPastSessions(int userId);
         IEnumerable<SessionViewModel> ViewUnassignedUpcomingSessions();
-        Task<IDictionary<SessionViewModel, int>> ViewRatings(int coachId);
+        Task<IDictionary<SessionViewModel, int>> ViewRatings(int userId);
     }
 }

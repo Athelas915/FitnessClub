@@ -24,18 +24,9 @@ namespace FitnessClub.Data.BLL.Services
             this.logger = logger;
             userId = userResolverService.GetUserId();
         }
-        public int GetCurrentPersonId()
+        public async Task CancelEnrollment(int userId, int sessionId)
         {
-            var customer = customerRepository.Get(filter: a => a.UserID == userId).FirstOrDefault();
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the currently logged in user.");
-                return -1;
-            }
-            return customer.PersonID;
-        }
-        public async Task CancelEnrollment(int customerId, int sessionId)
-        {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithEnrollments(customerId);
             var enrollment = customer.SessionEnrollments.Where(a => a.CustomerID == customerId && a.SessionID == sessionId).FirstOrDefault();
             if (customer == null || enrollment == null)
@@ -55,8 +46,9 @@ namespace FitnessClub.Data.BLL.Services
             }
 
         }
-        public async Task Enroll(int customerId, int sessionId)
+        public async Task Enroll(int userId, int sessionId)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
@@ -74,8 +66,9 @@ namespace FitnessClub.Data.BLL.Services
             await customerRepository.Commit();
         }
 
-        public async Task RateCoach(int customerId, int sessionId, int inputRating)
+        public async Task RateCoach(int userId, int sessionId, int inputRating)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithRatings(customerId);
             if (customer == null)
             {
@@ -102,8 +95,9 @@ namespace FitnessClub.Data.BLL.Services
             await customerRepository.Commit();
         }
 
-        public IEnumerable<SessionViewModel> ViewEnrolledUpcomingSessions(int customerId)
+        public IEnumerable<SessionViewModel> ViewEnrolledUpcomingSessions(int userId)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
@@ -116,8 +110,9 @@ namespace FitnessClub.Data.BLL.Services
             return sessions.Select(a => new SessionViewModel(a));
         }
 
-        public IEnumerable<MembershipViewModel> ViewMemberships(int customerId)
+        public IEnumerable<MembershipViewModel> ViewMemberships(int userId)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithMemberships(customerId);
             if (customer == null)
             {
@@ -133,8 +128,9 @@ namespace FitnessClub.Data.BLL.Services
             return memberships.Select(a => new MembershipViewModel(a));
         }
 
-        public IEnumerable<SessionViewModel> ViewPastSessions(int customerId)
+        public IEnumerable<SessionViewModel> ViewPastSessions(int userId)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
@@ -147,8 +143,9 @@ namespace FitnessClub.Data.BLL.Services
             return sessions.Select(a => new SessionViewModel(a));
         }
 
-        public IEnumerable<SessionViewModel> ViewSessions(int customerId)
+        public IEnumerable<SessionViewModel> ViewSessions(int userId)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
@@ -161,8 +158,9 @@ namespace FitnessClub.Data.BLL.Services
             return sessions.Select(a => new SessionViewModel(a));
         }
 
-        public IEnumerable<SessionViewModel> ViewUnenrolledUpcomingSessions(int customerId)
+        public IEnumerable<SessionViewModel> ViewUnenrolledUpcomingSessions(int userId)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)
             {
@@ -175,8 +173,9 @@ namespace FitnessClub.Data.BLL.Services
             return sessions.Select(a => new SessionViewModel(a));
         }
 
-        public IEnumerable<SessionViewModel> ViewUnratedSessions(int customerId)
+        public IEnumerable<SessionViewModel> ViewUnratedSessions(int userId)
         {
+            var customerId = customerRepository.GetPersonIdByUserId(userId);
             var customer = customerRepository.FindWithRatings(customerId);
             customer = customerRepository.FindWithEnrollments(customerId);
             if (customer == null)

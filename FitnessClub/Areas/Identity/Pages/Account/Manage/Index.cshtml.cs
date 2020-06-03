@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using FitnessClub.Data.BLL.Interfaces;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
+        private readonly string userId;
 
-        public IndexModel(IUserService userService)
+        public IndexModel(UserResolverService userResolver, IAccountService accountService)
         {
-            this.userService = userService;
+            this.accountService = accountService;
+            userId = userResolver.GetUserId(User);
         }
 
         public string Username { get; set; }
@@ -37,8 +36,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(string userId)
         {
-            var userName = await userService.GetUsername(userId);
-            var phoneNumber = await userService.GetPhoneNumber(userId);
+            var userName = await accountService.GetUsername(userId);
+            var phoneNumber = await accountService.GetPhoneNumber(userId);
 
             Username = userName;
 
@@ -50,8 +49,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = userService.GetUserId(User);
-
             await LoadAsync(userId);
             if (Username == null)
             {
@@ -62,18 +59,16 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var userId = userService.GetUserId(User);
-
             if (!ModelState.IsValid)
             {
                 await LoadAsync(userId);
                 return Page();
             }
 
-            var phoneNumber = await userService.GetPhoneNumber(userId);
+            var phoneNumber = await accountService.GetPhoneNumber(userId);
             if (Input.PhoneNumber != phoneNumber)
             {
-                var setPhoneResult = await userService.SetPhoneNumber(userId, Input.PhoneNumber);
+                var setPhoneResult = await accountService.SetPhoneNumber(userId, Input.PhoneNumber);
                 if (setPhoneResult == null)
                 {
                     return NotFound($"Unable to load user with ID '{userId}'.");

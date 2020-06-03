@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -13,13 +14,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IPasswordService passwordService;
         private readonly ISignInService signInService;
-
-        public ExternalLoginsModel(IUserService userService, ISignInService signInService)
+        private readonly string userId;
+        public ExternalLoginsModel(IPasswordService passwordService, ISignInService signInService, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.passwordService = passwordService;
             this.signInService = signInService;
+            userId = userResolver.GetUserId(User);
         }
 
         public IList<UserLoginInfo> CurrentLogins { get; set; }
@@ -33,9 +35,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = userService.GetUserId(User);
             (var currentLogins, var otherLogins) = await signInService.GetLogins(userId);
-            var hasPassword = await userService.HasPassword(userId);
+            var hasPassword = await passwordService.HasPassword(userId);
             if (hasPassword == null || currentLogins == null || otherLogins == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
@@ -48,8 +49,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostRemoveLoginAsync(string loginProvider, string providerKey)
         {
-            var userId = userService.GetUserId(User);
-
             var result = await signInService.RemoveLogin(userId, loginProvider, providerKey);
             if (result == null)
             {
@@ -66,7 +65,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostLinkLoginAsync(string provider)
         {
-            var userId = userService.GetUserId(User);
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -78,7 +76,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetLinkLoginCallbackAsync()
         {
-            var userId = userService.GetUserId(User);
 
             var result = await signInService.AddLogin(userId);
             if (result == null)

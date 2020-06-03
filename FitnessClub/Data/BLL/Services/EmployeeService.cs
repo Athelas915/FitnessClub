@@ -25,19 +25,9 @@ namespace FitnessClub.Data.BLL.Services
             userId = userResolverService.GetUserId();
         }
 
-        public int GetCurrentPersonId()
+        public async Task AddHoliday(int userId, HolidayViewModel inputHoliday)
         {
-            var employee = employeeRepository.Get(filter: a => a.UserID == userId).FirstOrDefault();
-            if (employee == null)
-            {
-                logger.LogInformation($"Couldn't find the currently logged in user.");
-                return -1;
-            }
-            return employee.PersonID;
-        }
-
-        public async Task AddHoliday(int employeeId, HolidayViewModel inputHoliday)
-        {
+            var employeeId = employeeRepository.GetPersonIdByUserId(userId);
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {
@@ -56,8 +46,9 @@ namespace FitnessClub.Data.BLL.Services
             await employeeRepository.Commit();
         }
 
-        public async Task<bool> EditHoliday(int employeeId, HolidayViewModel inputHoliday)
+        public async Task<bool> EditHoliday(int userId, HolidayViewModel inputHoliday)
         {
+            var employeeId = employeeRepository.GetPersonIdByUserId(userId);
             var employee = employeeRepository.FindWithHolidays(employeeId);
             var holiday = employee.Holidays.Where(a => a.HolidayID == inputHoliday.HolidayID).FirstOrDefault();
             if (employee == null || holiday == null)
@@ -82,8 +73,9 @@ namespace FitnessClub.Data.BLL.Services
             return true;
         }
 
-        public async Task RemoveHoliday(int employeeId, HolidayViewModel inputHoliday)
+        public async Task RemoveHoliday(int userId, HolidayViewModel inputHoliday)
         {
+            var employeeId = employeeRepository.GetPersonIdByUserId(userId);
             var employee = employeeRepository.FindWithHolidays(employeeId);
             var holiday = employee.Holidays.Where(a => a.HolidayID == inputHoliday.HolidayID).FirstOrDefault();
             if (employee == null || holiday == null)
@@ -102,8 +94,9 @@ namespace FitnessClub.Data.BLL.Services
             }
         }
 
-        public IEnumerable<HolidayViewModel> ViewHolidays(int employeeId)
+        public IEnumerable<HolidayViewModel> ViewHolidays(int userId)
         {
+            var employeeId = employeeRepository.GetPersonIdByUserId(userId);
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {
@@ -119,8 +112,9 @@ namespace FitnessClub.Data.BLL.Services
             return holidays.Select(a => new HolidayViewModel(a));
         }
 
-        public IEnumerable<HolidayViewModel> ViewPastHolidays(int employeeId)
+        public IEnumerable<HolidayViewModel> ViewPastHolidays(int userId)
         {
+            var employeeId = employeeRepository.GetPersonIdByUserId(userId);
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {
@@ -136,8 +130,9 @@ namespace FitnessClub.Data.BLL.Services
             return holidays.Select(a => new HolidayViewModel(a));
         }
 
-        public IEnumerable<HolidayViewModel> ViewUpcomingHolidays(int employeeId)
+        public IEnumerable<HolidayViewModel> ViewUpcomingHolidays(int userId)
         {
+            var employeeId = employeeRepository.GetPersonIdByUserId(userId);
             var employee = employeeRepository.FindWithHolidays(employeeId);
             if (employee == null)
             {

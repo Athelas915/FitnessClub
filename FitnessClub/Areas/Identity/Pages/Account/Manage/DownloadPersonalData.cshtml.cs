@@ -1,31 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using FitnessClub.Data.BLL.Interfaces;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
+        private readonly string userId;
 
-        public DownloadPersonalDataModel(IUserService userService)
+        public DownloadPersonalDataModel(IAccountService accountService, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.accountService = accountService;
+            userId = userResolver.GetUserId(User);
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var userId = userService.GetUserId(User);
-            var json = await userService.GetPersonalData(userId);
+            var json = await accountService.GetPersonalData(userId);
 
             Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
             return new FileContentResult(json, "text/json");

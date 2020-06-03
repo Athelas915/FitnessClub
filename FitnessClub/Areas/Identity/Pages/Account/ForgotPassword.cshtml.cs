@@ -12,19 +12,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
+        private readonly ITokenGenerator tokenGenerator;
         private readonly IEmailSender emailSender;
+        private readonly UserResolverService userResolver;
 
-        public ForgotPasswordModel(IUserService userService, IEmailSender emailSender)
+        public ForgotPasswordModel(IAccountService accountService, ITokenGenerator tokenGenerator, IEmailSender emailSender, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.accountService = accountService;
+            this.tokenGenerator = tokenGenerator;
             this.emailSender = emailSender;
+            this.userResolver = userResolver;
         }
 
         [BindProperty]
@@ -41,8 +46,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
-                var userId = await userService.GetUserId(Input.Email);
-                if (userId == null || !(await userService.IsEmailConfirmed(userId)))
+                var userId = await userResolver.GetUserId(Input.Email);
+                if (userId == null || !(await accountService.IsEmailConfirmed(userId)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
@@ -50,7 +55,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
 
                 // For more information on how to enable account confirmation and password reset please 
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
-                var code = await userService.GeneratePasswordResetToken(userId);
+                var code = await tokenGenerator.GeneratePasswordResetToken(userId);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",

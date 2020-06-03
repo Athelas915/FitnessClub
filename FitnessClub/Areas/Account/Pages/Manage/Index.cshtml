@@ -1,0 +1,19 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Account Settings";
+    ViewData["ActivePage"] = Model.ActivePageString;
+    Layout = Model.LayoutString;
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<h4>@ViewData["Title"]</h4>
+<div class="row">
+    <div class="col-md-9">
+        <h1>Im an index in other folder!</h1>
+        <h1>@Model.LayoutString</h1>
+    </div>
+</div>

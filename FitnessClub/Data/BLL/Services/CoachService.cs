@@ -10,32 +10,30 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Services
 {
-    public class CoachService : EmployeeService, ICoachService
+    public class CoachService : ICoachService
     {
         private readonly ISessionRepository sessionRepository;
         private readonly ICoachRepository coachRepository;
         private readonly ILogger<CoachService> logger;
         public CoachService(
             ISessionRepository sessionRepository,
-            IEmployeeRepository employeeRepository,
             ICoachRepository coachRepository,
-            UserResolverService userResolverService,
-            ILogger<CoachService> logger,
-            ILogger<EmployeeService> employeeLogger
-            ) : base(sessionRepository, employeeRepository, userResolverService, employeeLogger)
+            ILogger<CoachService> logger
+            )
         {
             this.sessionRepository = sessionRepository;
             this.coachRepository = coachRepository;
             this.logger = logger;
         }
 
-        public async Task AssignToSession(int coachId, int sessionId)
+        public async Task AssignToSession(int userId, int sessionId)
         {
+            var coachId = coachRepository.GetPersonIdByUserId(userId);
             var coach = await coachRepository.GetById(coachId);
             var session = sessionRepository.FindWithCoach(sessionId);
             if (coach == null )
             {
-                logger.LogInformation($"Couldn't find the coach with id {coachId}.");
+                logger.LogInformation($"Couldn't find the coach with user id {userId}.");
                 return;
             }
             else if (session == null)
@@ -53,13 +51,14 @@ namespace FitnessClub.Data.BLL.Services
             await sessionRepository.Commit();
         }
 
-        public async Task UnassignFromSession(int coachId, int sessionId)
+        public async Task UnassignFromSession(int userId, int sessionId)
         {
+            var coachId = coachRepository.GetPersonIdByUserId(userId);
             var coach = coachRepository.FindWithSessions(coachId);
             var session = coach.Sessions.Where(a => a.SessionID == sessionId).FirstOrDefault();
             if (coach == null || session == null)
             {
-                logger.LogInformation($"Couldn't find the session with given session id {sessionId} and person id {coachId}");
+                logger.LogInformation($"Couldn't find the session with given session id {sessionId} and person user id {userId}");
                 return;
             }
 
@@ -74,12 +73,13 @@ namespace FitnessClub.Data.BLL.Services
             }
         }
 
-        public IEnumerable<SessionViewModel> ViewAssignedSessions(int coachId)
+        public IEnumerable<SessionViewModel> ViewAssignedSessions(int userId)
         {
+            var coachId = coachRepository.GetPersonIdByUserId(userId);
             var coach = coachRepository.FindWithSessions(coachId);
             if (coach == null)
             {
-                logger.LogInformation($"Couldn't find the coach with given id {coachId}");
+                logger.LogInformation($"Couldn't find the coach with given user id {userId}");
                 return null;
             }
             var sessions = coach.Sessions.AsEnumerable();
@@ -92,12 +92,13 @@ namespace FitnessClub.Data.BLL.Services
             return sessions.Select(a => new SessionViewModel(a));
         }
 
-        public IEnumerable<SessionViewModel> ViewPastSessions(int coachId)
+        public IEnumerable<SessionViewModel> ViewPastSessions(int userId)
         {
+            var coachId = coachRepository.GetPersonIdByUserId(userId);
             var coach = coachRepository.FindWithSessions(coachId);
             if (coach == null)
             {
-                logger.LogInformation($"Couldn't find the coach with given id {coachId}");
+                logger.LogInformation($"Couldn't find the coach with given user id {userId}");
                 return null;
             }
             var sessions = coach.Sessions.AsEnumerable();
@@ -110,12 +111,13 @@ namespace FitnessClub.Data.BLL.Services
             return sessions.Select(a => new SessionViewModel(a));
         }
 
-        public async Task<IDictionary<SessionViewModel, int>> ViewRatings(int coachId)
+        public async Task<IDictionary<SessionViewModel, int>> ViewRatings(int userId)
         {
+            var coachId = coachRepository.GetPersonIdByUserId(userId);
             var coach = coachRepository.FindWithRatings(coachId);
             if (coach == null)
             {
-                logger.LogInformation($"Couldn't find the coach with given id {coachId}");
+                logger.LogInformation($"Couldn't find the coach with given user id {userId}");
                 return null;
             }
             var ratings = coach.CoachRatings.AsEnumerable();

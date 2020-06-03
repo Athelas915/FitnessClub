@@ -1,35 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.BLL.Services;
+using FitnessClub.Data.DAL;
+using FitnessClub.Data.DAL.Interfaces;
+using FitnessClub.Data.DAL.Repositories;
+using FitnessClub.Data.DAL.Utility;
+using FitnessClub.Data.Models.Identity;
+using FitnessClub.ServicesRegistration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Sinks.PostgreSQL;
-using Serilog.Settings.Configuration;
-using Microsoft.AspNetCore.Http;
-using FitnessClub.Data.Models;
-using FitnessClub.Data.DAL;
-using FitnessClub.Data.DAL.Utility;
-using FitnessClub.Data.DAL.Interfaces;
-using FitnessClub.Data.DAL.Repositories;
-using FitnessClub.Data.BLL.Interfaces;
-using FitnessClub.Data.BLL.Services;
-using FitnessClub.Data.Models.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.Extensions.Options;
+using System;
 
 namespace FitnessClub
 {
@@ -75,20 +62,9 @@ namespace FitnessClub
                 .AddUserStore<UserStoreFC>()
                 .AddRoleStore<RoleStore<AspNetRole, FCContext, int, AspNetUserRole, AspNetRoleClaim>>();
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            services.AddScoped<ICoachRepository, CoachRepository>();
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddScoped<ISessionRepository, SessionRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ILogRepository, LogRepository>();
-
-            services.AddScoped<ICoachService, CoachService>();
-            services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IEmployeeService, EmployeeService>();
-            services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<ISignInService, SignInService>();
-            services.AddScoped<IUserService, UserService>();
+            //these extension methods can be found in ServiceRegistration folder. They contain registration for corresponding services to not clog this method.
+            services.RegisterRepositories();
+            services.RegisterBLLServices();
 
             services.AddTransient<UserResolverService>();
 

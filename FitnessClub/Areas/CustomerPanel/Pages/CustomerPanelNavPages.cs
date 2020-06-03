@@ -5,12 +5,11 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
 {
     public static class CustomerPanelNavPages
     {
-        public static string Index => "Index";
+        public static string LayoutString => "/Areas/CustomerPanel/Pages/_Layout.cshtml";
         public static string Calendar => "Calendar";
         public static string CoachRating => "CoachRating";
         public static string Membership => "Membership";
         public static string AccountSettings => "AccountSettings";
-        public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
         public static string CalendarNavClass(ViewContext viewContext) => PageNavClass(viewContext, Calendar);
         public static string CoachRatingNavClass(ViewContext viewContext) => PageNavClass(viewContext, CoachRating);
         public static string MembershipNavClass(ViewContext viewContext) => PageNavClass(viewContext, Membership);

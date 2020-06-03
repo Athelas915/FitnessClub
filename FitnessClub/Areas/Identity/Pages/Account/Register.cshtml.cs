@@ -19,21 +19,35 @@ using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
+        private readonly IRegistrationService registrationService;
+        private readonly ITokenGenerator tokenGenerator;
         private readonly ISignInService signInService;
         private readonly IEmailSender emailSender;
+        private readonly UserResolverService userResolver;
 
-        public RegisterModel(IUserService userService, ISignInService signInService, IEmailSender emailSender)
+        public RegisterModel(
+            IAccountService accountService,
+            IRegistrationService registrationService,
+            ITokenGenerator tokenGenerator,
+            ISignInService signInService,
+            IEmailSender emailSender,
+            UserResolverService userResolver
+            )
         {
-            this.userService = userService;
+            this.accountService = accountService;
+            this.registrationService = registrationService;
+            this.tokenGenerator = tokenGenerator;
             this.signInService = signInService;
             this.emailSender = emailSender;
+            this.userResolver = userResolver;
         }
 
         [BindProperty]
@@ -81,15 +95,15 @@ namespace FitnessClub.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var result = await userService.CreateUser(Input.Email, Input.Password, Customer, "Customer");
+                var result = await registrationService.CreateUser(Input.Email, Input.Password, Customer, "Customer");
 
 
                 if (result.Succeeded)
                 {
-                    var userId = await userService.GetUserId(Input.Email);
+                    var userId = await userResolver.GetUserId(Input.Email);
 
 
-                    var code = await userService.GenerateEmailConfirmationToken(userId);
+                    var code = await tokenGenerator.GenerateEmailConfirmationToken(userId);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
@@ -102,7 +116,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
 
                     
 
-                    if (await userService.ConfirmedAccountRequired(userId))
+                    if (await registrationService.ConfirmedAccountRequired(userId))
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
                     }

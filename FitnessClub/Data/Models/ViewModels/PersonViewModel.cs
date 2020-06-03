@@ -21,4 +21,10 @@ namespace FitnessClub.Data.Models.ViewModels
         public string Birthdate { get; set; }
         public virtual AddressViewModel Address { get; set; }
     }
+    public class PersonViewModel : PersonViewModel<Person>
+    {
+        public PersonViewModel(Person person) : base(person)
+        {
+        }
+    }
 }

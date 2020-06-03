@@ -19,11 +19,11 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
     public class CoachRatingModel : PageModel
     {
         private readonly ICustomerService customerService;
-        private readonly ILogger<CoachRatingModel> logger;
-        public CoachRatingModel(ICustomerService customerService, ILogger<CoachRatingModel> logger)
+        private readonly int userId;
+        public CoachRatingModel(ICustomerService customerService, UserResolverService userResolver)
         {
             this.customerService = customerService;
-            this.logger = logger;
+            userId = userResolver.GetUserId();
         }
         public IEnumerable<SessionViewModel> Sessions { get; set; }
         [BindProperty]
@@ -33,13 +33,11 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
         public int ChosenSessionID { get; set; }
         public IActionResult OnGet()
         {
-            var customerId = customerService.GetCurrentPersonId();
-            if (customerId == -1)
+            if (userId == -1)
             {
-                logger.LogInformation($"Couldn't find id of the logged in customer.");
                 return RedirectToPage("./Index");
             }
-            Sessions = customerService.ViewUnratedSessions(customerId);
+            Sessions = customerService.ViewUnratedSessions(userId);
 
             return Page();
         }
@@ -49,14 +47,12 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
             {
                 return RedirectToPage();
             }
-            var customerId = customerService.GetCurrentPersonId();
-            if (customerId == -1)
+            if (userId == -1)
             {
-                logger.LogInformation($"Couldn't find id of the logged in customer.");
                 return RedirectToPage("./Index");
             }
 
-            await customerService.RateCoach(customerId, ChosenSessionID, Rating);
+            await customerService.RateCoach(userId, ChosenSessionID, Rating);
 
             return RedirectToPage();
         }

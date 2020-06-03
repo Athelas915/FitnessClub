@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.Models.ViewModels;
 using Microsoft.Extensions.Logging;
+using FitnessClub.Data.DAL.Utility;
 
 namespace FitnessClub.Areas.CustomerPanel.Pages
 {
@@ -15,23 +16,21 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
     public class MembershipModel : PageModel
     {
         private readonly ICustomerService customerService;
-        private readonly ILogger<MembershipModel> logger;
-        public MembershipModel(ICustomerService customerService, ILogger<MembershipModel> logger)
+        private readonly int userId;
+        public MembershipModel(ICustomerService customerService, UserResolverService userResolver)
         {
             this.customerService = customerService;
-            this.logger = logger;
+            userId = userResolver.GetUserId();
         }
 
         public IEnumerable<MembershipViewModel> Memberships { get; set; }
         public IActionResult OnGet()
         {
-            var customerId = customerService.GetCurrentPersonId();
-            if (customerId == -1)
+            if (userId == -1)
             {
-                logger.LogInformation($"Couldn't find id of the logged in customer.");
                 return RedirectToPage("./Index");
             }
-            Memberships = customerService.ViewMemberships(customerId);
+            Memberships = customerService.ViewMemberships(userId);
 
             return Page();
         }

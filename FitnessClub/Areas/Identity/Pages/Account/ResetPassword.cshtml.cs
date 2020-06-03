@@ -11,17 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ResetPasswordModel : PageModel
     {
-        private readonly IUserService userService;
-
-        public ResetPasswordModel(IUserService userService)
+        private readonly IPasswordService passwordService;
+        private readonly UserResolverService userResolver;
+        public ResetPasswordModel(IPasswordService passwordService, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.passwordService = passwordService;
+            this.userResolver = userResolver;
         }
 
         [BindProperty]
@@ -69,14 +71,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return Page();
             }
 
-            var userId = await userService.GetUserId(Input.Email);
+            var userId = await userResolver.GetUserId(Input.Email);
             if (userId == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
-            var result = await userService.ResetPassword(userId, Input.Code, Input.Password);
+            var result = await passwordService.ResetPassword(userId, Input.Code, Input.Password);
             if (result.Succeeded)
             {
                 return RedirectToPage("./ResetPasswordConfirmation");

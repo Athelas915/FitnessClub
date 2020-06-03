@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.BLL.Interfaces
 {
-    public interface IEmployeeService : IPersonService
+    public interface IEmployeeService
     {
-        IEnumerable<HolidayViewModel> ViewHolidays(int employeeId);
-        IEnumerable<HolidayViewModel> ViewUpcomingHolidays(int employeeId);
-        IEnumerable<HolidayViewModel> ViewPastHolidays(int employeeId);
+        IEnumerable<HolidayViewModel> ViewHolidays(int userId);
+        IEnumerable<HolidayViewModel> ViewUpcomingHolidays(int userId);
+        IEnumerable<HolidayViewModel> ViewPastHolidays(int userId);
         IEnumerable<HolidayViewModel> ViewAllCurrentHolidays();
-        Task AddHoliday(int employeeId, HolidayViewModel inputHoliday);
-        Task RemoveHoliday(int employeeId, HolidayViewModel inputHoliday);
-        Task<bool> EditHoliday(int employeeId, HolidayViewModel inputHoliday);
+        Task AddHoliday(int userId, HolidayViewModel inputHoliday);
+        Task RemoveHoliday(int userId, HolidayViewModel inputHoliday);
+        Task<bool> EditHoliday(int userId, HolidayViewModel inputHoliday);
     }
 }

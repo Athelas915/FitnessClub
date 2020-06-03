@@ -8,16 +8,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using FitnessClub.Data.DAL.Utility;
 
 namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
+        private readonly IPasswordService passwordService;
+        private readonly string userId;
 
-        public DeletePersonalDataModel(IUserService userService)
+        public DeletePersonalDataModel(IAccountService accountService, IPasswordService passwordService, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.accountService = accountService;
+            this.passwordService = passwordService;
+            userId = userResolver.GetUserId(User);
         }
 
         [BindProperty]
@@ -34,8 +39,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = userService.GetUserId(User);
-            var hasPassword = await userService.HasPassword(userId);
+            var hasPassword = await passwordService.HasPassword(userId);
             if (hasPassword == null)
             {
                 return NotFound("Unable to load user with given ID.");
@@ -46,8 +50,8 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var userId = userService.GetUserId(User);
-            var result = await userService.DeleteSelfUser(userId, Input.Password);
+            //Add password check before (HasPassword)
+            var result = await accountService.DeleteSelfUser(userId, Input.Password);
 
             if (!result.Succeeded)
             {

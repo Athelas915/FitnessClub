@@ -12,17 +12,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 
 namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public partial class EmailModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
+        private readonly ITokenGenerator tokenGenerator;
+        private readonly string userId;
         private readonly IEmailSender emailSender;
 
-        public EmailModel(IUserService userService, IEmailSender emailSender)
+        public EmailModel(IAccountService accountService, ITokenGenerator tokenGenerator, IEmailSender emailSender, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.accountService = accountService;
+            this.tokenGenerator = tokenGenerator;
+            userId = userResolver.GetUserId(User);
             this.emailSender = emailSender;
         }
 
@@ -48,7 +53,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(string userId)
         {
-            var email = await userService.GetEmail(userId);
+            var email = await accountService.GetEmail(userId);
             Email = email;
 
             Input = new InputModel
@@ -56,12 +61,11 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 NewEmail = email,
             };
 
-            IsEmailConfirmed = await userService.IsEmailConfirmed(userId);
+            IsEmailConfirmed = await accountService.IsEmailConfirmed(userId);
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = userService.GetUserId(User);
 
             await LoadAsync(userId);
             if (Email == null)
@@ -73,7 +77,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostChangeEmailAsync()
         {
-            var userId = userService.GetUserId(User);
             if (userId == null)
             {
                 return NotFound($"Unable to load user.");
@@ -85,10 +88,10 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var email = await userService.GetEmail(userId);
+            var email = await accountService.GetEmail(userId);
             if (Input.NewEmail != email)
             {
-                var code = await userService.GenerateChangeEmailToken(userId, Input.NewEmail);
+                var code = await tokenGenerator.GenerateChangeEmailToken(userId, Input.NewEmail);
                 if (code == null)
                 {
                     return NotFound($"Unable to load user with ID '{userId}'.");
@@ -113,16 +116,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostSendVerificationEmailAsync()
         {
-            var userId = userService.GetUserId(User);
-
             if (!ModelState.IsValid)
             {
                 await LoadAsync(userId);
                 return Page();
             }
 
-            var email = await userService.GetEmail(userId);
-            var code = await userService.GenerateEmailConfirmationToken(userId);
+            var email = await accountService.GetEmail(userId);
+            var code = await tokenGenerator.GenerateEmailConfirmationToken(userId);
             if (code == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");

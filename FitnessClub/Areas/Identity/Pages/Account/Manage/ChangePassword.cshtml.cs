@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,13 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {
-        private readonly IUserService userService;
+        private readonly IPasswordService passwordService;
+        private readonly string userId;
 
-        public ChangePasswordModel(IUserService userService)
+        public ChangePasswordModel(IPasswordService passwordService, UserResolverService userResolver)
         {
-            this.userService = userService;
+            this.passwordService = passwordService;
+            userId = userResolver.GetUserId(User);
         }
 
         [BindProperty]
@@ -48,8 +51,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = userService.GetUserId(User);
-            var hasPassword = await userService.HasPassword(userId);
+            var hasPassword = await passwordService.HasPassword(userId);
 
             if (hasPassword == null)
             {
@@ -69,8 +71,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             {
                 return Page();
             }
-            var userId = userService.GetUserId(User);
-            var changePasswordResult = await userService.ChangePassword(userId, Input.OldPassword, Input.NewPassword);
+            var changePasswordResult = await passwordService.ChangePassword(userId, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
                 foreach (var error in changePasswordResult.Errors)

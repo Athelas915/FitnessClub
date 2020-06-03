@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using FitnessClub.Data.BLL.Interfaces;
+using FitnessClub.Data.DAL.Utility;
 
 namespace FitnessClub.Areas.Identity.Pages.Account
 {
@@ -20,15 +21,26 @@ namespace FitnessClub.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly ISignInService signInService;
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
+        private readonly ITokenGenerator tokenGenerator;
         private readonly IEmailSender emailSender;
+        private readonly UserResolverService userResolver;
         private readonly ILogger<LoginModel> logger;
 
-        public LoginModel(IUserService userService, ISignInService signInService, IEmailSender emailSender, ILogger<LoginModel> logger)
+        public LoginModel(
+            IAccountService accountService, 
+            ITokenGenerator tokenGenerator, 
+            ISignInService signInService, 
+            IEmailSender emailSender, 
+            UserResolverService userResolver, 
+            ILogger<LoginModel> logger
+            )
         {
-            this.userService = userService;
+            this.accountService = accountService;
+            this.tokenGenerator = tokenGenerator;
             this.signInService = signInService;
             this.emailSender = emailSender;
+            this.userResolver = userResolver;
             this.logger = logger;
         }
 
@@ -114,13 +126,13 @@ namespace FitnessClub.Areas.Identity.Pages.Account
                 return Page();
             }
 
-            var userId = await userService.GetUserId(Input.Email);
+            var userId = await userResolver.GetUserId(Input.Email);
             if (userId == null)
             {
                 ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
             }
 
-            var code = await userService.GenerateEmailConfirmationToken(userId);
+            var code = await tokenGenerator.GenerateEmailConfirmationToken(userId);
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
                 pageHandler: null,
