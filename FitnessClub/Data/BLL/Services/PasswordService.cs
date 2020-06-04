@@ -18,9 +18,9 @@ namespace FitnessClub.Data.BLL.Services
             this.signInManager = signInManager;
             this.logger = logger;
         }
-        public async Task<IdentityResult> AddPassword(string userId, string newPassword)
+        public async Task<IdentityResult> AddPassword(int userId, string newPassword)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -37,18 +37,18 @@ namespace FitnessClub.Data.BLL.Services
             }
             return result;
         }
-        public async Task<bool?> HasPassword(string userId)
+        public async Task<bool?> HasPassword(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
             return await userRepository.UserManager.HasPasswordAsync(user);
         }
-        public async Task<IdentityResult> ChangePassword(string userId, string oldPassword, string newPassword)
+        public async Task<IdentityResult> ChangePassword(int userId, string oldPassword, string newPassword)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -66,9 +66,9 @@ namespace FitnessClub.Data.BLL.Services
             }
             return result;
         }
-        public async Task<IdentityResult> ResetPassword(string userId, string code, string newPassword)
+        public async Task<IdentityResult> ResetPassword(int userId, string code, string newPassword)
         {
-            var user = await userRepository.GetUser(userId);
+            var user = await userRepository.GetUser(userId.ToString());
             var result = await userRepository.UserManager.ResetPasswordAsync(user, code, newPassword);
             if (result.Succeeded)
             {

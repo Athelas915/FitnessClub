@@ -47,7 +47,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var userId = await userResolver.GetUserId(Input.Email);
-                if (userId == null || !(await accountService.IsEmailConfirmed(userId)))
+                if (userId == -1 || !(await accountService.IsEmailConfirmed(userId)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");

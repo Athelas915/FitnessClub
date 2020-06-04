@@ -13,9 +13,9 @@ namespace FitnessClub.Data.BLL.Services
         {
             userManager = userRepository.UserManager;
         }
-        public async Task<string> GenerateChangeEmailToken(string userId, string newEmail)
+        public async Task<string> GenerateChangeEmailToken(int userId, string newEmail)
         {
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -23,18 +23,18 @@ namespace FitnessClub.Data.BLL.Services
             return await userManager.GenerateChangeEmailTokenAsync(user, newEmail);
         }
 
-        public async Task<string> GenerateEmailConfirmationToken(string userId)
+        public async Task<string> GenerateEmailConfirmationToken(int userId)
         {
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
             return await userManager.GenerateEmailConfirmationTokenAsync(user);
         }
-        public async Task<string> GeneratePasswordResetToken(string userId)
+        public async Task<string> GeneratePasswordResetToken(int userId)
         {
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(userId.ToString());
             return await userManager.GeneratePasswordResetTokenAsync(user);
         }
     }

@@ -128,3 +128,10 @@ tr.green {
 tr.no-color {
     margin: 1px;
 }
+a.mar-top-10 {
+    margin-top: 10px;
+}
+
+li.mar-bot-10 {
+    margin-bottom: 10px;
+}

@@ -9,21 +9,20 @@ using FitnessClub.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 
-namespace FitnessClub.Areas.Identity.Pages.Account.Manage
+namespace FitnessClub.Areas.Account.Pages.Manage
 {
-    public class ChangePasswordModel : PageModel
+    public class SetPasswordModel : PageModel
     {
         private readonly IPasswordService passwordService;
-        private readonly string userId;
-
-        public ChangePasswordModel(IPasswordService passwordService, UserResolverService userResolver)
+        private readonly int userId;
+        public SetPasswordModel(IPasswordService passwordService, UserResolverService userResolver)
         {
             this.passwordService = passwordService;
-            userId = userResolver.GetUserId(User);
+            userId = userResolver.GetUserId();
         }
 
+        public LayoutData LayoutData { get; private set; }
         [BindProperty]
         public InputModel Input { get; set; }
 
@@ -32,11 +31,6 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Required]
-            [DataType(DataType.Password)]
-            [Display(Name = "Current password")]
-            public string OldPassword { get; set; }
-
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -49,40 +43,48 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             public string ConfirmPassword { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(string layout, string active)
         {
+            //allows displaying this page for different layouts
+            LayoutData = new LayoutData(layout, active);
             var hasPassword = await passwordService.HasPassword(userId);
 
             if (hasPassword == null)
             {
-                return NotFound("Unable to load user with given ID.");
+                return NotFound($"Unable to load user with ID '{userId}'.");
             }
-            else if (!hasPassword.Value)
+            else if (hasPassword.Value)
             {
-                return RedirectToPage("./SetPassword");
+                return RedirectToPage("./ChangePassword", new { layout = layout, active = active });
             }
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(string layout, string active)
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
-            var changePasswordResult = await passwordService.ChangePassword(userId, Input.OldPassword, Input.NewPassword);
-            if (!changePasswordResult.Succeeded)
+
+            var addPasswordResult = await passwordService.AddPassword(userId, Input.NewPassword);
+            if (addPasswordResult == null)
             {
-                foreach (var error in changePasswordResult.Errors)
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+            else if (!addPasswordResult.Succeeded)
+            {
+                foreach (var error in addPasswordResult.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return Page();
+                return RedirectToPage(new { layout = layout, active = active });
             }
-            StatusMessage = "Your password has been changed.";
 
-            return RedirectToPage();
+            StatusMessage = "Your password has been set.";
+
+            return RedirectToPage(new { layout = layout, active = active });
         }
     }
 }

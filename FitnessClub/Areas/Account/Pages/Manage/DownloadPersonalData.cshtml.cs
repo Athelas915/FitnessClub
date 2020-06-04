@@ -4,20 +4,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Threading.Tasks;
 
-namespace FitnessClub.Areas.Identity.Pages.Account.Manage
+namespace FitnessClub.Areas.Account.Pages.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
         private readonly IAccountService accountService;
-        private readonly string userId;
+        private readonly int userId;
 
         public DownloadPersonalDataModel(IAccountService accountService, UserResolverService userResolver)
         {
             this.accountService = accountService;
-            userId = userResolver.GetUserId(User);
+            userId = userResolver.GetUserId();
         }
-
-        public async Task<IActionResult> OnPostAsync()
+        public LayoutData LayoutData { get; private set; }
+        public void OnGet(string layout, string active)
+        {
+            //allows displaying this page for different layouts
+            LayoutData = new LayoutData(layout, active);
+        }
+            public async Task<IActionResult> OnPostAsync()
         {
             var json = await accountService.GetPersonalData(userId);
 

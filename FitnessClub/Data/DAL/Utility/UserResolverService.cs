@@ -25,7 +25,7 @@ namespace FitnessClub.Data.DAL.Utility
         }
         public int GetUserId()
         {
-            String userId;
+            string userId;
             try
             {
                 userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -35,20 +35,22 @@ namespace FitnessClub.Data.DAL.Utility
                 logger.LogInformation($"Couldn't find id of the logged in customer.");
                 userId = "-1";
             }
-            return int.Parse(userId);
+            int result;
+            if (int.TryParse(userId, out result))
+            {
+                return int.Parse(userId);
+            }
+            else
+            {
+                return -1;
+            }
 
         }
-        public string GetUserId(ClaimsPrincipal user)
-        {
-            var userId = userRepository.UserManager.GetUserId(user);
-
-            return userId;
-        }
-        public async Task<string> GetUserId(string email)
+        public async Task<int> GetUserId(string email)
         {
             var user = await userRepository.UserManager.FindByEmailAsync(email);
 
-            return await userRepository.UserManager.GetUserIdAsync(user);
+            return int.Parse(await userRepository.UserManager.GetUserIdAsync(user));
         }
     }
 }

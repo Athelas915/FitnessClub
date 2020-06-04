@@ -2,7 +2,8 @@
 @model EmailModel
 @{
     ViewData["Title"] = "Manage Email";
-    ViewData["ActivePage"] = ManageNavPages.Email;
+    ViewData["ActivePage"] = Model.LayoutData.ActivePage;
+    Layout = Model.LayoutData.Layout;
 }
 
 <h4>@ViewData["Title"]</h4>
@@ -22,10 +23,10 @@
                         </div>
                     </div>
                 }
-                 else
+                else
                 {
                     <input asp-for="Email" class="form-control" disabled />
-                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link" asp-route-layout=@Model.LayoutData.Layout asp-route-active=@Model.LayoutData.ActivePage>Send verification email</button>
                 }
             </div>
             <div class="form-group">
@@ -33,8 +34,9 @@
                 <input asp-for="Input.NewEmail" class="form-control" />
                 <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
             </div>
-            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary">Change email</button>
+            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary" asp-route-layout=@Model.LayoutData.Layout asp-route-active=@Model.LayoutData.ActivePage>Change email</button>
         </form>
+        <a class="btn btn-primary mar-top-10" asp-area="Account" asp-page="/Manage/Index" asp-route-layout=@Model.LayoutData.Layout asp-route-active=@Model.LayoutData.ActivePage>Back</a>
     </div>
 </div>
 

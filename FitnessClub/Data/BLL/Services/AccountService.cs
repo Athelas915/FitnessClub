@@ -29,18 +29,18 @@ namespace FitnessClub.Data.BLL.Services
             this.signInManager = signInManager;
             this.logger = logger;
         }
-        public async Task<string> GetEmail(string userId)
+        public async Task<string> GetEmail(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {   
                 return null;
             }
             return await userRepository.UserManager.GetEmailAsync(user);
         }
-        public async Task<byte[]> GetPersonalData(string userId)
+        public async Task<byte[]> GetPersonalData(int userId)
         {
-            var user = await userRepository.GetUserWithData(userId);
+            var user = await userRepository.GetUserWithData(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -87,9 +87,9 @@ namespace FitnessClub.Data.BLL.Services
 
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(allData));
         }
-        public async Task<string> GetPhoneNumber(string userId)
+        public async Task<string> GetPhoneNumber(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
@@ -97,18 +97,18 @@ namespace FitnessClub.Data.BLL.Services
             return await userRepository.UserManager.GetPhoneNumberAsync(user);
         }
 
-        public async Task<string> GetUsername(string userId)
+        public async Task<string> GetUsername(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
             return await userRepository.UserManager.GetUserNameAsync(user);
         }
-        public async Task<IdentityResult> SetPhoneNumber(string userId, string newNumber)
+        public async Task<IdentityResult> SetPhoneNumber(int userId, string newNumber)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -125,10 +125,10 @@ namespace FitnessClub.Data.BLL.Services
             }
             return result;
         }
-        public async Task<IdentityResult> ChangeEmail(string userId, string newEmail, string code)
+        public async Task<IdentityResult> ChangeEmail(int userId, string newEmail, string code)
         {
 
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -157,9 +157,24 @@ namespace FitnessClub.Data.BLL.Services
 
             return result;
         }
-        public async Task<IdentityResult> DeleteSelfUser(string userId, string inputPassword)
+        public async Task<IdentityResult> DeleteSelfUser(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
+            var result = await userRepository.UserManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                userRepository.Dispose();
+                throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");
+            }
+            await userRepository.Commit();
+            await signInManager.SignOutAsync();
+            logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+
+            return result;
+        }
+        public async Task<IdentityResult> DeleteSelfUser(int userId, string inputPassword)
+        {
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (!await userRepository.UserManager.CheckPasswordAsync(user, inputPassword))
             {
                 return IdentityResult.Failed(new IdentityError()
@@ -180,6 +195,6 @@ namespace FitnessClub.Data.BLL.Services
 
             return result;
         }
-        public async Task<bool> IsEmailConfirmed(string userId) => await userRepository.UserManager.IsEmailConfirmedAsync(await userRepository.GetUser(userId));
+        public async Task<bool> IsEmailConfirmed(int userId) => await userRepository.UserManager.IsEmailConfirmedAsync(await userRepository.GetUser(userId.ToString()));
     }
 }

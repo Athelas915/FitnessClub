@@ -11,41 +11,35 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using FitnessClub.Data.BLL.Interfaces;
 
-namespace FitnessClub.Areas.Identity.Pages.Account
+namespace FitnessClub.Areas.Account.Pages
 {
     [AllowAnonymous]
-    public class ConfirmEmailChangeModel : PageModel
+    public class ConfirmEmailModel : PageModel
     {
-        private readonly IAccountService accountService;
+        private readonly IRegistrationService registrationService;
 
-        public ConfirmEmailChangeModel(IAccountService accountService)
+        public ConfirmEmailModel(IRegistrationService registrationService)
         {
-            this.accountService = accountService;
+             this.registrationService = registrationService;
         }
 
         [TempData]
         public string StatusMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string userId, string email, string code)
+        public async Task<IActionResult> OnGetAsync(string userId, string code)
         {
             var userIdInt = int.Parse(userId);
-            if (userIdInt == -1 || email == null || code == null)
+            if (userIdInt == -1 || code == null)
             {
                 return RedirectToPage("/Index");
             }
 
-            var result = await accountService.ChangeEmail(userIdInt, email, code);
+            var result = await registrationService.ConfirmEmail(userIdInt, code);
             if (result == null)
             {
                 return NotFound($"Unable to load user with ID '{userIdInt}'.");
             }
-
-            if (!result.Succeeded)
-            {
-                StatusMessage = "Error changing email.";
-                return Page();
-            }
-            StatusMessage = "Thank you for confirming your email change.";
+            StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
             return Page();
         }
     }

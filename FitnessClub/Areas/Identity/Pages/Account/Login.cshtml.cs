@@ -127,7 +127,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
             }
 
             var userId = await userResolver.GetUserId(Input.Email);
-            if (userId == null)
+            if (userId == -1)
             {
                 ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
             }

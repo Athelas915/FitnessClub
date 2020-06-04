@@ -8,6 +8,11 @@ namespace FitnessClub.Data.Models.ViewModels
 {
     public class MembershipViewModel
     {
+        //The parameterless constructor is required for Model Binding on razor pages.
+        public MembershipViewModel()
+        {
+
+        }
         public MembershipViewModel(Membership membership)
         {
             MembershipID = membership.MembershipID;

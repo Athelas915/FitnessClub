@@ -1,0 +1,14 @@
+﻿@using FitnessClub.Data.BLL.Interfaces;
+@inject ISignInService SignInService
+@{
+    var hasExternalLogins = (await SignInService.GetExternalAuthenticationSchemes()).Any();
+}
+    <ul class="list-unstyled">
+        <li class="mar-bot-10"><a class="btn btn-primary w-100" id="email" asp-area="Account" asp-page="/Manage/Email" asp-route-layout=@Model.Layout asp-route-active=@Model.ActivePage>Change Email</a></li>
+        <li class="mar-bot-10"><a class="btn btn-primary w-100" id="change-password" asp-area="Account" asp-page="/Manage/ChangePassword" asp-route-layout=@Model.Layout asp-route-active=@Model.ActivePage>Password</a></li>
+        @if (hasExternalLogins)
+        {
+            <li class="mar-bot-10"><a id="external-login" class="btn btn-primary w-100" asp-area="Account" asp-page="/Manage/ExternalLogins" asp-route-layout=@Model.Layout asp-route-active=@Model.ActivePage>External logins</a></li>
+        }
+        <li class="mar-bot-10"><a class="btn btn-primary w-100 " id="personal-data" asp-area="Account" asp-page="/Manage/PersonalData" asp-route-layout=@Model.Layout asp-route-active=@Model.ActivePage>Personal data</a></li>
+    </ul>

@@ -7,20 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace FitnessClub.Areas.Identity.Pages.Account.Manage
+namespace FitnessClub.Areas.Account.Pages.Manage
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly string userId;
+        private readonly int userId;
 
         public PersonalDataModel(UserResolverService userResolver)
         {
-            userId = userResolver.GetUserId(User);
+            userId = userResolver.GetUserId();
         }
+        public LayoutData LayoutData { get; private set; }
 
-        public IActionResult OnGet()
+        public IActionResult OnGet(string layout, string active)
         {
-            if (userId == null)
+            //allows displaying this page for different layouts
+            LayoutData = new LayoutData(layout, active);
+            if (userId == -1)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }

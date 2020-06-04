@@ -64,11 +64,11 @@ namespace FitnessClub.Data.BLL.Services
                     {
                         await userRepository.UserManager.AddToRoleAsync(user, r);
                     }
-                    await signInManager.SignInAsync(user, isPersistent: false);
 
                 }
                 await userRepository.Commit();
                 await tr.CommitAsync();
+                await signInManager.SignInAsync(user, isPersistent: false);
             }
             else
             {
@@ -114,9 +114,9 @@ namespace FitnessClub.Data.BLL.Services
             }
             return result;
         }
-        public async Task<IdentityResult> ConfirmEmail(string userId, string code)
+        public async Task<IdentityResult> ConfirmEmail(int userId, string code)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -133,12 +133,12 @@ namespace FitnessClub.Data.BLL.Services
             }
             return result;
         }
-        public async Task<bool> ConfirmedAccountRequired(string userId)
+        public async Task<bool> ConfirmedAccountRequired(int userId)
         {
             var required = userRepository.UserManager.Options.SignIn.RequireConfirmedAccount;
             if (!required)
             {
-                var user = await userRepository.GetUser(userId);
+                var user = await userRepository.GetUser(userId.ToString());
                 await signInManager.SignInAsync(user, isPersistent: false);
             }
             return required;

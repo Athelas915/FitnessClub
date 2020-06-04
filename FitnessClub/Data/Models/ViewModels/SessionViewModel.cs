@@ -8,6 +8,11 @@ namespace FitnessClub.Data.Models.ViewModels
 {
     public class SessionViewModel
     {
+        //The parameterless constructor is required for Model Binding on razor pages.
+        public SessionViewModel()
+        {
+
+        }
         public SessionViewModel(Session session)
         {
             SessionID = session.SessionID;

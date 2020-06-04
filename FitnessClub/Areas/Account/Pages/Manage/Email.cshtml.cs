@@ -14,22 +14,23 @@ using Microsoft.AspNetCore.WebUtilities;
 using FitnessClub.Data.BLL.Interfaces;
 using FitnessClub.Data.DAL.Utility;
 
-namespace FitnessClub.Areas.Identity.Pages.Account.Manage
+namespace FitnessClub.Areas.Account.Pages.Manage
 {
     public partial class EmailModel : PageModel
     {
         private readonly IAccountService accountService;
         private readonly ITokenGenerator tokenGenerator;
-        private readonly string userId;
+        private readonly int userId;
         private readonly IEmailSender emailSender;
 
         public EmailModel(IAccountService accountService, ITokenGenerator tokenGenerator, IEmailSender emailSender, UserResolverService userResolver)
         {
             this.accountService = accountService;
             this.tokenGenerator = tokenGenerator;
-            userId = userResolver.GetUserId(User);
+            userId = userResolver.GetUserId();
             this.emailSender = emailSender;
         }
+        public LayoutData LayoutData { get; private set; }
 
         public string Username { get; set; }
 
@@ -51,7 +52,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(string userId)
+        private async Task LoadAsync(int userId)
         {
             var email = await accountService.GetEmail(userId);
             Email = email;
@@ -64,9 +65,10 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             IsEmailConfirmed = await accountService.IsEmailConfirmed(userId);
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(string layout, string active)
         {
-
+            //allows displaying this page for different layouts
+            LayoutData = new LayoutData(layout, active);
             await LoadAsync(userId);
             if (Email == null)
             {
@@ -75,9 +77,9 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostChangeEmailAsync()
+        public async Task<IActionResult> OnPostChangeEmailAsync(string layout, string active)
         {
-            if (userId == null)
+            if (userId == -1)
             {
                 return NotFound($"Unable to load user.");
             }
@@ -97,9 +99,9 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                     return NotFound($"Unable to load user with ID '{userId}'.");
                 }
                 var callbackUrl = Url.Page(
-                    "/Account/ConfirmEmailChange",
+                    "/ConfirmEmailChange",
                     pageHandler: null,
-                    values: new { userId = userId, email = Input.NewEmail, code = code },
+                    values: new { area = "Account", userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
                 await emailSender.SendEmailAsync(
                     Input.NewEmail,
@@ -107,14 +109,14 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                     $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
-                return RedirectToPage();
+                return RedirectToPage(new { layout = layout, active = active });
             }
             
-            StatusMessage = "Your email is unchanged.";
-            return RedirectToPage();
+            StatusMessage = "Your email is unchanged`.";
+            return RedirectToPage(new { layout = layout, active = active });
         }
 
-        public async Task<IActionResult> OnPostSendVerificationEmailAsync()
+        public async Task<IActionResult> OnPostSendVerificationEmailAsync(string layout, string active)
         {
             if (!ModelState.IsValid)
             {
@@ -130,9 +132,9 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
             }
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
+                "/ConfirmEmail",
                 pageHandler: null,
-                values: new { area = "Identity", userId = userId, code = code },
+                values: new { area = "Account", userId = userId, code = code },
                 protocol: Request.Scheme);
             await emailSender.SendEmailAsync(
                 email,
@@ -140,7 +142,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account.Manage
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
             StatusMessage = "Verification email sent. Please check your email.";
-            return RedirectToPage();
+            return RedirectToPage(new { layout = layout, active = active });
         }
     }
 }

@@ -5,9 +5,9 @@ namespace FitnessClub.Data.BLL.Interfaces
 {
     public interface IPasswordService
     {
-        Task<bool?> HasPassword(string userId);
-        Task<IdentityResult> AddPassword(string userId, string newPassword);
-        Task<IdentityResult> ChangePassword(string userId, string oldPassword, string newPassword);
-        Task<IdentityResult> ResetPassword(string userId, string code, string newPassword);
+        Task<bool?> HasPassword(int userId);
+        Task<IdentityResult> AddPassword(int userId, string newPassword);
+        Task<IdentityResult> ChangePassword(int userId, string oldPassword, string newPassword);
+        Task<IdentityResult> ResetPassword(int userId, string code, string newPassword);
     }
 }

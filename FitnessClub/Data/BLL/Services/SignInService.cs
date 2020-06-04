@@ -22,14 +22,14 @@ namespace FitnessClub.Data.BLL.Services
             this.signInManager = signInManager;
         }
 
-        public async Task<IdentityResult> AddLogin(string userId)
+        public async Task<IdentityResult> AddLogin(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
-            var info = await signInManager.GetExternalLoginInfoAsync(userId);
+            var info = await signInManager.GetExternalLoginInfoAsync(userId.ToString());
             if (info == null)
             {
                 throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
@@ -45,8 +45,15 @@ namespace FitnessClub.Data.BLL.Services
             }
             return result;
         }
-        public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl, string userId = null) =>
-            signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, userId);
+        public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl, int userId = -1)
+        {
+            string strUserId = null;
+            if (userId != -1)
+            {
+                strUserId = userId.ToString();
+            }
+            return signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, strUserId);
+        }
 
 
         public async Task<SignInResult> ExternalLoginSignIn(ExternalLoginInfo info) =>
@@ -56,9 +63,9 @@ namespace FitnessClub.Data.BLL.Services
 
         public async Task<ExternalLoginInfo> GetExternalLoginInfo() => await signInManager.GetExternalLoginInfoAsync();
 
-        public async Task<(IList<UserLoginInfo>, IList<AuthenticationScheme>)> GetLogins(string userId)
+        public async Task<(IList<UserLoginInfo>, IList<AuthenticationScheme>)> GetLogins(int userId)
         {
-            var user = await userRepository.GetUserWithData(userId);
+            var user = await userRepository.GetUserWithData(userId.ToString());
             if (user == null)
             {
                 return (null, null);
@@ -70,9 +77,9 @@ namespace FitnessClub.Data.BLL.Services
             return (currentLogins, otherLogins);
         }
 
-        public async Task<IdentityResult> RemoveLogin(string userId, string loginProvider, string providerKey)
+        public async Task<IdentityResult> RemoveLogin(int userId, string loginProvider, string providerKey)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId);
+            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;

@@ -7,6 +7,11 @@ namespace FitnessClub.Data.Models.ViewModels
 {
     public abstract class PersonViewModel<PEntity> where PEntity : Person
     {
+        //The parameterless constructor is required for Model Binding on razor pages.
+        public PersonViewModel()
+        {
+
+        }
         public PersonViewModel(PEntity person)
         {
             PersonID = person.PersonID;

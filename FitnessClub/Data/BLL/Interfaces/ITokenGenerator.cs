@@ -4,8 +4,8 @@ namespace FitnessClub.Data.BLL.Interfaces
 {
     public interface ITokenGenerator
     {
-        Task<string> GenerateEmailConfirmationToken(string userId);
-        Task<string> GenerateChangeEmailToken(string userId, string newEmail);
-        Task<string> GeneratePasswordResetToken(string userId);
+        Task<string> GenerateEmailConfirmationToken(int userId);
+        Task<string> GenerateChangeEmailToken(int userId, string newEmail);
+        Task<string> GeneratePasswordResetToken(int userId);
     }
 }

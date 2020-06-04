@@ -2,7 +2,8 @@
 @model PersonalDataModel
 @{
     ViewData["Title"] = "Personal Data";
-    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+    ViewData["ActivePage"] = Model.LayoutData.ActivePage;
+    Layout = Model.LayoutData.Layout;
 }
 
 <h4>@ViewData["Title"]</h4>
@@ -17,8 +18,9 @@
             <button class="btn btn-primary" type="submit">Download</button>
         </form>
         <p>
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-primary">Delete</a>
+            <a id="delete" asp-page="DeletePersonalData" asp-route-layout=@Model.LayoutData.Layout asp-route-active=@Model.LayoutData.ActivePage class="btn btn-primary">Delete</a>
         </p>
+        <a class="btn btn-primary" asp-area="Account" asp-page="/Manage/Index" asp-route-layout=@Model.LayoutData.Layout asp-route-active=@Model.LayoutData.ActivePage>Back</a>
     </div>
 </div>
 

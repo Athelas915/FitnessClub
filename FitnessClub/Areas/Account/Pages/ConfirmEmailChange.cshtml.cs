@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using FitnessClub.Data.BLL.Interfaces;
 
-namespace FitnessClub.Areas.Identity.Pages.Account
+namespace FitnessClub.Areas.Account.Pages
 {
     [AllowAnonymous]
     public class ConfirmEmailChangeModel : PageModel
@@ -31,7 +31,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
             var userIdInt = int.Parse(userId);
             if (userIdInt == -1 || email == null || code == null)
             {
-                return RedirectToPage("/Index");
+                return RedirectToPage("/Index", new {  });
             }
 
             var result = await accountService.ChangeEmail(userIdInt, email, code);

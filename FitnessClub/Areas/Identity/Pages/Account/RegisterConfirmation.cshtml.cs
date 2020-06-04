@@ -40,7 +40,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
             }
 
             var userId = await userResolver.GetUserId(email);
-            if (userId == null)
+            if (userId == -1)
             {
                 return NotFound($"Unable to load user with email '{email}'.");
             }

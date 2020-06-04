@@ -28,15 +28,16 @@ namespace FitnessClub.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string userId, string code)
         {
-            if (userId == null || code == null)
+            var userIdInt = int.Parse(userId);
+            if (userIdInt == -1 || code == null)
             {
                 return RedirectToPage("/Index");
             }
 
-            var result = await registrationService.ConfirmEmail(userId, code);
+            var result = await registrationService.ConfirmEmail(userIdInt, code);
             if (result == null)
             {
-                return NotFound($"Unable to load user with ID '{userId}'.");
+                return NotFound($"Unable to load user with ID '{userIdInt}'.");
             }
             StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
             return Page();

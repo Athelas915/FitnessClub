@@ -2,7 +2,8 @@
 @model DeletePersonalDataModel
 @{
     ViewData["Title"] = "Delete Personal Data";
-    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+    ViewData["ActivePage"] = Model.LayoutData.ActivePage;
+    Layout = Model.LayoutData.Layout;
 }
 
 <h4>@ViewData["Title"]</h4>
@@ -14,7 +15,7 @@
 </div>
 
 <div>
-    <form id="delete-user" method="post" class="form-group">
+    <form id="delete-user" method="post" class="form-group" asp-route-layout=@Model.LayoutData.Layout asp-route-active=@Model.LayoutData.ActivePage>
         <div asp-validation-summary="All" class="text-danger"></div>
         @if (Model.RequirePassword)
         {
@@ -26,6 +27,7 @@
         }
         <button class="btn btn-danger" type="submit">Delete data and close my account</button>
     </form>
+    <a class="btn btn-primary" asp-area="Account" asp-page="/Manage/PersonalData" asp-route-layout=@Model.LayoutData.Layout asp-route-active=@Model.LayoutData.ActivePage>Back</a>
 </div>
 
 @section Scripts {

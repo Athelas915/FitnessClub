@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FitnessClub.Data.Models.ViewModels
+﻿namespace FitnessClub.Data.Models.ViewModels
 {
     public class AddressViewModel
     {
+        //The parameterless constructor is required for Model Binding on razor pages. 
+        public AddressViewModel()
+        {
+
+        }
         public AddressViewModel(Address address)
         {
             AddressID = address.AddressID;

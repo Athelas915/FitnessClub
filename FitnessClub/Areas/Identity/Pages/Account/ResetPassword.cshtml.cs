@@ -72,7 +72,7 @@ namespace FitnessClub.Areas.Identity.Pages.Account
             }
 
             var userId = await userResolver.GetUserId(Input.Email);
-            if (userId == null)
+            if (userId == -1)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToPage("./ResetPasswordConfirmation");

@@ -6,13 +6,14 @@ namespace FitnessClub.Data.BLL.Interfaces
 {
     public interface IAccountService
     {
-        Task<string> GetEmail(string userId);
-        Task<byte[]> GetPersonalData(string userId);
-        Task<string> GetPhoneNumber(string userId);
-        Task<string> GetUsername(string userId);
-        Task<bool> IsEmailConfirmed(string userId);
-        Task<IdentityResult> DeleteSelfUser(string userId, string inputPassword);
-        Task<IdentityResult> SetPhoneNumber(string userId, string newNumber);
-        Task<IdentityResult> ChangeEmail(string userId, string newEmail, string code);
+        Task<string> GetEmail(int userId);
+        Task<byte[]> GetPersonalData(int userId);
+        Task<string> GetPhoneNumber(int userId);
+        Task<string> GetUsername(int userId);
+        Task<bool> IsEmailConfirmed(int userId);
+        Task<IdentityResult> DeleteSelfUser(int userId);
+        Task<IdentityResult> DeleteSelfUser(int userId, string inputPassword);
+        Task<IdentityResult> SetPhoneNumber(int userId, string newNumber);
+        Task<IdentityResult> ChangeEmail(int userId, string newEmail, string code);
     }
 }

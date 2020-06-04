@@ -2,6 +2,11 @@
 {
     public class HolidayViewModel
     {
+        //The parameterless constructor is required for Model Binding on razor pages.
+        public HolidayViewModel()
+        {
+
+        }
         public HolidayViewModel(Holiday holiday)
         {
             HolidayID = holiday.HolidayID;

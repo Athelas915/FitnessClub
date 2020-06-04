@@ -9,7 +9,7 @@ namespace FitnessClub.Data.BLL.Interfaces
     {
         Task<IdentityResult> CreateUser(string email, Person person, ExternalLoginInfo info, params string[] roles);
         Task<IdentityResult> CreateUser(string email, string password, Person person, params string[] roles);
-        Task<IdentityResult> ConfirmEmail(string userId, string code);
-        Task<bool> ConfirmedAccountRequired(string userId);
+        Task<IdentityResult> ConfirmEmail(int userId, string code);
+        Task<bool> ConfirmedAccountRequired(int userId);
     }
 }
