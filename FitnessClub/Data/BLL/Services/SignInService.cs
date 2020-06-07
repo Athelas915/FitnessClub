@@ -24,7 +24,7 @@ namespace FitnessClub.Data.BLL.Services
 
         public async Task<IdentityResult> AddLogin(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
@@ -34,7 +34,7 @@ namespace FitnessClub.Data.BLL.Services
             {
                 throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
             }
-            var result = await userRepository.UserManager.AddLoginAsync(user, info);
+            var result = await userRepository.AddLoginAsync(user, info);
             if (result.Succeeded)
             {
                 await userRepository.Commit();
@@ -70,7 +70,7 @@ namespace FitnessClub.Data.BLL.Services
             {
                 return (null, null);
             }
-            var currentLogins = await userRepository.UserManager.GetLoginsAsync(user);
+            var currentLogins = await userRepository.GetLoginsAsync(user);
             var otherLogins = (await GetExternalAuthenticationSchemes())
                 .Where(auth => currentLogins.All(ul => auth.Name != ul.LoginProvider))
                 .ToList();
@@ -79,12 +79,12 @@ namespace FitnessClub.Data.BLL.Services
 
         public async Task<IdentityResult> RemoveLogin(int userId, string loginProvider, string providerKey)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
-            var result = await userRepository.UserManager.RemoveLoginAsync(user, loginProvider, providerKey);
+            var result = await userRepository.RemoveLoginAsync(user, loginProvider, providerKey);
 
             if (result.Succeeded)
             {

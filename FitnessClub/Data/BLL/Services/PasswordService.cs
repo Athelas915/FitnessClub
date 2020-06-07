@@ -20,12 +20,12 @@ namespace FitnessClub.Data.BLL.Services
         }
         public async Task<IdentityResult> AddPassword(int userId, string newPassword)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
-            var result = await userRepository.UserManager.AddPasswordAsync(user, newPassword);
+            var result = await userRepository.AddPasswordAsync(user, newPassword);
             if (result.Succeeded)
             {
                 await signInManager.RefreshSignInAsync(user);
@@ -39,26 +39,26 @@ namespace FitnessClub.Data.BLL.Services
         }
         public async Task<bool?> HasPassword(int userId)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
-            return await userRepository.UserManager.HasPasswordAsync(user);
+            return await userRepository.HasPasswordAsync(user);
         }
         public async Task<IdentityResult> ChangePassword(int userId, string oldPassword, string newPassword)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
-            var result = await userRepository.UserManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            var result = await userRepository.ChangePasswordAsync(user, oldPassword, newPassword);
             if (result.Succeeded)
             {
                 await userRepository.Commit();
                 await signInManager.RefreshSignInAsync(user);
-                logger.LogInformation("User with ID '{UserId}' deleted themselves.", await userRepository.UserManager.GetUserIdAsync(user));
+                logger.LogInformation("User with ID '{UserId}' deleted themselves.", await userRepository.GetUserIdAsync(user));
             }
             else
             {
@@ -69,7 +69,7 @@ namespace FitnessClub.Data.BLL.Services
         public async Task<IdentityResult> ResetPassword(int userId, string code, string newPassword)
         {
             var user = await userRepository.GetUser(userId.ToString());
-            var result = await userRepository.UserManager.ResetPasswordAsync(user, code, newPassword);
+            var result = await userRepository.ResetPasswordAsync(user, code, newPassword);
             if (result.Succeeded)
             {
                 await userRepository.Commit();

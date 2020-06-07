@@ -8,34 +8,34 @@ namespace FitnessClub.Data.BLL.Services
 {
     public class TokenGenerator : ITokenGenerator
     {
-        private readonly UserManager<AspNetUser> userManager;
+        private readonly IUserRepository userRepository;
         public TokenGenerator(IUserRepository userRepository)
         {
-            userManager = userRepository.UserManager;
+            this.userRepository = userRepository;
         }
         public async Task<string> GenerateChangeEmailToken(int userId, string newEmail)
         {
-            var user = await userManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
-            return await userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+            return await userRepository.GenerateChangeEmailTokenAsync(user, newEmail);
         }
 
         public async Task<string> GenerateEmailConfirmationToken(int userId)
         {
-            var user = await userManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
-            return await userManager.GenerateEmailConfirmationTokenAsync(user);
+            return await userRepository.GenerateEmailConfirmationTokenAsync(user);
         }
         public async Task<string> GeneratePasswordResetToken(int userId)
         {
-            var user = await userManager.FindByIdAsync(userId.ToString());
-            return await userManager.GeneratePasswordResetTokenAsync(user);
+            var user = await userRepository.FindByIdAsync(userId.ToString());
+            return await userRepository.GeneratePasswordResetTokenAsync(user);
         }
     }
 }

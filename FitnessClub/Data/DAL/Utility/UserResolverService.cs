@@ -35,8 +35,7 @@ namespace FitnessClub.Data.DAL.Utility
                 logger.LogInformation($"Couldn't find id of the logged in customer.");
                 userId = "-1";
             }
-            int result;
-            if (int.TryParse(userId, out result))
+            if (int.TryParse(userId, out int result))
             {
                 return int.Parse(userId);
             }
@@ -48,9 +47,9 @@ namespace FitnessClub.Data.DAL.Utility
         }
         public async Task<int> GetUserId(string email)
         {
-            var user = await userRepository.UserManager.FindByEmailAsync(email);
+            var user = await userRepository.FindByEmailAsync(email);
 
-            return int.Parse(await userRepository.UserManager.GetUserIdAsync(user));
+            return int.Parse(await userRepository.GetUserIdAsync(user));
         }
     }
 }

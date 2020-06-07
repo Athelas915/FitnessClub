@@ -37,12 +37,12 @@ namespace FitnessClub.Data.BLL.Services
             var user = new AspNetUser { UserName = email, Email = email };
 
             var tr = await userRepository.BeginTransaction();
-            var result = await userRepository.UserManager.CreateAsync(user);
+            var result = await userRepository.CreateAsync(user);
 
             if (result.Succeeded)
             {
                 await userRepository.Commit();
-                result = await userRepository.UserManager.AddLoginAsync(user, info);
+                result = await userRepository.AddLoginAsync(user, info);
                 if (result.Succeeded)
                 {
                     logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
@@ -62,7 +62,7 @@ namespace FitnessClub.Data.BLL.Services
 
                     foreach (var r in roles)
                     {
-                        await userRepository.UserManager.AddToRoleAsync(user, r);
+                        await userRepository.AddToRoleAsync(user, r);
                     }
 
                 }
@@ -81,7 +81,7 @@ namespace FitnessClub.Data.BLL.Services
             var user = new AspNetUser { UserName = email, Email = email };
 
             var tr = await userRepository.BeginTransaction();
-            var result = await userRepository.UserManager.CreateAsync(user, password);
+            var result = await userRepository.CreateAsync(user, password);
 
             if (result.Succeeded)
             {
@@ -103,7 +103,7 @@ namespace FitnessClub.Data.BLL.Services
 
                 foreach (var r in roles)
                 {
-                    await userRepository.UserManager.AddToRoleAsync(user, r);
+                    await userRepository.AddToRoleAsync(user, r);
                 }
                 await userRepository.Commit();
                 await tr.CommitAsync();
@@ -116,13 +116,13 @@ namespace FitnessClub.Data.BLL.Services
         }
         public async Task<IdentityResult> ConfirmEmail(int userId, string code)
         {
-            var user = await userRepository.UserManager.FindByIdAsync(userId.ToString());
+            var user = await userRepository.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return null;
             }
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            var result = await userRepository.UserManager.ConfirmEmailAsync(user, code);
+            var result = await userRepository.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
             {
                 await userRepository.Commit();
@@ -135,7 +135,7 @@ namespace FitnessClub.Data.BLL.Services
         }
         public async Task<bool> ConfirmedAccountRequired(int userId)
         {
-            var required = userRepository.UserManager.Options.SignIn.RequireConfirmedAccount;
+            var required = userRepository.RequireConfirmedAccount();
             if (!required)
             {
                 var user = await userRepository.GetUser(userId.ToString());
