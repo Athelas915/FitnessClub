@@ -30,12 +30,12 @@ namespace FitnessClub.Data.BLL.Services
         {
             var coachId = coachRepository.GetPersonIdByUserId(userId);
             var coach = await coachRepository.GetById(coachId);
-            var session = sessionRepository.FindWithCoach(sessionId);
-            if (coach == null )
+            if (coach == null)
             {
                 logger.LogInformation($"Couldn't find the coach with user id {userId}.");
                 return;
             }
+            var session = sessionRepository.FindWithCoach(sessionId);
             else if (session == null)
             {
                 logger.LogInformation($"Couldn't find the session with id {sessionId}.");

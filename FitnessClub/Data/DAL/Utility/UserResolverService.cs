@@ -32,7 +32,7 @@ namespace FitnessClub.Data.DAL.Utility
             }
             catch (NullReferenceException)
             {
-                logger.LogInformation($"Couldn't find id of the logged in customer.");
+                logger.LogWarning($"Couldn't find id of the logged in customer.");
                 userId = "-1";
             }
             if (int.TryParse(userId, out int result))

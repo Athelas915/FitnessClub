@@ -34,7 +34,7 @@
                         @Html.DisplayNameFor(model => model.Sessions.First().StartTime)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().FinishTime)
+                        @Html.DisplayNameFor(model => model.Sessions.First().Duration)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Sessions.First().Room)
@@ -69,7 +69,7 @@
                             @Html.DisplayFor(modelItem => item.StartTime)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.FinishTime)
+                            @Html.DisplayFor(modelItem => item.Duration)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Room)

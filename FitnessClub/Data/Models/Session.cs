@@ -7,7 +7,7 @@ namespace FitnessClub.Data.Models
 {
     public enum SessionType
     {
-        aerobics, spinning, boxing, yoga, pilates
+        Aerobics, Spinning, Boxing, Yoga, Pilates
     }
     public class Session : DataEntity
     {
