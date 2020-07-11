@@ -2,6 +2,7 @@
 using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
 using FitnessClub.Data.Models.Identity;
+using FitnessClub.Data.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
@@ -18,13 +19,16 @@ namespace FitnessClub.Data.BLL.Services
     public class AccountService : IAccountService
     {
         private readonly IUserRepository userRepository;
+        private readonly IPersonRepository personRepository;
         private readonly SignInManager<AspNetUser> signInManager;
         private readonly ILogger<AccountService> logger;
         public AccountService(
             IUserRepository userRepository,
+            IPersonRepository personRepository,
             SignInManager<AspNetUser> signInManager,
             ILogger<AccountService> logger)
         {
+            this.personRepository = personRepository;
             this.userRepository = userRepository;
             this.signInManager = signInManager;
             this.logger = logger;
@@ -196,5 +200,29 @@ namespace FitnessClub.Data.BLL.Services
             return result;
         }
         public async Task<bool> IsEmailConfirmed(int userId) => await userRepository.IsEmailConfirmedAsync(await userRepository.GetUser(userId.ToString()));
+        public async Task UpdateAddress(int userId, AddressViewModel inputAddress)
+        {
+            personRepository.Include(a => a.Address);
+            personRepository.AddFilter(a => a.UserID == userId);
+            var user = (await personRepository.Get()).FirstOrDefault();
+            personRepository.Update(user);
+            user.Address = inputAddress.Model;
+            await personRepository.Commit();
+        }
+        async public Task<PersonViewModel> GetPerson(int userId) 
+            => new PersonViewModel(
+                (await personRepository
+                    .AddFilter(a => a.UserID == userId)
+                    .Get())
+                .FirstOrDefault()
+                );
+
+        public async Task<PersonViewModel> GetWithAddress(int userId)
+            => new PersonViewModel(
+                (await personRepository
+                    .AddFilter(a => a.UserID == userId)
+                    .Include(a => a.Address)
+                    .Get())
+                .FirstOrDefault());
     }
 }

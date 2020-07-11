@@ -12,6 +12,23 @@ namespace FitnessClub.Data.Models
     }
     public class Person : DataEntity
     {
+        public Person() { }
+
+        public Person(Person p) : base(p)
+        {
+            PersonID = p.PersonID;
+            FirstName = p.FirstName;
+            LastName = p.LastName;
+            Gender = (Gender)(int)p.Gender;
+            Birthdate = p.Birthdate;
+            AspNetUser = p.AspNetUser;
+            UserID = p.UserID;
+            if (p.Address != null)
+            {
+                Address = new Address(p.Address);
+            }
+        }
+
         public int PersonID { get; set; }
         [ProtectedPersonalData]
         public string FirstName { get; set; }

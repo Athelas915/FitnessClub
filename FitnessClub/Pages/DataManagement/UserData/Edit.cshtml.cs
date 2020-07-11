@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -56,7 +55,7 @@ namespace FitnessClub.Pages.DataManagement.UserData
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AspNetUserExists(AspNetUser.Id))
+                if (!await AspNetUserExists(AspNetUser.Id))
                 {
                     return NotFound();
                 }
@@ -69,9 +68,9 @@ namespace FitnessClub.Pages.DataManagement.UserData
             return RedirectToPage("./Index");
         }
 
-        private bool AspNetUserExists(int id)
+        private async Task<bool> AspNetUserExists(int id)
         {
-            return _context.AspNetUsers.Any(e => e.Id == id);
+            return await _context.AspNetUsers.FirstOrDefaultAsync(x => x.Id == id) != null;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FitnessClub.Data.Models
 {
-    public class BaseEntity
+    public abstract class BaseEntity
     {
     }
 }

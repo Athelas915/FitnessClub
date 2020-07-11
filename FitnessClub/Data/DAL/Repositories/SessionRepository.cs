@@ -1,7 +1,11 @@
 ﻿using FitnessClub.Data.DAL.Interfaces;
 using FitnessClub.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Repositories
 {
@@ -10,12 +14,11 @@ namespace FitnessClub.Data.DAL.Repositories
         public SessionRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
-
-        public IEnumerable<Session> GetAllWithCoach() => Get(includeProperties: "Coach");
-        public IEnumerable<Session> GetAllWithEnrollments() => Get(includeProperties: "SessionEnrollments");
-        public IEnumerable<Session> GetAllWithRatings() => Get(includeProperties: "CoachRatings");
-        public Session FindWithRatings(int id) => Get(filter: a => a.SessionID == id, includeProperties: "CoachRatings").FirstOrDefault();
-        public Session FindWithEnrollments(int id) => Get(filter: a => a.SessionID == id, includeProperties: "SessionEnrollments").FirstOrDefault();
-        public Session FindWithCoach(int id) => Get(filter: a => a.SessionID == id, includeProperties: "Coach").FirstOrDefault();
+        public async override Task<IList<Session>> Get()
+        {
+            Include(a => a.Coach);
+            OrderBy(a => a.Start);
+            return await base.Get();
+        }
     }
 }

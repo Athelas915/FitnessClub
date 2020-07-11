@@ -13,12 +13,10 @@ namespace FitnessClub.Areas.Account.Pages.Manage
     public class IndexModel : PageModel
     {
         public readonly IAccountService accountService;
-        public readonly IPersonService personService;
         public readonly int userId;
-        public IndexModel(IAccountService accountService, IPersonService personService, UserResolverService userResolver)
+        public IndexModel(IAccountService accountService, UserResolverService userResolver)
         {
             this.accountService = accountService;
-            this.personService = personService;
             userId = userResolver.GetUserId();
             
         }
@@ -39,7 +37,7 @@ namespace FitnessClub.Areas.Account.Pages.Manage
             LayoutData = new LayoutData(layout, active);
             EmailAddress = await accountService.GetEmail(userId);
 
-            var address = personService.ViewAddress(userId);
+            var address = (await accountService.GetWithAddress(userId)).Address;
             var phone = await accountService.GetPhoneNumber(userId);
 
             Input = new InputModel()

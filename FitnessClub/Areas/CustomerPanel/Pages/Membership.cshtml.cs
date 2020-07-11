@@ -23,14 +23,14 @@ namespace FitnessClub.Areas.CustomerPanel.Pages
             userId = userResolver.GetUserId();
         }
 
-        public IEnumerable<MembershipViewModel> Memberships { get; set; }
-        public IActionResult OnGet()
+        public CustomerViewModel Customer { get; set; }
+        public async Task<IActionResult> OnGet()
         {
             if (userId == -1)
             {
                 return RedirectToPage("./Index");
             }
-            Memberships = customerService.ViewMemberships(userId);
+            Customer = await customerService.GetWithMemberships(userId);
 
             return Page();
         }

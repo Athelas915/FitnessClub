@@ -19,17 +19,17 @@
             <thead>
                 <tr class="no-color">
                     <th>
-                        @Html.DisplayNameFor(model => model.Memberships.First().MembershipNo)
+                        @Html.DisplayNameFor(model => model.Customer.Memberships.First().MembershipNo)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Memberships.First().Start)
+                        @Html.DisplayNameFor(model => model.Customer.Memberships.First().Start)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Memberships.First().Finish)
+                        @Html.DisplayNameFor(model => model.Customer.Memberships.First().Finish)
                     </th>
             </thead>
             <tbody>
-                @foreach (var item in Model.Memberships)
+                @foreach (var item in Model.Customer.Memberships)
                 {
                     <tr class="@(item.Active ? "green" : "no-color")">
                         <td>

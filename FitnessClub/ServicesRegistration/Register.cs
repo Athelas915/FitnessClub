@@ -29,9 +29,9 @@ namespace FitnessClub.ServicesRegistration
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IPasswordService, PasswordService>();
-            services.AddScoped<IPersonService, PersonService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
-            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISessionManagementService, SessionManagementService>();
+            services.AddScoped<IEnrollmentService, EnrollmentService>();
             services.AddScoped<ISignInService, SignInService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
 

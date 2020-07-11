@@ -15,16 +15,17 @@ namespace FitnessClub.Data.DAL.Interfaces
     }
     public interface IRepository<TEntity> : IRepository where TEntity : DataEntity
     {
-        IEnumerable<TEntity> Get(
-               Expression<Func<TEntity, bool>> filter = null,
-               Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-               string includeProperties = ""
-            );
-        Task<TEntity> GetById(params int[] Ids);
+        IRepository<TEntity> AddFilter(Expression<Func<TEntity, bool>> filter);
+        IRepository<TEntity> OrderBy(Expression<Func<TEntity, object>> orderBy);
+        IRepository<TEntity> Include(Expression<Func<TEntity, object>> include);
+        IRepository<TEntity> Include(string include);
+        Task<IList<TEntity>> Get();
+        Task<IList<TEntity>> GetAll();
+        Task<TEntity> FindById(int id);
         Task Insert(TEntity entity);
         Task Delete(params int[] Ids);
         void Delete(TEntity entity);
         void Update(TEntity entity);
-        Task<bool> Any(params int[] Ids);
+        Task<bool> Any(int id);
     }
 }

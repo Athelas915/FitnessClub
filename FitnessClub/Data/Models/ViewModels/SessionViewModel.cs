@@ -7,97 +7,45 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FitnessClub.Data.Models.ViewModels
 {
-    public class SessionViewModel
+    public class SessionViewModel : ViewModel<Session>
     {
-        private readonly Session session;
         //The parameterless constructor is required for Model Binding on razor pages.
-        public SessionViewModel()
-        {
-            session = new Session();
-            session.Coach = new Coach();
-        }
-        public SessionViewModel(Session session)
-        {
-            this.session = session;
-            if (this.session.Coach == null)
-            {
-                this.session.Coach = new Coach();
-            }
-        }
+        public SessionViewModel() { }
+        public SessionViewModel(Session session) : base(session) {}
         public int SessionID
         {
-            get => session.SessionID;
-            set => session.SessionID = value;
+            get => model.SessionID;
         }
         [DisplayName("Session Type")]
         public SessionType? SessionType
         {
-            get => session.SessionType;
-            set => session.SessionType = value;
-        }
-        public string CoachFirstName
-        {
-            get
-            {
-                return session.Coach.FirstName;
-            }
-            set
-            {
-                session.Coach.FirstName = value;
-            }
-        }
-        public string CoachLastName
-        {
-            get
-            {
-                return session.Coach.LastName;
-            }
-            set
-            {
-                session.Coach.LastName = value;
-            }
-        }
-        [DisplayName("Coach")]
-        public string CoachFullName{
-            get => $"{CoachFirstName} {CoachLastName}".Trim();
-            set
-            {
-                if (value == null)
-                {
-                    CoachFirstName = CoachLastName = null;
-                    return;
-                }
-                var items = value.Split();
-                if (items.Length > 0)
-                    CoachFirstName = items[0]; // may cause npc
-                if (items.Length > 1)
-                    CoachLastName = items[1];
-            }
+            get => model.SessionType;
+            set => model.SessionType = value;
         }
         public string Date
         {
-            get => session.Start.ToShortDateString();
+            get => model.Start.ToShortDateString();
             set
             {
-                session.Start = DateTime.Parse(value) + session.Start.TimeOfDay;
-                session.Finish = session.Start + TimeSpan.Parse(Duration);
+                model.Start = DateTime.Parse(value) + model.Start.TimeOfDay;
+                model.Finish = model.Start + TimeSpan.Parse(Duration);
             }
         }
         [DisplayName("Start Time")]
         public string StartTime 
         {
-            get => session.Start.ToShortTimeString();
+            get => model.Start.ToShortTimeString();
             set
             {
-                session.Start = session.Start.Date + TimeSpan.Parse(value);
-                session.Finish = session.Start + TimeSpan.Parse(Duration);
+                model.Start = model.Start.Date + TimeSpan.Parse(value);
+                model.Finish = model.Start + TimeSpan.Parse(Duration);
 
             }
         }
         public string Duration 
         { 
-            get => (session.Finish - session.Start).ToString("hh\\:mm");
-            set => session.Finish = session.Start + TimeSpan.Parse(value);
+            get => (model.Finish - model.Start).ToString("hh\\:mm");
+            set => model.Finish = model.Start + TimeSpan.Parse(value);
         }
 
         public string Weekday
@@ -106,8 +54,60 @@ namespace FitnessClub.Data.Models.ViewModels
         }
         public int Room 
         {
-            get => session.Room;
-            set => session.Room = value; 
+            get => model.Room;
+            set => model.Room = value; 
+        }
+        public IList<int> Ratings
+        {
+            get
+            {
+                if (model.CoachRatings != null)
+                {
+                    return model.CoachRatings.Select(a => a.Rating).ToList();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        private CoachViewModel lazyCoach = null;
+        public CoachViewModel Coach
+        {
+            get
+            {
+                if (model.Coach != null)
+                {
+                    lazyCoach = lazyCoach == null ? new CoachViewModel(model.Coach) : lazyCoach;
+                    return lazyCoach;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        public ICollection<CustomerViewModel> Participants
+        {
+            get
+            {
+                if (model.SessionEnrollments != null)
+                {
+                    var result = new List<CustomerViewModel>();
+                    foreach (var se in model.SessionEnrollments)
+                    {
+                        if (se.Customer != null)
+                        {
+                            result.Add(new CustomerViewModel(se.Customer));
+                        }
+                    }
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
     }
 }

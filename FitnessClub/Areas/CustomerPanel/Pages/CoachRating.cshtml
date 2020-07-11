@@ -19,25 +19,25 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().SessionType)
+                        @Html.DisplayNameFor(model => model.Sessions.Keys.First().SessionType)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().CoachFullName)
+                        @Html.DisplayNameFor(model => model.Sessions.Keys.First().Coach.FullName)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().Weekday)
+                        @Html.DisplayNameFor(model => model.Sessions.Keys.First().Weekday)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().Date)
+                        @Html.DisplayNameFor(model => model.Sessions.Keys.First().Date)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().StartTime)
+                        @Html.DisplayNameFor(model => model.Sessions.Keys.First().StartTime)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().Duration)
+                        @Html.DisplayNameFor(model => model.Sessions.Keys.First().Duration)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Sessions.First().Room)
+                        @Html.DisplayNameFor(model => model.Sessions.Keys.First().Room)
                     </th>
                     <th>
                         Rate:
@@ -50,14 +50,14 @@
                 @{
                     var i = 0;
                 }
-                @foreach (var item in Model.Sessions)
+                @foreach (var item in Model.Sessions.Keys)
                 {
                     <tr>
                         <td>
                             @Html.DisplayFor(modelItem => item.SessionType)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.CoachFullName)
+                            @Html.DisplayFor(modelItem => item.Coach.FullName)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Weekday)

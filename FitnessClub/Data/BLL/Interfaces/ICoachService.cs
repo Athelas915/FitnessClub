@@ -6,11 +6,10 @@ namespace FitnessClub.Data.BLL.Interfaces
 {
     public interface ICoachService
     {
-        Task AssignToSession(int userId, int sessionId);
-        Task UnassignFromSession(int userId, int sessionId);
-        IEnumerable<SessionViewModel> ViewAssignedSessions(int userId);
-        IEnumerable<SessionViewModel> ViewPastSessions(int userId);
-        IEnumerable<SessionViewModel> ViewUnassignedUpcomingSessions();
-        Task<IDictionary<SessionViewModel, int>> ViewRatings(int userId);
+        Task<CoachViewModel> GetCoach(int userId);
+        Task<CoachViewModel> GetWithAvgRating(int userId);
+        Task<CoachViewModel> GetWithSessions(int userId);
+        Task AssignCoach(SessionViewModel session, CoachViewModel coach);
+        Task UnassignCoach(SessionViewModel session);
     }
 }

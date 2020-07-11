@@ -13,188 +13,89 @@ namespace FitnessClub.Data.BLL.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly ISessionRepository sessionRepository;
         private readonly ICustomerRepository customerRepository;
-        private readonly ILogger<CustomerService> logger;
+        private readonly ISessionRepository sessionRepository;
         private readonly int userId;
-        public CustomerService(ISessionRepository sessionRepository, ICustomerRepository customerRepository, UserResolverService userResolverService, ILogger<CustomerService> logger)
+        public CustomerService(ICustomerRepository customerRepository, ISessionRepository sessionRepository, UserResolverService userResolver)
         {
-            this.sessionRepository = sessionRepository;
             this.customerRepository = customerRepository;
-            this.logger = logger;
-            userId = userResolverService.GetUserId();
+            this.sessionRepository = sessionRepository;
+            userId = userResolver.GetUserId();
         }
-        public async Task CancelEnrollment(int userId, int sessionId)
+
+        public async Task CreateMembership(CustomerViewModel customer, MembershipViewModel membership)
         {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithEnrollments(customerId);
-            var enrollment = customer.SessionEnrollments.Where(a => a.CustomerID == customerId && a.SessionID == sessionId).FirstOrDefault();
-            if (customer == null || enrollment == null)
-            {
-                logger.LogInformation($"Couldn't find the enrollment with given session id {sessionId} and person id {customerId}");
-                return;
-            }
-
-            var result = customer.SessionEnrollments.Remove(enrollment);
-            if (!result)
-            {
-                customerRepository.Dispose();
-            }
-            else
-            {
-                await sessionRepository.Commit();
-            }
-
+            var c = customer.Model;
+            customerRepository.Update(c);
+            c.Memberships.Add(membership.Model);
+            await customerRepository.Commit();  
         }
-        public async Task Enroll(int userId, int sessionId)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithEnrollments(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return;
-            }
-            var enrollment = new SessionEnrollment() 
-            {
-                CustomerID = customerId,
-                SessionID = sessionId,
-                CreatedBy = userId
-            };
-            customer.SessionEnrollments.Add(enrollment);
 
+        public async Task DeleteMembership(CustomerViewModel customer, MembershipViewModel membership)
+        {
+            var c = customer.Model;
+            customerRepository.Update(c);
+            c.Memberships.Remove(membership.Model);
             await customerRepository.Commit();
         }
 
-        public async Task RateCoach(int userId, int sessionId, int inputRating)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithRatings(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return;
-            }
-            var coachId = (await sessionRepository.GetById(sessionId)).CoachID;
-            if (coachId == null)
-            {
-                logger.LogInformation($"Couldn't find coach for session with id {sessionId}. Perhaps coach was deleted from the databse.");
-                return;
-            }
+        public async Task<CustomerViewModel> GetCustomer(int userId)
+            => new CustomerViewModel(
+                (await customerRepository
+                    .AddFilter(a => a.UserID == userId)
+                    .Get())
+                .FirstOrDefault());
 
-            var rating = new CoachRating()
-            {
-                Rating = inputRating,
-                CoachID = coachId.Value,
-                CustomerID = customerId,
-                SessionID = sessionId,
-                CreatedBy = userId
-            };
-            customer.CoachRatings.Add(rating);
-
-            await customerRepository.Commit();
-        }
-
-        public IEnumerable<SessionViewModel> ViewEnrolledUpcomingSessions(int userId)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithEnrollments(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return null;
-            }
-            var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
-
-            var sessions = sessionRepository.Get(filter: a => sessionIds.Contains(a.SessionID) && a.Start > DateTime.Now, includeProperties: "Coach");
-            return sessions.Select(a => new SessionViewModel(a));
-        }
-
-        public IEnumerable<MembershipViewModel> ViewMemberships(int userId)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithMemberships(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return null;
-            }
-            var memberships = customer.Memberships.AsEnumerable();
-            foreach (var m in memberships)
-            {
-                m.Customer = customer;
-            }
-            memberships = memberships.OrderBy(a => a.Start);
-            return memberships.Select(a => new MembershipViewModel(a));
-        }
-
-        public IEnumerable<SessionViewModel> ViewPastSessions(int userId)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithEnrollments(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return null;
-            }
-            var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
-
-            var sessions = sessionRepository.Get(filter: a => sessionIds.Contains(a.SessionID) && a.Finish < DateTime.Now, includeProperties: "Coach");
-            return sessions.Select(a => new SessionViewModel(a));
-        }
-
-        public IEnumerable<SessionViewModel> ViewSessions(int userId)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithEnrollments(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return null;
-            }
-            var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
-
-            var sessions = sessionRepository.Get(filter: a => sessionIds.Contains(a.SessionID), includeProperties: "Coach");
-            return sessions.Select(a => new SessionViewModel(a));
-        }
-
-        public IEnumerable<SessionViewModel> ViewUnenrolledUpcomingSessions(int userId)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithEnrollments(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return null;
-            }
-            var sessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
-
-            var sessions = sessionRepository.Get(filter: a => !sessionIds.Contains(a.SessionID) && a.Start > DateTime.Now, includeProperties: "Coach");
-            return sessions.Select(a => new SessionViewModel(a));
-        }
-
-        public IEnumerable<SessionViewModel> ViewUnratedSessions(int userId)
-        {
-            var customerId = customerRepository.GetPersonIdByUserId(userId);
-            var customer = customerRepository.FindWithRatings(customerId);
-            customer = customerRepository.FindWithEnrollments(customerId);
-            if (customer == null)
-            {
-                logger.LogInformation($"Couldn't find the user with id {customerId}");
-                return null;
-            }
-            var enrolledSessionIds = customer.SessionEnrollments.Select(a => a.SessionID);
-            var ratedSessionIds = customer.CoachRatings.Select(a => a.SessionID);
-
-            var sessions = sessionRepository.Get(
-                filter: a => 
-                    !ratedSessionIds.Contains(a.SessionID) &&
-                    enrolledSessionIds.Contains(a.SessionID) && 
-                    a.Finish < DateTime.Now, includeProperties: "Coach",
-                orderBy: a =>
-                    a.OrderBy(b => b.Start)
+        public async Task<CustomerViewModel> GetWithSessions(int userId)
+            => new CustomerViewModel((
+                    await customerRepository
+                    .AddFilter(a => a.UserID == userId)
+                    .Include(a => a.SessionEnrollments)
+                    .Include("SessionEnrollments.Session")
+                    .Include(a => a.CoachRatings)
+                    .Get())
+                .FirstOrDefault()
                 );
-            return sessions.Select(a => new SessionViewModel(a));
+
+        public async Task<CustomerViewModel> GetWithMemberships(int userId)
+            => new CustomerViewModel((
+                    await customerRepository
+                    .AddFilter(a => a.UserID == userId)
+                    .Include(a => a.Memberships)
+                    .Get())
+                .FirstOrDefault()
+                );
+
+        public async Task UpdateMembership(CustomerViewModel customer, MembershipViewModel membership)
+        {
+            var c = customer.Model;
+            customerRepository.Update(c);
+            c.Memberships.Remove(c.Memberships.FirstOrDefault(a => a.CustomerID == customer.Model.PersonID));
+            c.Memberships.Add(membership.Model);
+            await customerRepository.Commit();
+        }
+        public async Task RateCoach(SessionViewModel session, CustomerViewModel customer, int rating)
+        {
+            var c = customer.Model;
+            customerRepository.Update(c);
+            var s = (await sessionRepository
+                .Include(a => a.Coach)
+                .AddFilter(a => a.SessionID == session.SessionID)
+                .Get())
+                .FirstOrDefault();
+            if (s.Coach != null)
+            {
+                c.CoachRatings.Add(
+                    new CoachRating()
+                    {
+                        SessionID = session.SessionID,
+                        CoachID = session.Coach.PersonID,
+                        CustomerID = customer.PersonID,
+                        Rating = rating,
+                        CreatedBy = userId
+                    });;
+                await customerRepository.Commit();
+            }
         }
     }
 }

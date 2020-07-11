@@ -2,6 +2,7 @@
 using FitnessClub.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Repositories
 {
@@ -10,8 +11,5 @@ namespace FitnessClub.Data.DAL.Repositories
         public EmployeeRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
-
-        public IEnumerable<Employee> GetAllWithHolidays() => Get(includeProperties: "Holidays");
-        public Employee FindWithHolidays(int id) => Get(filter: a => a.PersonID == id, includeProperties: "Holidays").FirstOrDefault();
     }
 }

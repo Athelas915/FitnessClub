@@ -2,6 +2,7 @@
 using FitnessClub.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FitnessClub.Data.DAL.Repositories
 {
@@ -10,9 +11,6 @@ namespace FitnessClub.Data.DAL.Repositories
         public PersonRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
-        public IEnumerable<PEntity> GetAllWithAddresses() => Get(includeProperties: "Address");
-        public PEntity FindWithAddress(int id) => Get(filter: a => a.PersonID == id, includeProperties: "Address").FirstOrDefault();
-        public int GetPersonIdByUserId(int userId) => Get(filter: a => a.UserID == userId).FirstOrDefault().PersonID;
     }
     public class PersonRepository : PersonRepository<Person>, IPersonRepository
     {

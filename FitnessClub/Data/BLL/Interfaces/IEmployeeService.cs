@@ -6,12 +6,10 @@ namespace FitnessClub.Data.BLL.Interfaces
 {
     public interface IEmployeeService
     {
-        IEnumerable<HolidayViewModel> ViewHolidays(int userId);
-        IEnumerable<HolidayViewModel> ViewUpcomingHolidays(int userId);
-        IEnumerable<HolidayViewModel> ViewPastHolidays(int userId);
-        IEnumerable<HolidayViewModel> ViewAllCurrentHolidays();
-        Task AddHoliday(int userId, HolidayViewModel inputHoliday);
-        Task RemoveHoliday(int userId, HolidayViewModel inputHoliday);
-        Task<bool> EditHoliday(int userId, HolidayViewModel inputHoliday);
+        Task<EmployeeViewModel> GetEmployee(int userId);
+        Task<EmployeeViewModel> GetWithHolidays(int userId);
+        Task CreateHoliday(EmployeeViewModel employee, HolidayViewModel inputHoliday);
+        Task RemoveHoliday(EmployeeViewModel employee, HolidayViewModel inputHoliday);
+        Task EditHoliday(EmployeeViewModel employee, HolidayViewModel inputHoliday);
     }
 }

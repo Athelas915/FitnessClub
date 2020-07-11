@@ -6,33 +6,73 @@ using System.ComponentModel;
 
 namespace FitnessClub.Data.Models.ViewModels
 {
-    public class MembershipViewModel
+    public class MembershipViewModel : ViewModel<Membership>
     {
         //The parameterless constructor is required for Model Binding on razor pages.
-        public MembershipViewModel()
+        public MembershipViewModel() {}
+        public MembershipViewModel(Membership membership) : base(membership) {}
+        public int MembershipID 
         {
-
+            get => model.MembershipID;
         }
-        public MembershipViewModel(Membership membership)
-        {
-            MembershipID = membership.MembershipID;
-            MembershipNo = membership.MembershipNo;
-            Start = membership.Start.ToShortDateString();
-            Finish = membership.Finish.ToShortDateString();
-            var firstName = membership.Customer.FirstName;
-            var lastName = membership.Customer.LastName;
-            CustomerFullName = firstName + ' ' + lastName;
-            Active = (DateTime.Now > membership.Start && DateTime.Now < membership.Finish) ? true : false;
-        }
-        public int MembershipID { get; set; }
         [DisplayName("Membership Number")]
-        public int MembershipNo { get; set; }
+        public int MembershipNo 
+        {
+            get => model.MembershipNo;
+            set => model.MembershipNo = value;
+        }
         [DisplayName("Start Date")]
-        public string Start { get; set; }
+        public string Start 
+        { 
+            get => model.Start.ToShortDateString();
+            set => model.Start = DateTime.Parse(value); 
+        }
         [DisplayName("Expiration Date")]
-        public string Finish { get; set; }
-        [DisplayName("Customer")]
-        public string CustomerFullName { get; set; }
-        public bool Active { get; set; }
+        public string Finish
+        {
+            get => model.Finish.ToShortDateString();
+            set => model.Finish = DateTime.Parse(value);
+        }
+        public int DaysLeft
+        {
+            get
+            {
+                var dlStart = DateTime.Now.Subtract(model.Start).Days;
+                if (dlStart< 0)
+                {
+                    var dlEnd = DateTime.Now.Subtract(model.Finish).Days;
+                    if (dlEnd< 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return dlEnd;
+                    }
+                }
+                else
+                {
+                    return dlStart;
+                }
+            }
+        }
+        public string CustomerFirstName
+        {
+            get => model.Customer.FirstName;
+            set => model.Customer.FirstName = value;
+        }
+        public string CustomerLastName
+        {
+            get => model.Customer.LastName;
+            set => model.Customer.LastName = value;
+        }
+        public bool Active 
+        { 
+            get
+            {
+                var result = model.Start < DateTime.Now && model.Finish > DateTime.Now ? true : false;
+                return result;
+            }       
+        }
     }
 }

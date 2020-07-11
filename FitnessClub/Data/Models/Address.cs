@@ -6,6 +6,23 @@ namespace FitnessClub.Data.Models
 {
     public class Address : DataEntity
     {
+        public Address() { }
+
+        public Address(Address a) : base(a)
+        {
+            AddressID = a.AddressID;
+            Street = a.Street;
+            ZipCode = a.ZipCode;
+            City = a.City;
+            Region = a.Region;
+            Country = a.Country;
+            PersonID = a.PersonID;
+            if (a.Person != null)
+            {
+                Person = new Person(a.Person);
+            }
+        }
+
         public int AddressID { get; set; }
         [ProtectedPersonalData]
         public string Street { get; set; }
