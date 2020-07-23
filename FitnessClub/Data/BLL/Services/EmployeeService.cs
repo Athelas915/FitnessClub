@@ -21,9 +21,9 @@ namespace FitnessClub.Data.BLL.Services
 
         public async Task CreateHoliday(EmployeeViewModel employee, HolidayViewModel holiday)
         {
-            var c = employee.Model;
-            employeeRepository.Update(c);
-            c.Holidays.Add(holiday.Model);
+            var e = employee.Model;
+            employeeRepository.Update(e);
+            e.Holidays.Add(holiday.Model);
             await employeeRepository.Commit();
         }
 
