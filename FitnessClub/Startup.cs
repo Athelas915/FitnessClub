@@ -34,7 +34,7 @@ namespace FitnessClub
             if (env.EnvironmentName == "Development")
             {
                 //In development, the connection string is taken from secrets.json file that isn't checked in at github.
-                Configuration["ConnectionStrings:FCConnectionString"] = Configuration.GetConnectionString("FCContextDevelopment");
+                Configuration["ConnectionStrings:FCConnectionString"] = Configuration["FCContextDevelopment"];
             }
             else
             {
